@@ -7,22 +7,24 @@
 //
 
 #include "Game.h"
+#include <iostream>
 
 // TODO
 Game::Game() {}
 
 bool Game::Initialize(){
+    
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
         return false;
     }
     //SDL_Quit();
     myWindow = SDL_CreateWindow(
-        "The Pong Window",                  // window title
-        SDL_WINDOWPOS_UNDEFINED,           // initial x position
-        SDL_WINDOWPOS_UNDEFINED,           // initial y position
-        1024,                               // width, in pixels
-        768,                               // height, in pixels
-        SDL_WINDOW_OPENGL                  // flags
+        "The Pong Window",
+        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_UNDEFINED,
+        1024,
+        768,
+        SDL_WINDOW_OPENGL
     );
     
     myRenderer = SDL_CreateRenderer(myWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -49,6 +51,12 @@ void Game::ProcessInput(){
     if (state[SDL_SCANCODE_ESCAPE]) {
         runLoop = false;
     }
+    if (state[SDL_SCANCODE_UP]) {
+        direction = 1;
+    }
+    if (state[SDL_SCANCODE_DOWN]) {
+        direction = 2;
+    }
 }
 
 void Game::RunLoop(){
@@ -59,15 +67,13 @@ void Game::RunLoop(){
     }
 }
 
-void Game::UpdateGame(){}
-
-void Game::MakeARect(SDL_Rect wall, SDL_Renderer* renderer,
+void Game::MakeARect(SDL_Rect rect, SDL_Renderer* renderer,
                int x1, int y1, int w1, int h1){
-    wall.x = x1;
-    wall.y = y1;
-    wall.w = w1;
-    wall.h = h1;
-    SDL_RenderFillRect(renderer, &wall);
+    rect.x = x1;
+    rect.y = y1;
+    rect.w = w1;
+    rect.h = h1;
+    SDL_RenderFillRect(renderer, &rect);
 }
 
 void Game::GenerateOutput(){
@@ -83,15 +89,60 @@ void Game::GenerateOutput(){
     MakeARect(side_wall, myRenderer, 1004, 0, thickness, 768);
     MakeARect(bottom_wall, myRenderer, 0, 748, 1024, thickness);
     
-    SDL_SetRenderDrawColor(myRenderer, 255, 50, 50, 255);
-    SDL_Rect paddle;
-    const int paddle_height = 100;
-    MakeARect(paddle, myRenderer, 15, 324, 12, paddle_height);
+    MakeARect(paddle, myRenderer, 15, paddle.y, 12, 100);
     
-    SDL_SetRenderDrawColor(myRenderer, 90, 255, 0, 255);
-    SDL_Rect ball;
-    const int ball_height = 15;
-    MakeARect(ball, myRenderer, 512, 384, ball_height, ball_height);
+    MakeARect(ball, myRenderer, ballPosition.x, ballPosition.y, 12, 12);
     
     SDL_RenderPresent(myRenderer);
+}
+
+void Game::UpdateGame(){
+    while(SDL_GetTicks() < previous_time+16){}
+    current_time = SDL_GetTicks();
+    
+    delta_time = (current_time - previous_time)*100;
+    previous_time = current_time;
+    
+    if(delta_time > 33){
+        delta_time = 33;
+    }
+    
+    //moving the paddle
+    if (direction == 1){
+        if(paddle.y > 25){
+            paddle.y = paddle.y - .1*int(delta_time);
+        }
+    }
+    if (direction == 2){
+        if(paddle.y < 643){
+            paddle.y = paddle.y + .1*int(delta_time);
+        }
+    }
+    
+    //collisions
+    if(ballPosition.y < 26){
+        ballVelocity.y = -ballVelocity.y;
+    }
+    if(ballPosition.y > 738){
+        ballVelocity.y = -ballVelocity.y;
+    }
+    if(ballPosition.x > 989){
+        ballVelocity.x = -ballVelocity.x;
+    }
+
+    if((ballPosition.x < 25) && (paddle.y < ballPosition.y) && (ballPosition.y < paddle.y+100)){
+        ballVelocity.x = -ballVelocity.x;
+    }
+    
+    //player loses
+    if(ballPosition.x < -25){
+        ballVelocity.x = -ballVelocity.x;
+        runLoop = false;
+    }
+    
+    //ball moves
+    ballPosition.x = ballPosition.x + 0.1*ballVelocity.x*int(delta_time);
+    ballPosition.y = ballPosition.y + 0.1*ballVelocity.y*int(delta_time);
+    
+    
 }
