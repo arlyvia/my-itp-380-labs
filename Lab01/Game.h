@@ -21,10 +21,12 @@ class Game {
         SDL_Point paddlePosition = {20, 384};
     
         SDL_Point ballPosition = {512, 384};
-        SDL_Point ballVelocity = {1, 1};
+        SDL_Point ballVelocity = {300, 335};
     
-        float current_time;
-        float previous_time = 0;
+        const float PADDLE_SPEED = 500.0f;
+    
+        Uint32 current_time;
+        Uint32 previous_time = 0;
         float delta_time;
     
         int direction = 0;

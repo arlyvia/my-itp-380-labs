@@ -51,12 +51,17 @@ void Game::ProcessInput(){
     if (state[SDL_SCANCODE_ESCAPE]) {
         runLoop = false;
     }
-    if (state[SDL_SCANCODE_UP]) {
-        direction = 1;
+    if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_DOWN]) {
+        if (state[SDL_SCANCODE_UP]) {
+            direction = 1;
+        }
+        if (state[SDL_SCANCODE_DOWN]) {
+            direction = 2;
+        }
+    } else {
+        direction = 0;
     }
-    if (state[SDL_SCANCODE_DOWN]) {
-        direction = 2;
-    }
+    
 }
 
 void Game::RunLoop(){
@@ -100,22 +105,22 @@ void Game::UpdateGame(){
     while(SDL_GetTicks() < previous_time+16){}
     current_time = SDL_GetTicks();
     
-    delta_time = (current_time - previous_time)*100;
+    delta_time = (current_time - previous_time)/1000.0f; // 0.01666f (60FPS), 0.03333f (30FPS)
     previous_time = current_time;
     
-    if(delta_time > 33){
-        delta_time = 33;
+    if(delta_time > 0.033f){
+        delta_time = 0.033f;
     }
     
     //moving the paddle
     if (direction == 1){
         if(paddle.y > 25){
-            paddle.y = paddle.y - .1*int(delta_time);
+            paddle.y = paddle.y - (int)(PADDLE_SPEED * delta_time);
         }
     }
     if (direction == 2){
         if(paddle.y < 643){
-            paddle.y = paddle.y + .1*int(delta_time);
+            paddle.y = paddle.y + (int)(PADDLE_SPEED * delta_time);
         }
     }
     
@@ -141,8 +146,8 @@ void Game::UpdateGame(){
     }
     
     //ball moves
-    ballPosition.x = ballPosition.x + 0.1*ballVelocity.x*int(delta_time);
-    ballPosition.y = ballPosition.y + 0.1*ballVelocity.y*int(delta_time);
+    ballPosition.x = ballPosition.x + (int)(ballVelocity.x * delta_time);
+    ballPosition.y = ballPosition.y + (int)(ballVelocity.y * delta_time);
     
     
 }
