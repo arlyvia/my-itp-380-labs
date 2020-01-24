@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Component.h"
 #include <algorithm>
+#include <vector>
 
 Actor::Actor(Game* game)
 	:mGame(game)
@@ -11,16 +12,28 @@ Actor::Actor(Game* game)
 	,mRotation(0.0f)
 {
 	// TODO
+    mGame->AddActor(this);
 }
 
 Actor::~Actor()
 {
 	// TODO
+    mGame->RemoveActor(this);
+    for(int i = 0; i < (int)(mComponents.size()); i++){
+        mComponents.erase(mComponents.begin()+i);
+    }
+    mComponents.clear();
 }
 
 void Actor::Update(float deltaTime)
 {
 	// TODO
+    if(this->GetState() == ActorState::Active){
+        for(int i = 0; i < int(mComponents.size()); i++){
+            mComponents[i]->Update(deltaTime);
+        }
+        OnUpdate(deltaTime);
+    }
 }
 
 void Actor::OnUpdate(float deltaTime)
@@ -30,6 +43,12 @@ void Actor::OnUpdate(float deltaTime)
 void Actor::ProcessInput(const Uint8* keyState)
 {
 	// TODO
+    if(this->GetState() == ActorState::Active){
+        for(int i = 0; i < int(mComponents.size()); i++){
+            mComponents[i]->ProcessInput(keyState);
+        }
+        OnProcessInput(keyState);
+    }
 }
 
 void Actor::OnProcessInput(const Uint8* keyState)
