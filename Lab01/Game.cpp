@@ -86,9 +86,9 @@ void Game::GenerateOutput(){
     SDL_RenderClear(myRenderer);
     
     SDL_SetRenderDrawColor(myRenderer, 255, 255, 255, 255);
-    SDL_Rect top_wall;
-    SDL_Rect side_wall;
-    SDL_Rect bottom_wall;
+    SDL_Rect top_wall{0, 0, 1024, 20};
+    SDL_Rect side_wall{1004, 0, 20, 768};
+    SDL_Rect bottom_wall{0, 748, 1024, 768};
     const int thickness = 20;
     MakeARect(top_wall, myRenderer, 0, 0, 1024, thickness);
     MakeARect(side_wall, myRenderer, 1004, 0, thickness, 768);
@@ -125,22 +125,26 @@ void Game::UpdateGame(){
     }
     
     //collisions
-    if(ballPosition.y < 26){
+    if(ballPosition.y <= 26){
+        ballPosition.y = 27;
         ballVelocity.y = -ballVelocity.y;
     }
-    if(ballPosition.y > 738){
+    if(ballPosition.y >= 738){
+         ballPosition.y = 737;
         ballVelocity.y = -ballVelocity.y;
     }
-    if(ballPosition.x > 989){
+    if(ballPosition.x >= 989){
+        ballPosition.x = 988;
         ballVelocity.x = -ballVelocity.x;
     }
 
-    if((ballPosition.x < 25) && (paddle.y < ballPosition.y) && (ballPosition.y < paddle.y+100)){
+    if((ballPosition.x <= 25) && (paddle.y <= ballPosition.y) && (ballPosition.y < paddle.y+100)){
+        ballPosition.x = 26;
         ballVelocity.x = -ballVelocity.x;
     }
     
     //player loses
-    if(ballPosition.x < -25){
+    if(ballPosition.x <= -25){
         ballVelocity.x = -ballVelocity.x;
         runLoop = false;
     }
