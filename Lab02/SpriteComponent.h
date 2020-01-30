@@ -15,6 +15,7 @@ public:
 
 	// Get the draw order for this sprite
 	int GetDrawOrder() const { return mDrawOrder; }
+    void SetDrawOrder(int order) { mDrawOrder = order; }
 	// Get the width/height of the texture
 	int GetTexHeight() const { return mTexHeight; }
 	int GetTexWidth() const { return mTexWidth; }

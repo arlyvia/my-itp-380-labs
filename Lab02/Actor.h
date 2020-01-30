@@ -37,7 +37,10 @@ public:
 	// Adds component to Actor (this is automatically called
 	// in the component constructor)
 	void AddComponent(class Component* c);
-	
+    
+    //TO-DO
+    Vector2 GetForward();
+    
 	// Returns component of type T, or null if doesn't exist
 	template <typename T>
 	T* GetComponent() const

@@ -19,8 +19,9 @@ Actor::~Actor()
 {
 	// TODO
     mGame->RemoveActor(this);
-    for(int i = 0; i < (int)(mComponents.size()); i++){
-        mComponents.erase(mComponents.begin()+i);
+    for(auto& component : mComponents)
+    {
+        delete component;
     }
     mComponents.clear();
 }
@@ -61,4 +62,12 @@ void Actor::AddComponent(Component* c)
 	std::sort(mComponents.begin(), mComponents.end(), [](Component* a, Component* b) {
 		return a->GetUpdateOrder() < b->GetUpdateOrder();
 	});
+}
+
+Vector2 Actor::GetForward() {
+    float theta = this->GetRotation();
+    float x_comp = Math::Cos(theta);
+    float y_comp = -Math::Sin(theta);
+    Vector2 forward = Vector2(x_comp, y_comp);
+    return forward;
 }
