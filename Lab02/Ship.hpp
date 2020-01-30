@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 #include "Actor.h"
+#include "SpriteComponent.h"
+#include "MoveComponent.h"
 
 #endif /* Ship_hpp */
 
@@ -21,8 +23,9 @@ class Ship: public Actor {
     
         //member variables
         int mDirection = 0;
-    
-//        void OnUpdate(float deltaTime) override;
+        SpriteComponent* ship_sc;
+        MoveComponent* ship_mc;
+    //        void OnUpdate(float deltaT*ime) override;
     
         //methods
         void OnProcessInput(const Uint8* keyState) override;

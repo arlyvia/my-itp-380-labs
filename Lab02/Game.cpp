@@ -148,11 +148,9 @@ void Game::LoadData(){
     stars->SetPosition(pos_stars);
     
     Ship* ship = new Ship(this);
-   SpriteComponent* ship_sc = new SpriteComponent(ship);
-   ship_sc->SetTexture(GetTexture("Assets/Ship.png"));
+   
    Vector2 pos_ship = Vector2(512, 384);
    ship->SetPosition(pos_ship);
-   MoveComponent* ship_mc = new MoveComponent(ship);
 //   ship_mc->SetAngularSpeed(5);
 //   ship_mc->SetForwardSpeed(2);
 }
