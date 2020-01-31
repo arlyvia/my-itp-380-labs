@@ -16,10 +16,7 @@
 Block::Block(class Game* game)
 :Actor(game)
 {
-    /*this->ship_sc = new SpriteComponent(this);
-    this->ship_sc->SetTexture(GetGame()->GetTexture("Assets/Ship.png"));
-    this->ship_mc = new MoveComponent(this);
-    */
+   
 }
 
 

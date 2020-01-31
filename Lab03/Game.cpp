@@ -10,6 +10,7 @@
 #include "Actor.h"
 #include "SpriteComponent.h"
 #include "MoveComponent.h"
+#include "Paddle.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -146,21 +147,12 @@ void Game::LoadData(){
    Vector2 pos_bg = Vector2(512, 384);
    bg->SetPosition(pos_bg);
     
-    /*Actor* block = new Actor(this);
-      SpriteComponent* block_sc = new SpriteComponent(block);
-      block_sc->SetTexture(GetTexture("Assets/BlockA.png"));
-      block_sc->SetDrawOrder(100);
-      Vector2 pos_block = Vector2(512, 384);
-      block->SetPosition(pos_block);
+   readTextFile("Assets/Level.txt");
     
-    Actor* block2 = new Actor(this);
-    SpriteComponent* block2_sc = new SpriteComponent(block2);
-    block2_sc->SetTexture(GetTexture("Assets/BlockE.png"));
-    block2_sc->SetDrawOrder(100);
-    Vector2 pos_block2 = Vector2(400, 300);
-    block2->SetPosition(pos_block2);*/
+    Paddle* paddle = new Paddle(this);
+    Vector2 pos_paddle = Vector2(horizontal_center, paddle_pos_y);
+    paddle->SetPosition(pos_paddle);
     
-    readTextFile("Assets/Level.txt");
 }
 
 void Game::UnloadData(){
@@ -219,6 +211,7 @@ void Game::createBlock(std::string texture, int pos_i, int pos_j){
             Vector2(start_offset_x + pos_j*64 + half_of_width,
             start_offset_y + pos_i*32 + half_of_height);
         blockA->SetPosition(pos_blockA);
+    
 }
 
 void Game::readTextFile(std::string filename){
@@ -230,7 +223,6 @@ void Game::readTextFile(std::string filename){
   
     std::string str = "";
     
-    //std::getline(textFile, str);
     for(int i = 0; i<15; i++){
         std::getline(textFile, str);
         for(int j = 0; j<15; j++){
@@ -256,3 +248,4 @@ void Game::readTextFile(std::string filename){
     }
     
 }
+

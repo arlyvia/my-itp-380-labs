@@ -69,6 +69,10 @@ class Game {
     
         void createBlock(std::string texture, int pos_x, int pos_y);
     
+        //Paddle
+        const int horizontal_center = 512;
+        const int paddle_pos_y = 735;
+    
     
     private:
     
