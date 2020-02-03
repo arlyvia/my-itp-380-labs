@@ -22,8 +22,8 @@ bool Game::Initialize(){
         "The Pong Window",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
-        1024,
-        768,
+        window_width,
+        window_height,
         SDL_WINDOW_OPENGL
     );
     
@@ -86,17 +86,17 @@ void Game::GenerateOutput(){
     SDL_RenderClear(myRenderer);
     
     SDL_SetRenderDrawColor(myRenderer, 255, 255, 255, 255);
-    SDL_Rect top_wall{0, 0, 1024, 20};
-    SDL_Rect side_wall{1004, 0, 20, 768};
-    SDL_Rect bottom_wall{0, 748, 1024, 768};
-    const int thickness = 20;
-    MakeARect(top_wall, myRenderer, 0, 0, 1024, thickness);
-    MakeARect(side_wall, myRenderer, 1004, 0, thickness, 768);
-    MakeARect(bottom_wall, myRenderer, 0, 748, 1024, thickness);
+    SDL_Rect top_wall{0, 0, window_width, wall_thickness};
+    SDL_Rect side_wall{side_wall_x, 0, wall_thickness, window_height};
+    SDL_Rect bottom_wall{0, side_wall_y, window_width, window_height};
     
-    MakeARect(paddle, myRenderer, 15, paddle.y, 12, 100);
+    MakeARect(top_wall, myRenderer, 0, 0, window_width, wall_thickness);
+    MakeARect(side_wall, myRenderer, side_wall_x, 0, wall_thickness, window_height);
+    MakeARect(bottom_wall, myRenderer, 0, side_wall_y, window_width, wall_thickness);
     
-    MakeARect(ball, myRenderer, ballPosition.x, ballPosition.y, 12, 12);
+    MakeARect(paddle, myRenderer, 15, paddle.y, paddle_width, paddle_height);
+    
+    MakeARect(ball, myRenderer, ballPosition.x, ballPosition.y, ball_size, ball_size);
     
     SDL_RenderPresent(myRenderer);
 }
@@ -114,37 +114,37 @@ void Game::UpdateGame(){
     
     //moving the paddle
     if (direction == 1){
-        if(paddle.y > 25){
+        if(paddle.y > top_wall_boundary){
             paddle.y = paddle.y - (int)(PADDLE_SPEED * delta_time);
         }
     }
     if (direction == 2){
-        if(paddle.y < 643){
+        if(paddle.y < bottom_wall_boundary){
             paddle.y = paddle.y + (int)(PADDLE_SPEED * delta_time);
         }
     }
     
     //collisions
-    if(ballPosition.y <= 26){
-        ballPosition.y = 27;
+    if(ballPosition.y <= top_wall_limit){
+        ballPosition.y = top_wall_offset;
         ballVelocity.y = -ballVelocity.y;
     }
-    if(ballPosition.y >= 738){
-         ballPosition.y = 737;
+    if(ballPosition.y >= bottom_wall_limit) {
+         ballPosition.y = bottom_wall_offset;
         ballVelocity.y = -ballVelocity.y;
     }
-    if(ballPosition.x >= 989){
-        ballPosition.x = 988;
+    if(ballPosition.x >= side_wall_limit){
+        ballPosition.x =side_wall_offset;
         ballVelocity.x = -ballVelocity.x;
     }
 
-    if((ballPosition.x <= 25) && (paddle.y <= ballPosition.y) && (ballPosition.y < paddle.y+100)){
-        ballPosition.x = 26;
+    if((ballPosition.x <= top_wall_boundary) && (paddle.y <= ballPosition.y) && (ballPosition.y < paddle.y+100)){
+        ballPosition.x = top_wall_limit;
         ballVelocity.x = -ballVelocity.x;
     }
     
     //player loses
-    if(ballPosition.x <= -25){
+    if(ballPosition.x <= ball_out_of_bounds){
         ballVelocity.x = -ballVelocity.x;
         runLoop = false;
     }
