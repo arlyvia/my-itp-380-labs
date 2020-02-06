@@ -11,6 +11,8 @@
 #include "SpriteComponent.h"
 #include "MoveComponent.h"
 #include "Paddle.hpp"
+#include "Ball.hpp"
+#include "BallMove.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -152,6 +154,11 @@ void Game::LoadData(){
     Paddle* paddle = new Paddle(this);
     Vector2 pos_paddle = Vector2(horizontal_center, paddle_pos_y);
     paddle->SetPosition(pos_paddle);
+    
+    Ball* ball = new Ball(this);
+    Vector2 pos_ball = Vector2(horizontal_center, paddle_pos_y - 100);
+    ball->SetPosition(pos_ball);
+    BallMove* ball_mc = new BallMove(ball);
     
 }
 
