@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+
 // TODO
 class Game {
     public:
@@ -57,6 +58,14 @@ class Game {
         //functions
         void AddSprite(SpriteComponent* sprite);
         void RemoveSprite(SpriteComponent* sprite);
+    
+        //Asteroids
+        std::vector<class Asteroid*> mAsteroids;
+    
+        //methods
+        void AddAsteroid(Asteroid* asteroid);
+        void RemoveAsteroid(Asteroid* asteroid);
+        
     
     private:
     

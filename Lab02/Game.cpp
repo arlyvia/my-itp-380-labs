@@ -10,6 +10,7 @@
 #include "Actor.h"
 #include "SpriteComponent.h"
 #include "MoveComponent.h"
+#include "Asteroid.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -151,6 +152,17 @@ void Game::LoadData(){
    
    Vector2 pos_ship = Vector2(512, 384);
    ship->SetPosition(pos_ship);
+    
+    Asteroid* asteroid = new Asteroid(this);
+    Asteroid* asteroid2 = new Asteroid(this);
+    Asteroid* asteroid3 = new Asteroid(this);
+    Asteroid* asteroid4 = new Asteroid(this);
+    Asteroid* asteroid5 = new Asteroid(this);
+    Asteroid* asteroid6 = new Asteroid(this);
+    Asteroid* asteroid7 = new Asteroid(this);
+    Asteroid* asteroid8 = new Asteroid(this);
+    Asteroid* asteroid9 = new Asteroid(this);
+    Asteroid* asteroid10 = new Asteroid(this);
 //   ship_mc->SetAngularSpeed(5);
 //   ship_mc->SetForwardSpeed(2);
 }
@@ -202,3 +214,17 @@ void Game::RemoveSprite(SpriteComponent* sprite){
         mSprites.erase(it);
     }
 }
+
+//Asteroids
+void Game::AddAsteroid(Asteroid* asteroid){
+    mAsteroids.push_back(asteroid);
+}
+
+void Game::RemoveAsteroid(Asteroid* asteroid){
+    auto it = std::find(mAsteroids.begin(), mAsteroids.end(), asteroid);
+    if(it != mAsteroids.end())
+    {
+        mAsteroids.erase(it);
+    }
+}
+

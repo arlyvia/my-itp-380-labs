@@ -25,8 +25,12 @@ class Ship: public Actor {
         int mDirection = 0;
         SpriteComponent* ship_sc;
         MoveComponent* ship_mc;
-    //        void OnUpdate(float deltaT*ime) override;
+    
+        Uint32 current_time;
+        Uint32 previous_time = 0;
+        float mElapsedTime = 0;
     
         //methods
         void OnProcessInput(const Uint8* keyState) override;
+        void OnUpdate(float deltaTime) override;
 };

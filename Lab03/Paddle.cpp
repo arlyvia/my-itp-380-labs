@@ -24,11 +24,14 @@ Paddle::Paddle(class Game* game)
 void Paddle::OnProcessInput(const Uint8* keyState)
 {
     if (keyState[SDL_SCANCODE_LEFT] || keyState[SDL_SCANCODE_RIGHT]) {
-        if (keyState[SDL_SCANCODE_LEFT]) {
+        if (keyState[SDL_SCANCODE_LEFT] && this->GetPosition().x > 100) {
             paddle_mc->SetForwardSpeed(-paddle_speed);
         }
-        if (keyState[SDL_SCANCODE_RIGHT]) {
+        else if (keyState[SDL_SCANCODE_RIGHT] && this->GetPosition().x < 924) {
             paddle_mc->SetForwardSpeed(paddle_speed);
+        } else {
+            paddle_mc->SetForwardSpeed(0);
+            paddle_mc->SetAngularSpeed(0);
         }
 
     } else {
