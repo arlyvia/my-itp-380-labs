@@ -43,4 +43,6 @@ void BallMove::Update(float deltaTime){
         mOwner->SetPosition(pos_ball);
         ball_velocity = Vector2(250, -250);
     }
+    
+    
 }
