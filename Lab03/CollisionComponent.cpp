@@ -17,19 +17,33 @@ CollisionComponent::~CollisionComponent()
 bool CollisionComponent::Intersect(const CollisionComponent* other)
 {
 	// TODO: Implement
-	return false;
+    
+    if (!(this->GetMax().x < other->GetMin().x)
+       && !(other->GetMax().x < this->GetMin().x)
+       && !(this->GetMax().y < other->GetMin().y)
+       && !(other->GetMax().y < this->GetMin().y)){
+        return true;
+    } else {
+        return false;
+    }
 }
 
 Vector2 CollisionComponent::GetMin() const
 {
 	// TODO: Implement
-	return Vector2::Zero;
+    Vector2 min;
+    min.x = this->mOwner->GetPosition().x - (mWidth * this->mOwner->GetScale()) / 2.0f;
+    min.y = this->mOwner->GetPosition().y - (mHeight * this->mOwner->GetScale()) / 2.0f;
+	return min;
 }
 
 Vector2 CollisionComponent::GetMax() const
 {
 	// TODO: Implement
-	return Vector2::Zero;
+    Vector2 max;
+    max.x = this->mOwner->GetPosition().x + (mWidth * this->mOwner->GetScale()) / 2.0f;
+    max.y = this->mOwner->GetPosition().y + (mHeight * this->mOwner->GetScale()) / 2.0f;
+    return max;
 }
 
 const Vector2& CollisionComponent::GetCenter() const

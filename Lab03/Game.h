@@ -72,7 +72,10 @@ class Game {
         //Paddle
         const int horizontal_center = 512;
         const int paddle_pos_y = 735;
+        class Paddle* mPaddle;
     
+        Paddle* GetPaddle(){return mPaddle;}
+        void SetPaddle(Paddle* paddle){mPaddle = paddle;}
     
     private:
     

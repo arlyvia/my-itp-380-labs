@@ -16,9 +16,12 @@
 Paddle::Paddle(class Game* game)
 :Actor(game)
 {
-   this->paddle_sc = new SpriteComponent(this);
-  this->paddle_sc->SetTexture(GetGame()->GetTexture("Assets/Paddle.png"));
-  this->paddle_mc = new MoveComponent(this);
+    this->paddle_sc = new SpriteComponent(this);
+    this->paddle_sc->SetTexture(GetGame()->GetTexture("Assets/Paddle.png"));
+    this->paddle_mc = new MoveComponent(this);
+    
+    this->paddle_cc = new CollisionComponent(this);
+    this->paddle_cc->SetSize(104.0f, 24.0f);
 }
 
 void Paddle::OnProcessInput(const Uint8* keyState)

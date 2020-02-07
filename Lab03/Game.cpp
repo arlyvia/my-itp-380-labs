@@ -151,9 +151,9 @@ void Game::LoadData(){
     
    readTextFile("Assets/Level.txt");
     
-    Paddle* paddle = new Paddle(this);
+    mPaddle = new Paddle(this);
     Vector2 pos_paddle = Vector2(horizontal_center, paddle_pos_y);
-    paddle->SetPosition(pos_paddle);
+    mPaddle->SetPosition(pos_paddle);
     
     Ball* ball = new Ball(this);
     Vector2 pos_ball = Vector2(horizontal_center, paddle_pos_y - 100);

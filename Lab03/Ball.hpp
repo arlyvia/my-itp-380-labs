@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "Actor.h"
 #include "SpriteComponent.h"
+#include "CollisionComponent.h"
 #include "Game.h"
 #include "Math.h"
 
@@ -23,4 +24,5 @@ class Ball: public Actor {
     
         //member variables
         SpriteComponent* ball_sc;
+        CollisionComponent* ball_cc;
 };

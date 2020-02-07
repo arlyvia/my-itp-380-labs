@@ -17,6 +17,7 @@
 #include "Game.h"
 #include "MoveComponent.h"
 #include "SpriteComponent.h"
+#include "CollisionComponent.h"
 
 
 class Paddle: public Actor {
@@ -28,6 +29,7 @@ class Paddle: public Actor {
         int mDirection = 0;
         SpriteComponent* paddle_sc;
         MoveComponent* paddle_mc;
+        CollisionComponent* paddle_cc;
     
         int paddle_speed = 500;
         

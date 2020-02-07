@@ -12,4 +12,7 @@ Ball::Ball(class Game* game)
 {
     this->ball_sc = new SpriteComponent(this);
     this->ball_sc->SetTexture(GetGame()->GetTexture("Assets/Ball.png"));
+    
+    this->ball_cc = new CollisionComponent(this);
+    this->ball_cc->SetSize(20.0f, 20.0f);
 }
