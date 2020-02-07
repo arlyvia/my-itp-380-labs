@@ -25,4 +25,5 @@ class Ball: public Actor {
         //member variables
         SpriteComponent* ball_sc;
         CollisionComponent* ball_cc;
+    
 };

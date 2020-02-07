@@ -6,6 +6,9 @@
 //
 
 #include "BallMove.hpp"
+#include "Ball.hpp"
+#include "Paddle.hpp"
+#include "CollisionComponent.h"
 
 BallMove::BallMove(class Actor* owner)
     :MoveComponent(owner)
@@ -44,5 +47,8 @@ void BallMove::Update(float deltaTime){
         ball_velocity = Vector2(250, -250);
     }
     
+    if(mOwner->GetComponent<CollisionComponent>()->Intersect(mOwner->GetGame()->GetPaddle()->GetComponent<CollisionComponent>())){
+        ball_velocity.y = -ball_velocity.y;
+    }
     
 }
