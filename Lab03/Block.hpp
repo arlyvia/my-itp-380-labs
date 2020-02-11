@@ -13,6 +13,7 @@
 #include "Game.h"
 #include "MoveComponent.h"
 #include "SpriteComponent.h"
+#include "CollisionComponent.h"
 
 #endif /* Block_hpp */
 
@@ -26,6 +27,7 @@ class Block: public Actor {
         int mDirection = 0;
         SpriteComponent* block_sc;
         MoveComponent* block_mc;
+        CollisionComponent* block_cc;
     
         //methods
         void changeTexture(std::string filename);

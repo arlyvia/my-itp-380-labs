@@ -9,6 +9,7 @@
 #include "Ball.hpp"
 #include "Paddle.hpp"
 #include "CollisionComponent.h"
+#include "Math.h"
 
 BallMove::BallMove(class Actor* owner)
     :MoveComponent(owner)
@@ -48,9 +49,29 @@ void BallMove::Update(float deltaTime){
     }
     
     if(mOwner->GetComponent<CollisionComponent>()->Intersect(mOwner->GetGame()->GetPaddle()->GetComponent<CollisionComponent>())){
-        if(mOwner->GetPosition().y >= (this->mOwner->GetGame()->GetPaddle()->GetPosition().y)-12.0f)
-            && ((mOwner->GetPosition().x >= (this->mOwner->GetGame()->GetPaddle()->GetPosition().x)-52.0f)
-                && (mOwner->GetPosition().x <= (this->mOwner->GetGame()->GetPaddle()->GetPosition().x)+52.0f)){}
+            if((mOwner->GetPosition().x >= this->mOwner->GetGame()->GetPaddle()->GetPosition().x-52.0f)
+                    && (mOwner->GetPosition().x <= this->mOwner->GetGame()->GetPaddle()->GetPosition().x-18.0f)){
+                
+                Vector2 normal_middle = Vector2(-0.5f, -0.866f);
+                ball_velocity = Vector2::Reflect(ball_velocity,normal_middle);
+                
+                mOwner->SetPosition(Vector2(mOwner->GetPosition().x-1.0f, mOwner->GetPosition().y-1.0f));
+            }
+            else if((mOwner->GetPosition().x >= this->mOwner->GetGame()->GetPaddle()->GetPosition().x-18.0f)
+            && (mOwner->GetPosition().x <= this->mOwner->GetGame()->GetPaddle()->GetPosition().x+18.0f)){
+                Vector2 normal_middle = Vector2(0,-1);
+                ball_velocity = Vector2::Reflect(ball_velocity,normal_middle);
+                
+                mOwner->SetPosition(Vector2(mOwner->GetPosition().x, mOwner->GetPosition().y-1.0f));
+            }
+            else if((mOwner->GetPosition().x >= this->mOwner->GetGame()->GetPaddle()->GetPosition().x+18.0f)
+            && (mOwner->GetPosition().x <= this->mOwner->GetGame()->GetPaddle()->GetPosition().x+52.0f)){
+                
+                Vector2 normal_middle = Vector2(0.5f, -0.866f);
+                ball_velocity = Vector2::Reflect(ball_velocity,normal_middle);
+                
+                mOwner->SetPosition(Vector2(mOwner->GetPosition().x+1.0f, mOwner->GetPosition().y-1.0f));
+            }
     }
     
 }
