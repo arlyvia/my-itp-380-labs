@@ -48,7 +48,9 @@ void BallMove::Update(float deltaTime){
     }
     
     if(mOwner->GetComponent<CollisionComponent>()->Intersect(mOwner->GetGame()->GetPaddle()->GetComponent<CollisionComponent>())){
-        ball_velocity.y = -ball_velocity.y;
+        if(mOwner->GetPosition().y >= (this->mOwner->GetGame()->GetPaddle()->GetPosition().y)-12.0f)
+            && ((mOwner->GetPosition().x >= (this->mOwner->GetGame()->GetPaddle()->GetPosition().x)-52.0f)
+                && (mOwner->GetPosition().x <= (this->mOwner->GetGame()->GetPaddle()->GetPosition().x)+52.0f)){}
     }
     
 }
