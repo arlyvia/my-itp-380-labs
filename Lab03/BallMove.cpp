@@ -52,7 +52,6 @@ void BallMove::Update(float deltaTime){
         mOwner->SetPosition(pos_ball);
         ball_velocity = Vector2(250, -250);
     }
-    
     if(mOwner->GetComponent<CollisionComponent>()->Intersect(mOwner->GetGame()->GetPaddle()->GetComponent<CollisionComponent>())){
             if((mOwner->GetPosition().x >= this->mOwner->GetGame()->GetPaddle()->GetPosition().x-52.0f)
                     && (mOwner->GetPosition().x <= this->mOwner->GetGame()->GetPaddle()->GetPosition().x-18.0f)){
@@ -101,6 +100,5 @@ void BallMove::Update(float deltaTime){
             mOwner->GetGame()->mBlocks[i]->SetState(ActorState::Destroy);
             break;
         }
-    }
-    
+    }  
 }
