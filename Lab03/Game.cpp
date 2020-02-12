@@ -13,6 +13,7 @@
 #include "Paddle.hpp"
 #include "Ball.hpp"
 #include "BallMove.hpp"
+#include "Block.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -210,8 +211,21 @@ void Game::RemoveSprite(SpriteComponent* sprite){
     }
 }
 
+//Blocks
+void Game::AddBlock(Block* block){
+    mBlocks.push_back(block);
+}
+
+void Game::RemoveBlock(Block* block){
+    auto it = std::find(mBlocks.begin(), mBlocks.end(), block);
+    if(it != mBlocks.end())
+    {
+        mBlocks.erase(it);
+    }
+}
+
 void Game::createBlock(std::string texture, int pos_i, int pos_j){
-        Actor* blockA = new Actor(this);
+        Block* blockA = new Block(this);
         SpriteComponent* blockA_sc = new SpriteComponent(blockA);
         blockA_sc->SetTexture(GetTexture(texture));
         Vector2 pos_blockA =

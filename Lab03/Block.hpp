@@ -21,7 +21,7 @@ class Block: public Actor {
     public:
         //constructor
         Block(class Game* game);
-        
+        ~Block();
     
         //member variables
         int mDirection = 0;

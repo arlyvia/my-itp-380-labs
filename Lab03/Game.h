@@ -77,6 +77,12 @@ class Game {
         Paddle* GetPaddle(){return mPaddle;}
         void SetPaddle(Paddle* paddle){mPaddle = paddle;}
     
+        //Blocks
+        std::vector<class Block*> mBlocks;
+    
+        void AddBlock(Block* block);
+        void RemoveBlock(Block* block);
+    
     private:
     
         void LoadData();

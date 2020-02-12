@@ -9,7 +9,12 @@
 #include "Ball.hpp"
 #include "Paddle.hpp"
 #include "CollisionComponent.h"
+#include "Component.h"
 #include "Math.h"
+#include "Block.hpp"
+#include "Game.h"
+
+#include <iostream>
 
 BallMove::BallMove(class Actor* owner)
     :MoveComponent(owner)
@@ -72,6 +77,30 @@ void BallMove::Update(float deltaTime){
                 
                 mOwner->SetPosition(Vector2(mOwner->GetPosition().x+1.0f, mOwner->GetPosition().y-1.0f));
             }
+    }
+    Vector2 local_offset;
+    for(int i=0; i < (signed)(mOwner->GetGame()->mBlocks.size()); i++){
+        
+        CollSide side = mOwner->GetComponent<CollisionComponent>()->GetMinOverlap(mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>(), local_offset);
+        
+        if(side != CollSide::None){
+            if(side == CollSide::Top){
+                Vector2 normal_top = Vector2(0, -1.0f);
+                ball_velocity = Vector2::Reflect(ball_velocity,normal_top);
+            } else if(side == CollSide::Bottom){
+                Vector2 normal_top = Vector2(0, 1.0f);
+                ball_velocity = Vector2::Reflect(ball_velocity,normal_top);
+            } else if(side == CollSide::Right){
+                Vector2 normal_top = Vector2(-1.0f, 0);
+                ball_velocity = Vector2::Reflect(ball_velocity,normal_top);
+            } else if(side == CollSide::Left){
+                Vector2 normal_top = Vector2(1.0f, 0);
+                ball_velocity = Vector2::Reflect(ball_velocity,normal_top);
+            }
+            
+            mOwner->GetGame()->mBlocks[i]->SetState(ActorState::Destroy);
+            break;
+        }
     }
     
 }

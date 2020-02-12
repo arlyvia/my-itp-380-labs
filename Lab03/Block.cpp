@@ -17,11 +17,15 @@
 Block::Block(class Game* game)
 :Actor(game)
 {
+    this->GetGame()->AddBlock(this);
     this->block_cc = new CollisionComponent(this);
     this->block_cc->SetSize(64.0f, 32.0f);
-   
 }
 
+Block::~Block()
+{
+    this->GetGame()->RemoveBlock(this);
+}
 
 void Block::changeTexture(std::string filename){
     this->block_sc->SetTexture(GetGame()->GetTexture(filename));
