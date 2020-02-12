@@ -68,22 +68,22 @@ CollSide CollisionComponent::GetMinOverlap(
         if((Math::Abs(otherMinYDiff) <= Math::Abs(otherMaxYDiff))
             && (Math::Abs(otherMinYDiff) <= Math::Abs(otherMinXDiff))
             && (Math::Abs(otherMinYDiff) <= Math::Abs(otherMaxXDiff))){
-            offset.y = offset.y-1;
+            offset.y = otherMinYDiff;
             return CollSide::Top;
         } else if((Math::Abs(otherMaxYDiff) <= Math::Abs(otherMinYDiff))
             && (Math::Abs(otherMaxYDiff) <= Math::Abs(otherMinXDiff))
             && (Math::Abs(otherMaxYDiff) <= Math::Abs(otherMaxXDiff))){
-            offset.y = offset.y+1;
+            offset.y = otherMaxYDiff;
             return CollSide::Bottom;
         } else if((Math::Abs(otherMinXDiff) <= Math::Abs(otherMinYDiff))
             && (Math::Abs(otherMinXDiff) <= Math::Abs(otherMaxYDiff))
             && (Math::Abs(otherMinXDiff) <= Math::Abs(otherMaxXDiff))){
-            offset.x = offset.x-1;
+            offset.x = otherMinXDiff;
             return CollSide::Left;
         } else if((Math::Abs(otherMaxXDiff) <= Math::Abs(otherMinYDiff))
             && (Math::Abs(otherMaxXDiff) <= Math::Abs(otherMaxYDiff))
             && (Math::Abs(otherMaxXDiff) <= Math::Abs(otherMinXDiff))){
-            offset.x = offset.x+1;
+            offset.x = otherMaxXDiff;
             return CollSide::Right;
         }
     }
