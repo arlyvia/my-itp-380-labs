@@ -12,6 +12,8 @@
 #include "MoveComponent.h"
 #include "Player.hpp"
 #include "Block.hpp"
+#include "Goomba.hpp"
+#include "Spawner.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -30,7 +32,7 @@ bool Game::Initialize(){
     }
     //SDL_Quit();
     myWindow = SDL_CreateWindow(
-        "The Blocks Window",
+        "The Mario Window",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
         600,
@@ -148,7 +150,7 @@ void Game::LoadData(){
    Vector2 pos_bg = Vector2(3392, 224);
    bg->SetPosition(pos_bg);
     
-   readTextFile("Assets/Level0.txt");
+   readTextFile("Assets/Level1.txt");
     
 }
 
@@ -230,6 +232,12 @@ void Game::createPlayer(int pos_i, int pos_j){
                                  start_offset_y + pos_i*32));
 }
 
+void Game::createSpawner(int pos_i, int pos_j){
+    Spawner* spawner = new Spawner(this);
+    spawner->SetPosition(Vector2(start_offset_x + pos_j*32,
+                                 start_offset_y + pos_i*32));
+}
+
 void Game::readTextFile(std::string filename){
     std::ifstream textFile;
     textFile.open(filename);
@@ -274,6 +282,9 @@ void Game::readTextFile(std::string filename){
             }
             if(str[j] == 'P'){
                 createPlayer(i, j);
+            }
+            if(str[j] == 'Y'){
+                createSpawner(i, j);
             }
         }
     }

@@ -13,6 +13,7 @@
 #include "Component.h"
 #include "Actor.h"
 #include "Game.h"
+#include "SDL2/SDL.h"
 
 class PlayerMove: public MoveComponent {
     public:
@@ -23,6 +24,10 @@ class PlayerMove: public MoveComponent {
         void Update(float deltaTime) override;
     
         float mYSpeed = 0;
+    
+        bool mSpacePressed = false;
+        bool mInAir = false;
+        bool last_frame = false;
 };
 
 #endif /* PlayerMove_hpp */

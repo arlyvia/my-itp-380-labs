@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <string>
 #include <fstream>
+#include "Math.h"
 // TODO
 class Game {
     public:
@@ -75,8 +76,13 @@ class Game {
     
         //Player
         class Player* mPlayer;
-    void createPlayer(int pos_i, int pos_j);
+        void createPlayer(int pos_i, int pos_j);
     
+        //camera
+        Vector2 camera_pos;
+    
+        std::vector<class Goomba*> mEnemies;
+        void createSpawner(int pos_i, int pos_j);
     private:
     
         void LoadData();
