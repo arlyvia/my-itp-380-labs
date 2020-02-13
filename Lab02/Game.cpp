@@ -29,6 +29,7 @@ bool Game::Initialize(){
         return false;
     }
     //SDL_Quit();
+    
     myWindow = SDL_CreateWindow(
         "The Asteroid Window",
         SDL_WINDOWPOS_UNDEFINED,
@@ -37,10 +38,24 @@ bool Game::Initialize(){
         768,
         SDL_WINDOW_OPENGL
     );
+    if (myWindow == NULL) {
+        printf("Could not create window: %s\n", SDL_GetError());
+        return false;
+    }
     
     myRenderer = SDL_CreateRenderer(myWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     
-    IMG_Init(IMG_INIT_PNG);
+    if (myRenderer == NULL) {
+        printf("Could not create renderer: %s\n", SDL_GetError());
+        return false;
+    }
+    
+    int result = IMG_Init(IMG_INIT_PNG);
+    
+    if (result == 0) {
+        printf("Could not load image: %s\n", SDL_GetError());
+        return false;
+    }
     
     LoadData();
     

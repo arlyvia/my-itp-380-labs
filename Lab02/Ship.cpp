@@ -51,6 +51,13 @@ void Ship::OnProcessInput(const Uint8* keyState)
         if (keyState[SDL_SCANCODE_RIGHT]) {
             ship_mc->SetAngularSpeed(-(Math::Pi/4));
         }
+        if(keyState[SDL_SCANCODE_DOWN]&&keyState[SDL_SCANCODE_UP]){
+            ship_mc->SetForwardSpeed(0);
+            ship_sc->SetTexture(GetGame()->GetTexture("Assets/Ship.png"));
+        }
+        if(keyState[SDL_SCANCODE_LEFT]&&keyState[SDL_SCANCODE_RIGHT]){
+            ship_mc->SetAngularSpeed(0);
+        }
         if (keyState[SDL_SCANCODE_SPACE]){
             if(mElapsedTime > 1.0f){
                 Laser* laser = new Laser(this->GetGame());
