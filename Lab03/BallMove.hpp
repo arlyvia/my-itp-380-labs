@@ -14,6 +14,7 @@
 #include "Actor.h"
 #include "Game.h"
 #include "Component.h"
+#include "CollisionComponent.h"
 
 #endif /* BallMove_hpp */
 
@@ -38,5 +39,8 @@ class BallMove: public MoveComponent {
         float right_wall_limit = 982.0f;
         float right_wall_offset = 981.0f;
         float bottom_edge = 768.0f;
+    
+        Paddle* local_paddle = mOwner->GetGame()->GetPaddle();
+        CollisionComponent* owner_cc = mOwner->GetComponent<CollisionComponent>();
 };
 

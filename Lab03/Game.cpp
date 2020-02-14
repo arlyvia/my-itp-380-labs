@@ -159,8 +159,7 @@ void Game::LoadData(){
     Ball* ball = new Ball(this);
     Vector2 pos_ball = Vector2(horizontal_center, paddle_pos_y - 100);
     ball->SetPosition(pos_ball);
-    BallMove* ball_mc = new BallMove(ball);
-    
+    new BallMove(ball);
 }
 
 void Game::UnloadData(){

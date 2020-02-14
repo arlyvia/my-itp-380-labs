@@ -8,9 +8,6 @@
 #include "BallMove.hpp"
 #include "Ball.hpp"
 #include "Paddle.hpp"
-#include "CollisionComponent.h"
-#include "Component.h"
-#include "Math.h"
 #include "Block.hpp"
 #include "Game.h"
 
@@ -27,60 +24,68 @@ BallMove::BallMove(class Actor* owner)
 void BallMove::Update(float deltaTime){
     mOwner->SetPosition(mOwner->GetPosition() + ball_velocity * deltaTime);
     
-    //top
+    //ceiling
     if(mOwner->GetPosition().y <= top_wall_limit){
         mOwner->SetPosition(Vector2(mOwner->GetPosition().x, top_wall_offset));
         ball_velocity.y = -ball_velocity.y;
        }
     
-    //left
+    //left wall
     if(mOwner->GetPosition().x <= left_wall_limit) {
         mOwner->SetPosition(Vector2(left_wall_offset, mOwner->GetPosition().y));
         ball_velocity.x = -ball_velocity.x;
     }
     
-    //right
+    //right wall
    if(mOwner->GetPosition().x >= right_wall_limit){
        mOwner->SetPosition(Vector2(right_wall_offset, mOwner->GetPosition().y));
        ball_velocity.x = -ball_velocity.x;
    }
 
-    //becomes bottom
+    //bottom
     if(mOwner->GetPosition().y >= bottom_edge + 20){
-       //&& (paddle.x <= mOwner->GetPosition().x) && (mOwner->GetPosition().y < paddle.y+100)){
         Vector2 pos_ball = Vector2(mOwner->GetGame()->horizontal_center, mOwner->GetGame()->paddle_pos_y - 100);
         mOwner->SetPosition(pos_ball);
         ball_velocity = Vector2(250, -250);
     }
-    if(mOwner->GetComponent<CollisionComponent>()->Intersect(mOwner->GetGame()->GetPaddle()->GetComponent<CollisionComponent>())){
-            if((mOwner->GetPosition().x >= this->mOwner->GetGame()->GetPaddle()->GetPosition().x-52.0f)
-                    && (mOwner->GetPosition().x <= this->mOwner->GetGame()->GetPaddle()->GetPosition().x-18.0f)){
+    
+    //paddle collisions
+    if(owner_cc->Intersect(local_paddle->GetComponent<CollisionComponent>()) ){
+            if((mOwner->GetPosition().x >= this->local_paddle->GetPosition().x-52.0f)
+                    && (mOwner->GetPosition().x <= this->local_paddle->GetPosition().x-18.0f)
+               && ball_velocity.y > 0){
                 
-                Vector2 normal_middle = Vector2(-0.5f, -0.866f);
+                Vector2 normal_middle = Vector2(-0.1f, -0.9f);
+                normal_middle.Normalize();
                 ball_velocity = Vector2::Reflect(ball_velocity,normal_middle);
                 
                 mOwner->SetPosition(Vector2(mOwner->GetPosition().x-1.0f, mOwner->GetPosition().y-1.0f));
             }
-            else if((mOwner->GetPosition().x >= this->mOwner->GetGame()->GetPaddle()->GetPosition().x-18.0f)
-            && (mOwner->GetPosition().x <= this->mOwner->GetGame()->GetPaddle()->GetPosition().x+18.0f)){
+            else if((mOwner->GetPosition().x >= this->local_paddle->GetPosition().x-18.0f)
+            && (mOwner->GetPosition().x <= this->local_paddle->GetPosition().x+18.0f)
+                    && ball_velocity.y > 0){
                 Vector2 normal_middle = Vector2(0,-1);
                 ball_velocity = Vector2::Reflect(ball_velocity,normal_middle);
                 
                 mOwner->SetPosition(Vector2(mOwner->GetPosition().x, mOwner->GetPosition().y-1.0f));
             }
-            else if((mOwner->GetPosition().x >= this->mOwner->GetGame()->GetPaddle()->GetPosition().x+18.0f)
-            && (mOwner->GetPosition().x <= this->mOwner->GetGame()->GetPaddle()->GetPosition().x+52.0f)){
+            else if((mOwner->GetPosition().x >= this->local_paddle->GetPosition().x+18.0f)
+            && (mOwner->GetPosition().x <= this->local_paddle->GetPosition().x+52.0f)
+                    && ball_velocity.y > 0){
                 
-                Vector2 normal_middle = Vector2(0.5f, -0.866f);
+                Vector2 normal_middle = Vector2(0.1f, -0.9f);
+                normal_middle.Normalize();
                 ball_velocity = Vector2::Reflect(ball_velocity,normal_middle);
                 
                 mOwner->SetPosition(Vector2(mOwner->GetPosition().x+1.0f, mOwner->GetPosition().y-1.0f));
             }
     }
+    
+    //block collisions
     Vector2 local_offset;
     for(int i=0; i < (signed)(mOwner->GetGame()->mBlocks.size()); i++){
         
-        CollSide side = mOwner->GetComponent<CollisionComponent>()->GetMinOverlap(mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>(), local_offset);
+        CollSide side = owner_cc->GetMinOverlap(mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>(), local_offset);
         
         if(side != CollSide::None){
             if(side == CollSide::Top){
