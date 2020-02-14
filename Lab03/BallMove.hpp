@@ -31,12 +31,12 @@ class BallMove: public MoveComponent {
         //member variables
         float mAngularSpeed;
         float mForwardSpeed;
-        float top_wall_limit = 32.0f;
-        float top_wall_offset = 33.0f;
-        float left_wall_limit = 32.0f;
-        float left_wall_offset = 33.0f;
-        float right_wall_limit = 992.0f;
-        float right_wall_offset = 991.0f;
+        float top_wall_limit = 42.0f;
+        float top_wall_offset = 43.0f;
+        float left_wall_limit = 42.0f;
+        float left_wall_offset = 43.0f;
+        float right_wall_limit = 982.0f;
+        float right_wall_offset = 981.0f;
         float bottom_edge = 768.0f;
 };
 
