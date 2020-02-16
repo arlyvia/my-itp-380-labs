@@ -43,16 +43,16 @@ void BallMove::Update(float deltaTime){
    }
 
     //bottom
-    if(mOwner->GetPosition().y >= bottom_edge + 20){
-        Vector2 pos_ball = Vector2(mOwner->GetGame()->horizontal_center, mOwner->GetGame()->paddle_pos_y - 100);
+    if(mOwner->GetPosition().y >= bottom_edge + ball_size){
+        Vector2 pos_ball = Vector2(mOwner->GetGame()->horizontal_center, mOwner->GetGame()->paddle_pos_y - dist_to_init_pos);
         mOwner->SetPosition(pos_ball);
         ball_velocity = Vector2(250, -250);
     }
     
     //paddle collisions
     if(owner_cc->Intersect(local_paddle->GetComponent<CollisionComponent>()) ){
-            if((mOwner->GetPosition().x >= this->local_paddle->GetPosition().x-52.0f)
-                    && (mOwner->GetPosition().x <= this->local_paddle->GetPosition().x-18.0f)
+            if((mOwner->GetPosition().x >= this->local_paddle->GetPosition().x-half_paddle_w)
+                    && (mOwner->GetPosition().x <= this->local_paddle->GetPosition().x-half_paddle_h)
                && ball_velocity.y > 0){
                 
                 Vector2 normal_middle = Vector2(-0.1f, -0.9f);
@@ -61,21 +61,21 @@ void BallMove::Update(float deltaTime){
                 
                 mOwner->SetPosition(Vector2(mOwner->GetPosition().x-1.0f, mOwner->GetPosition().y-1.0f));
             }
-            else if((mOwner->GetPosition().x >= this->local_paddle->GetPosition().x-18.0f)
-            && (mOwner->GetPosition().x <= this->local_paddle->GetPosition().x+18.0f)
+            else if((mOwner->GetPosition().x >= this->local_paddle->GetPosition().x-half_paddle_h)
+            && (mOwner->GetPosition().x <= this->local_paddle->GetPosition().x+half_paddle_h)
                     && ball_velocity.y > 0){
-                Vector2 normal_middle = Vector2(0,-1);
-                ball_velocity = Vector2::Reflect(ball_velocity,normal_middle);
+                Vector2 normal_left = Vector2(0,-1);
+                ball_velocity = Vector2::Reflect(ball_velocity,normal_left);
                 
                 mOwner->SetPosition(Vector2(mOwner->GetPosition().x, mOwner->GetPosition().y-1.0f));
             }
-            else if((mOwner->GetPosition().x >= this->local_paddle->GetPosition().x+18.0f)
-            && (mOwner->GetPosition().x <= this->local_paddle->GetPosition().x+52.0f)
+            else if((mOwner->GetPosition().x >= this->local_paddle->GetPosition().x+half_paddle_h)
+            && (mOwner->GetPosition().x <= this->local_paddle->GetPosition().x+half_paddle_w)
                     && ball_velocity.y > 0){
                 
-                Vector2 normal_middle = Vector2(0.1f, -0.9f);
-                normal_middle.Normalize();
-                ball_velocity = Vector2::Reflect(ball_velocity,normal_middle);
+                Vector2 normal_right = Vector2(0.1f, -0.9f);
+                normal_right.Normalize();
+                ball_velocity = Vector2::Reflect(ball_velocity,normal_right);
                 
                 mOwner->SetPosition(Vector2(mOwner->GetPosition().x+1.0f, mOwner->GetPosition().y-1.0f));
             }

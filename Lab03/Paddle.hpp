@@ -5,13 +5,8 @@
 //  Created by Arlyvia Chaialee on 1/30/20.
 //
 
-#ifndef Paddle_hpp
-#define Paddle_hpp
-
+#pragma once
 #include <stdio.h>
-
-#endif /* Paddle_hpp */
-
 #include <stdio.h>
 #include "Actor.h"
 #include "Game.h"

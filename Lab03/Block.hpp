@@ -5,17 +5,13 @@
 //  Created by Arlyvia Chaialee on 1/30/20.
 //
 
-#ifndef Block_hpp
-#define Block_hpp
-
+#pragma once
 #include <stdio.h>
 #include "Actor.h"
 #include "Game.h"
 #include "MoveComponent.h"
 #include "SpriteComponent.h"
 #include "CollisionComponent.h"
-
-#endif /* Block_hpp */
 
 class Block: public Actor {
     public:
