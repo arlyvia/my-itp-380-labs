@@ -25,6 +25,10 @@ class GoombaMove: public MoveComponent {
         float goombaYSpeed = 0;
     
         bool stomped = false;
+        //no magic numbers
+        float bottom_of_screen = 448.0f;
+        
+        float goomba_walk_speed = 100.0f;
 };
 
 #endif /* GoombaMove_hpp */

@@ -1,5 +1,6 @@
 #pragma once
 #include "SDL2/SDL.h"
+#include <SDL2/SDL_mixer.h>
 #include <iostream>
 #include <vector>
 #include <unordered_map>
@@ -83,6 +84,12 @@ class Game {
     
         std::vector<class Goomba*> mEnemies;
         void createSpawner(int pos_i, int pos_j);
+    
+        //sound
+        std::unordered_map<std::string, Mix_Chunk*> soundMap;
+        Mix_Chunk* GetSound(const std::string& filename);
+    
+        int mChannel;
     private:
     
         void LoadData();

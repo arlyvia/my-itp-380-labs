@@ -10,18 +10,20 @@ AnimatedSprite::AnimatedSprite(Actor* owner, int drawOrder)
 void AnimatedSprite::Update(float deltaTime)
 {
 	// TODO: Implement
-    if(mAnimName.empty()){}
-    if(!this->mIsPaused){
-        mAnimTimer = mAnimTimer * deltaTime;
-        if(mAnimTimer >= mAnims.find(mAnimName)->second.size()){
-            //need to store the result
-            //mAnims.find(mAnimName);
-            while(mAnimTimer >= mAnims.size()){
-                mAnimTimer = mAnimTimer - 1;
+    if(mAnimName.empty()){
+        return;
+    }
+    if(mAnims.find(mAnimName)->second.size() != 0){
+        if(!mIsPaused){
+            mAnimTimer = mAnimTimer + mAnimFPS * deltaTime;
+            if(mAnimTimer >= mAnims.find(mAnimName)->second.size()){
+                while(mAnimTimer >= mAnims.find(mAnimName)->second.size()){
+                    mAnimTimer = mAnimTimer - mAnims.find(mAnimName)->second.size();
+                }
             }
         }
+        SetTexture(mAnims[mAnimName][(signed)mAnimTimer]);
     }
-    //SetTexture(mAnimName);
 }
 
 void AnimatedSprite::SetAnimation(const std::string& name, bool resetTimer)

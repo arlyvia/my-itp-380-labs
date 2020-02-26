@@ -18,6 +18,8 @@ class Spawner: public Actor {
         Spawner(class Game* game);
         void OnUpdate(float deltaTime) override;
     
+        float dist_btw_players = 600.0f;
+    
 };
 
 #endif /* Spawner_hpp */

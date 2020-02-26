@@ -16,7 +16,7 @@
 GoombaMove::GoombaMove(class Actor* owner)
     :MoveComponent(owner)
 {
-    this->SetForwardSpeed(-100);
+    this->SetForwardSpeed(-goomba_walk_speed);
 }
 
 void GoombaMove::Update(float deltaTime){
@@ -38,9 +38,9 @@ void GoombaMove::Update(float deltaTime){
                     mOwner->SetPosition(mOwner->GetPosition()-local_offset);
                     goombaYSpeed = 0;
                 }else if(side == CollSide::Left){
-                    this->SetForwardSpeed(-100);
+                    this->SetForwardSpeed(-goomba_walk_speed);
                 } else if(side == CollSide::Right){
-                    this->SetForwardSpeed(100);
+                    this->SetForwardSpeed(goomba_walk_speed);
                 }
             }
         }
@@ -50,14 +50,14 @@ void GoombaMove::Update(float deltaTime){
             
             if(side != CollSide::None){
                 if(side == CollSide::Left){
-                    this->SetForwardSpeed(-100);
+                    this->SetForwardSpeed(-goomba_walk_speed);
                 } else if(side == CollSide::Right){
-                    this->SetForwardSpeed(100);
+                    this->SetForwardSpeed(goomba_walk_speed);
                 }
             }
         }
         
-        if(mOwner->GetPosition().y < 448.0f){
+        if(mOwner->GetPosition().y < bottom_of_screen){
             Vector2 velocity_y(0, goombaYSpeed);
             mOwner->SetPosition(mOwner->GetPosition() + velocity_y * deltaTime);
         }else{

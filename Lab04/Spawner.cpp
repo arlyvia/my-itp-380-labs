@@ -17,7 +17,7 @@ Spawner::Spawner(class Game* game)
 }
 
 void Spawner::OnUpdate(float deltaTime){
-    if(this->GetPosition().x - this->GetGame()->mPlayer->GetPosition().x < 600.0f){
+    if(this->GetPosition().x - this->GetGame()->mPlayer->GetPosition().x <  dist_btw_players){
         Goomba* goomba = new Goomba(this->GetGame());
         goomba->SetPosition(this->GetPosition());
         this->GetGame()->mEnemies.push_back(goomba);

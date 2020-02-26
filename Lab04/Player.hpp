@@ -20,7 +20,7 @@ class Player: public Actor {
         Player(class Game* game);
     
         //member variables
-        SpriteComponent* player_sc;
+        class AnimatedSprite* player_ac;
         //MoveComponent* block_mc;
         CollisionComponent* player_cc;
     

@@ -13,6 +13,7 @@
 #include "Component.h"
 #include "Actor.h"
 #include "Game.h"
+#include "AnimatedSprite.h"
 #include "SDL2/SDL.h"
 
 class PlayerMove: public MoveComponent {
@@ -28,6 +29,14 @@ class PlayerMove: public MoveComponent {
         bool mSpacePressed = false;
         bool mInAir = false;
         bool last_frame = false;
+    
+        void Player_Animate(std::string mAnimName, std::vector<SDL_Texture *> Anims);
+        
+        //no magic numbers
+        float bottom_of_screen = 448.0f;
+        float jump_speed = 350.0f;
+        float player_walk_speed = 300.0f;
+        float pole_x_pos = 6368.0f;
 };
 
 #endif /* PlayerMove_hpp */

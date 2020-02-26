@@ -31,7 +31,7 @@ protected:
 	// Map of animation name to vector of textures corresponding to the animation
 	std::unordered_map<std::string, std::vector<SDL_Texture*>> mAnims;
 	
-	// Name of current animation
+	// Name of current animationm
 	std::string mAnimName;
 	
 	// Whether or not the animation is paused (defaults to false)

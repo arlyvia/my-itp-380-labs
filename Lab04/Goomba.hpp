@@ -10,10 +10,10 @@
 
 #include <stdio.h>
 #include "SpriteComponent.h"
-#include "CollisionComponent.h"
 #include "GoombaMove.hpp"
 #include "Actor.h"
 #include "PlayerMove.hpp"
+#include "CollisionComponent.h"
 
 class Goomba: public Actor {
     public:
@@ -25,15 +25,14 @@ class Goomba: public Actor {
         void stomp();
     
         //member variables
-        SpriteComponent* goomba_sc;
+        class AnimatedSprite* goomba_ac;
         //MoveComponent* goomba_mc;
         CollisionComponent* goomba_cc;
+       
     
         GoombaMove* goomba_move;
         bool stomped = false;
         float deadCounter = 0;
-    
-        
     
 };
 

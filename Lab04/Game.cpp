@@ -44,6 +44,8 @@ bool Game::Initialize(){
     
     IMG_Init(IMG_INIT_PNG);
     
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+    
     LoadData();
     
     return true;
@@ -55,7 +57,7 @@ void Game::Shutdown(){
     SDL_DestroyRenderer(myRenderer);
     SDL_DestroyWindow(myWindow);
     SDL_Quit();
-    
+    Mix_CloseAudio();
 }
 
 void Game::ProcessInput(){
@@ -151,6 +153,11 @@ void Game::LoadData(){
    bg->SetPosition(pos_bg);
     
    readTextFile("Assets/Level1.txt");
+    Mix_Chunk* music = GetSound("Assets/Sounds/Music.ogg");
+    mChannel = Mix_PlayChannel(-1, music, -1);
+    if(mChannel==-1) {
+        printf("Mix_PlayChannel: %s\n",Mix_GetError());
+    }
     
 }
 
@@ -161,6 +168,11 @@ void Game::UnloadData(){
     
     for ( auto it = textureMap.begin(); it != textureMap.end(); ++it ){
         SDL_DestroyTexture(it->second);
+    }
+    
+    for ( auto it = soundMap.begin(); it != soundMap.end(); ++it ){
+        Mix_FreeChunk(it->second);
+        it->second=nullptr;
     }
 }
 
@@ -291,3 +303,24 @@ void Game::readTextFile(std::string filename){
     
 }
 
+Mix_Chunk* Game::GetSound(const std::string& filename){
+    std::unordered_map<std::string,Mix_Chunk*>::const_iterator got = soundMap.find (filename);
+
+    if ( got == soundMap.end() ){
+         /*SDL_Surface* image = IMG_Load(filename.c_str());
+         SDL_Texture *texture = SDL_CreateTextureFromSurface(myRenderer, image);
+         SDL_FreeSurface(image);*/
+        
+         Mix_Chunk *sound;
+         sound = Mix_LoadWAV(filename.c_str());
+        if(sound != nullptr){
+            soundMap[filename] = sound;
+        } else {
+            SDL_Log("Mix_LoadWAV: %s/n", Mix_GetError());
+            return 0;
+        }
+        return sound;
+    } else {
+        return got->second;
+    }
+}

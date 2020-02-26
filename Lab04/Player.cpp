@@ -6,14 +6,15 @@
 //
 
 #include "Player.hpp"
+#include "AnimatedSprite.h"
 #include "Game.h"
 
 Player::Player(class Game* game)
 :Actor(game)
 {
-    this->player_sc = new SpriteComponent(this);
-    this->player_sc->SetTexture(this->GetGame()->GetTexture("Assets/Mario/Idle.png"));
-    this->player_sc->SetDrawOrder(200);
+    this->player_ac = new AnimatedSprite(this);
+    this->player_ac->SetTexture(this->GetGame()->GetTexture("Assets/Mario/Idle.png"));
+    this->player_ac->SetDrawOrder(200);
     
     this->player_cc = new CollisionComponent(this);
     this->player_cc->SetSize(32.0f, 32.0f);

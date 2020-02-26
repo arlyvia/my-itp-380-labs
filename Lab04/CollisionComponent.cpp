@@ -80,9 +80,7 @@ CollSide CollisionComponent::GetMinOverlap(
             && (Math::Abs(otherMinXDiff) <= Math::Abs(otherMaxXDiff))){
             offset.x = otherMinXDiff;
             return CollSide::Left;
-        } else if((Math::Abs(otherMaxXDiff) <= Math::Abs(otherMinYDiff))
-            && (Math::Abs(otherMaxXDiff) <= Math::Abs(otherMaxYDiff))
-            && (Math::Abs(otherMaxXDiff) <= Math::Abs(otherMinXDiff))){
+        } else {
             offset.x = otherMaxXDiff;
             return CollSide::Right;
         } 
