@@ -15,6 +15,8 @@
 #include "Spawner.hpp"
 #include "CSVHelper.h"
 #include "Collider.hpp"
+#include "Door.hpp"
+#include <utility>
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -153,7 +155,8 @@ void Game::LoadData(){
     bg_tc->SetTexture(GetTexture("Assets/Dungeon/DungeonTiles.png"));
     
     readObjectCSV("Assets/Dungeon/Room1.csv");
-    loadPlayersAndColliders();
+    currRoom = "Room1";
+    loadPlayersAndColliders(currRoom);
     //std::cout << bg_tc->csv_storage[0][0] << std::endl;
     /*Mix_Chunk* music = GetSound("Assets/Sounds/Music.ogg");
     mChannel = Mix_PlayChannel(-1, music, -1);
@@ -256,7 +259,8 @@ void Game::readObjectCSV(std::string filename){
     }
 }
 
-void Game::loadPlayersAndColliders(){
+void Game::loadPlayersAndColliders(std::string room){
+    std::vector<Door*> doors;
     for(int i=0; i < (int)obj_csv_storage.size(); i++){
         if(obj_csv_storage[i][0] == "Player"){
             mPlayer = new Player(this);
@@ -275,5 +279,40 @@ void Game::loadPlayersAndColliders(){
             collider->SetPosition(Vector2(x, y));
             mColliders.push_back(collider);
         }
+        if(obj_csv_storage[i][0] == "Door"){
+            Door* door = new Door(this);
+            std::string x_str = obj_csv_storage[i][1];
+            std::string y_str = obj_csv_storage[i][2];
+            std::string w_str = obj_csv_storage[i][3];
+            std::string h_str = obj_csv_storage[i][4];
+            int x = std::stoi(x_str) + std::stoi(w_str)/2;
+            int y = std::stoi(y_str) + std::stoi(h_str)/2;
+            door->SetPosition(Vector2(x, y));
+            std::string dest = obj_csv_storage[i][5];
+            std::string dir = obj_csv_storage[i][6];
+            std::string state = obj_csv_storage[i][7];
+            
+            if(dir == "Up"){
+                door->mDirection = DoorDirection::Up;
+            } else if(dir == "Down"){
+                door->mDirection = DoorDirection::Down;
+            } else if(dir == "Left"){
+                door->mDirection = DoorDirection::Left;
+            } else if(dir == "Right"){
+                door->mDirection = DoorDirection::Right;
+            }
+            
+            if(state == "Closed"){
+                door->mState = DoorState::Closed;
+            } else if(state == "Open"){
+                door->mState = DoorState::Open;
+            } else if(state == "Locked"){
+                door->mState = DoorState::Locked;
+            }
+            
+            door->SetUpDoor(door->mDirection, door->mState, dest);
+            doors.push_back(door);
+        }
     }
+    doorMap.insert({room, doors});
 }

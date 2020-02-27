@@ -82,9 +82,13 @@ class Game {
         std::vector<std::vector<std::string>> obj_csv_storage;
     
         //colliders
-        void loadPlayersAndColliders();
+        void loadPlayersAndColliders(std::string room);
     
         std::vector<class Collider*> mColliders;
+    
+        //doors
+        std::unordered_map<std::string, std::vector<class Door*>> doorMap;
+        std::string currRoom;
         
     private:
     
