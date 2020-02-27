@@ -42,6 +42,13 @@ Player::Player(class Game* game)
     
     player_move->Player_Animate("walkUp", walkUpAnim);
     player_ac->SetIsPaused(true);
+    /*player_ac->AddAnimation("walkUp", walkUpAnim);
+    player_ac->AddAnimation("walkDown", walkDownAnim);
+    player_ac->AddAnimation("walkLeft", walkLeftAnim);
+    player_ac->AddAnimation("walkRight", walkRightAnim);
+    
+    player_ac->SetIsPaused(true);
+    player_ac->SetAnimation("walkUp");*/
     
 }
 

@@ -10,8 +10,11 @@
 #include "Actor.h"
 #include "SpriteComponent.h"
 #include "MoveComponent.h"
+#include "TiledBGComponent.hpp"
 #include "Player.hpp"
 #include "Spawner.hpp"
+#include "CSVHelper.h"
+#include "Collider.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -143,7 +146,15 @@ void Game::RemoveActor(Actor* actor){
 }
 
 void Game::LoadData(){
-    mPlayer = new Player(this);
+    
+    Actor* bg = new Actor(this);
+    TiledBGComponent* bg_tc = new TiledBGComponent(bg);
+    bg_tc->LoadTileCSV("Assets/Dungeon/DungeonMapBG.csv", 32, 32);
+    bg_tc->SetTexture(GetTexture("Assets/Dungeon/DungeonTiles.png"));
+    
+    readObjectCSV("Assets/Dungeon/Room1.csv");
+    loadPlayersAndColliders();
+    //std::cout << bg_tc->csv_storage[0][0] << std::endl;
     /*Mix_Chunk* music = GetSound("Assets/Sounds/Music.ogg");
     mChannel = Mix_PlayChannel(-1, music, -1);
     if(mChannel==-1) {
@@ -225,5 +236,44 @@ Mix_Chunk* Game::GetSound(const std::string& filename){
         return sound;
     } else {
         return got->second;
+    }
+}
+
+void Game::readObjectCSV(std::string filename){
+    std::ifstream textFile;
+    textFile.open(filename);
+    if (!textFile) {
+        exit(1);
+    }
+    std::string str = "";
+    
+    while(textFile){
+        std::getline(textFile, str);
+        if(str != ""){
+            std::vector line = CSVHelper::Split(str);
+            obj_csv_storage.push_back(line);
+        }
+    }
+}
+
+void Game::loadPlayersAndColliders(){
+    for(int i=0; i < (int)obj_csv_storage.size(); i++){
+        if(obj_csv_storage[i][0] == "Player"){
+            mPlayer = new Player(this);
+            std::string x_str = obj_csv_storage[i][1];
+            std::string y_str = obj_csv_storage[i][2];
+            mPlayer->SetPosition(Vector2(std::stoi(x_str), std::stoi(y_str)));
+        }
+        if(obj_csv_storage[i][0] == "Collider"){
+            std::string w_str = obj_csv_storage[i][3];
+            std::string h_str = obj_csv_storage[i][4];
+            Collider* collider = new Collider(this, std::stoi(w_str), std::stoi(h_str));
+            std::string x_str = obj_csv_storage[i][1];
+            std::string y_str = obj_csv_storage[i][2];
+            int x = std::stoi(x_str) + std::stoi(w_str)/2;
+            int y = std::stoi(y_str) + std::stoi(h_str)/2;
+            collider->SetPosition(Vector2(x, y));
+            mColliders.push_back(collider);
+        }
     }
 }

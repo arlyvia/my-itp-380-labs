@@ -75,6 +75,17 @@ class Game {
         Mix_Chunk* GetSound(const std::string& filename);
     
         int mChannel;
+    
+        //csv
+    
+        void readObjectCSV(std::string filename);
+        std::vector<std::vector<std::string>> obj_csv_storage;
+    
+        //colliders
+        void loadPlayersAndColliders();
+    
+        std::vector<class Collider*> mColliders;
+        
     private:
     
         void LoadData();

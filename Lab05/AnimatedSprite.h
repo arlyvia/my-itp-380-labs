@@ -41,5 +41,5 @@ protected:
 	float mAnimTimer = 0.0f;
 	
 	// The frames per second the animation should run at
-	float mAnimFPS = 10.0f;
+	float mAnimFPS = 5.0f;
 };
