@@ -14,12 +14,6 @@
 Door::Door(class Game* game)
 :Actor(game){
     door_cc = new CollisionComponent(this);
-    if(mDirection == DoorDirection::Up
-       || mDirection == DoorDirection::Down){
-        door_cc->SetSize(30.0f, 64.0f);
-    } else {
-        door_cc->SetSize(64.0f, 30.0f);
-    }
     door_sc = new SpriteComponent(this);
 }
 
@@ -56,6 +50,12 @@ void Door::SetUpDoor(DoorDirection direction, DoorState state, std::string desti
         } else if(state == DoorState::Locked){
             door_sc->SetTexture(GetGame()->GetTexture("Assets/Door/RightLocked.png"));
         }
+    }
+    if(mDirection == DoorDirection::Up
+       || mDirection == DoorDirection::Down){
+        door_cc->SetSize(30.0f, 64.0f);
+    } else {
+        door_cc->SetSize(64.0f, 30.0f);
     }
 }
 

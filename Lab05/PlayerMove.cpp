@@ -8,6 +8,7 @@
 #include "PlayerMove.hpp"
 #include "MoveComponent.h"
 #include "Math.h"
+#include"Door.hpp"
 #include "CollisionComponent.h"
 #include "Collider.hpp"
 #include <SDL2/SDL_image.h>
@@ -87,7 +88,35 @@ void PlayerMove::Update(float deltaTime){
           mOwner->GetGame()->camera_pos = mOwner->GetGame()->camera_pos+local_offset;
       }
     }
-    
+    std::vector<Door*> doors = mOwner->GetGame()->doorMap[mOwner->GetGame()->currRoom];
+    for(int i=0; i < (signed)doors.size(); i++){
+      CollSide side = mOwner->GetComponent<CollisionComponent>()->GetMinOverlap(doors[i]->GetComponent<CollisionComponent>(), local_offset);
+      if(side != CollSide::None){
+          std::cout << "yo" << std::endl;
+          std::vector<Door*> dest_doors = mOwner->GetGame()->doorMap[doors[i]->mDestination];
+          for(int j=0; j < (signed)dest_doors.size(); j++){
+              if(dest_doors[j]->mDirection == DoorDirection::Up &&
+                 doors[i]->mDirection == DoorDirection::Down){
+                  mOwner->SetPosition(dest_doors[j]->GetPosition());
+              }
+              if(dest_doors[j]->mDirection == DoorDirection::Left &&
+                 doors[i]->mDirection == DoorDirection::Right){
+                  mOwner->SetPosition(dest_doors[j]->GetPosition());
+                  std::cout << "door" << std::endl;
+              }
+              if(dest_doors[j]->mDirection == DoorDirection::Right &&
+                 doors[i]->mDirection == DoorDirection::Left){
+                  mOwner->SetPosition(dest_doors[j]->GetPosition());
+                  std::cout << "door" << std::endl;
+              }
+              if(dest_doors[j]->mDirection == DoorDirection::Up &&
+                 doors[i]->mDirection == DoorDirection::Down){
+                  
+              }
+          }
+          mOwner->GetGame()->currRoom = doors[i]->mDestination;
+      }
+    }
 }
 
 

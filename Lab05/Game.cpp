@@ -154,9 +154,22 @@ void Game::LoadData(){
     bg_tc->LoadTileCSV("Assets/Dungeon/DungeonMapBG.csv", 32, 32);
     bg_tc->SetTexture(GetTexture("Assets/Dungeon/DungeonTiles.png"));
     
-    readObjectCSV("Assets/Dungeon/Room1.csv");
     currRoom = "Room1";
-    loadPlayersAndColliders(currRoom);
+    
+    obj_csv_storage = readObjectCSV("Assets/Dungeon/Room1.csv");
+    loadPlayersAndColliders("Room1");
+    obj_csv_storage = readObjectCSV("Assets/Dungeon/Room2.csv");
+    loadPlayersAndColliders("Room2");
+    obj_csv_storage = readObjectCSV("Assets/Dungeon/Room3.csv");
+    loadPlayersAndColliders("Room3");
+    obj_csv_storage = readObjectCSV("Assets/Dungeon/Room4.csv");
+    loadPlayersAndColliders("Room4");
+    obj_csv_storage = readObjectCSV("Assets/Dungeon/Room5.csv");
+    loadPlayersAndColliders("Room5");
+    obj_csv_storage = readObjectCSV("Assets/Dungeon/Room6.csv");
+    loadPlayersAndColliders("Room6");
+    obj_csv_storage = readObjectCSV("Assets/Dungeon/Room7.csv");
+    loadPlayersAndColliders("Room7");
     //std::cout << bg_tc->csv_storage[0][0] << std::endl;
     /*Mix_Chunk* music = GetSound("Assets/Sounds/Music.ogg");
     mChannel = Mix_PlayChannel(-1, music, -1);
@@ -242,7 +255,8 @@ Mix_Chunk* Game::GetSound(const std::string& filename){
     }
 }
 
-void Game::readObjectCSV(std::string filename){
+std::vector<std::vector<std::string>> Game::readObjectCSV(std::string filename){
+    std::vector<std::vector<std::string>> result;
     std::ifstream textFile;
     textFile.open(filename);
     if (!textFile) {
@@ -254,9 +268,11 @@ void Game::readObjectCSV(std::string filename){
         std::getline(textFile, str);
         if(str != ""){
             std::vector line = CSVHelper::Split(str);
-            obj_csv_storage.push_back(line);
+            result.push_back(line);
         }
     }
+    return result;
+    
 }
 
 void Game::loadPlayersAndColliders(std::string room){

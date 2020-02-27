@@ -78,7 +78,7 @@ class Game {
     
         //csv
     
-        void readObjectCSV(std::string filename);
+        std::vector<std::vector<std::string>> readObjectCSV(std::string filename);
         std::vector<std::vector<std::string>> obj_csv_storage;
     
         //colliders
