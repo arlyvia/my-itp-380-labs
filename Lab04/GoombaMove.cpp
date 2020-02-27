@@ -24,7 +24,7 @@ void GoombaMove::Update(float deltaTime){
         Vector2 velocity = mOwner->GetForward() * GetForwardSpeed();
         mOwner->SetPosition(mOwner->GetPosition() + velocity * deltaTime);
         
-        goombaYSpeed = goombaYSpeed + 1500.0f * deltaTime;
+        goombaYSpeed = goombaYSpeed + 2000.0f * deltaTime;
 
         Vector2 local_offset(0, 0);
         for(int i=0; i < (signed)mOwner->GetGame()->mBlocks.size(); i++){

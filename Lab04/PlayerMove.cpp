@@ -10,37 +10,52 @@
 #include "Goomba.hpp"
 #include "Math.h"
 #include "CollisionComponent.h"
+#include "AnimatedSprite.h"
 #include "Block.hpp"
 #include <SDL2/SDL_image.h>
 
 PlayerMove::PlayerMove(class Actor* owner)
     :MoveComponent(owner)
 {
+    std::vector<SDL_Texture*> runLeftAnim{
+        mOwner->GetGame()->GetTexture("Assets/Mario/RunLeft0.png"),
+        mOwner->GetGame()->GetTexture("Assets/Mario/RunLeft1.png"),
+        mOwner->GetGame()->GetTexture("Assets/Mario/RunLeft2.png")
+    };
+    mOwner->GetComponent<AnimatedSprite>()->AddAnimation("runLeft", runLeftAnim);
     
+    std::vector<SDL_Texture*> runRightAnim{
+        mOwner->GetGame()->GetTexture("Assets/Mario/RunRight0.png"),
+        mOwner->GetGame()->GetTexture("Assets/Mario/RunRight1.png"),
+        mOwner->GetGame()->GetTexture("Assets/Mario/RunRight2.png")
+    };
+    mOwner->GetComponent<AnimatedSprite>()->AddAnimation("runRight", runRightAnim);
+    
+    std::vector<SDL_Texture*> idleAnim{
+        mOwner->GetGame()->GetTexture("Assets/Mario/Idle.png"),
+    };
+    mOwner->GetComponent<AnimatedSprite>()->AddAnimation("idle", idleAnim);
+    
+    std::vector<SDL_Texture*> jumpRightAnim{
+          mOwner->GetGame()->GetTexture("Assets/Mario/JumpRight.png"),
+    };
+    mOwner->GetComponent<AnimatedSprite>()->AddAnimation("jumpRight", jumpRightAnim);
+    
+    std::vector<SDL_Texture*> jumpLeftAnim{
+          mOwner->GetGame()->GetTexture("Assets/Mario/JumpLeft.png"),
+    };
+    mOwner->GetComponent<AnimatedSprite>()->AddAnimation("jumpLeft", jumpLeftAnim);
 }
 
 void PlayerMove::ProcessInput(const Uint8 *keyState) {
-    if (keyState[SDL_SCANCODE_LEFT]) {
-        std::vector<SDL_Texture*> runLeftAnim{
-            mOwner->GetGame()->GetTexture("Assets/Mario/RunLeft0.png"),
-            mOwner->GetGame()->GetTexture("Assets/Mario/RunLeft1.png"),
-            mOwner->GetGame()->GetTexture("Assets/Mario/RunLeft2.png")
-        };
-        Player_Animate("runLeft", runLeftAnim);
+    if (keyState[SDL_SCANCODE_LEFT] ) {
+        if(!mInAir) mOwner->GetComponent<AnimatedSprite>()->SetAnimation("runLeft");
         SetForwardSpeed(-player_walk_speed);
     } else if (keyState[SDL_SCANCODE_RIGHT]){
-        std::vector<SDL_Texture*> runRightAnim{
-            mOwner->GetGame()->GetTexture("Assets/Mario/RunRight0.png"),
-            mOwner->GetGame()->GetTexture("Assets/Mario/RunRight1.png"),
-            mOwner->GetGame()->GetTexture("Assets/Mario/RunRight2.png")
-        };
-        Player_Animate("runRight", runRightAnim);
+        if(!mInAir) mOwner->GetComponent<AnimatedSprite>()->SetAnimation("runRight");
         SetForwardSpeed(player_walk_speed);
     } else {
-        std::vector<SDL_Texture*> idleAnim{
-            mOwner->GetGame()->GetTexture("Assets/Mario/Idle.png"),
-        };
-        Player_Animate("idle", idleAnim);
+        mOwner->GetComponent<AnimatedSprite>()->SetAnimation("idle");
         SetForwardSpeed(0);
     }
     
@@ -54,29 +69,21 @@ void PlayerMove::ProcessInput(const Uint8 *keyState) {
             }
         }
         if(GetForwardSpeed() > 0){
-             std::vector<SDL_Texture*> jumpRightAnim{
-                   mOwner->GetGame()->GetTexture("Assets/Mario/JumpRight.png"),
-             };
-             Player_Animate("jumpRight", jumpRightAnim);
+            if(mInAir==true){
+                mOwner->GetComponent<AnimatedSprite>()->SetAnimation("jumpRight");
+            }
         } else if(GetForwardSpeed() < 0){
-            std::vector<SDL_Texture*> jumpLeftAnim{
-                  mOwner->GetGame()->GetTexture("Assets/Mario/JumpLeft.png"),
-            };
-            Player_Animate("jumpLeft", jumpLeftAnim);
+            if(mInAir==true){
+                mOwner->GetComponent<AnimatedSprite>()->SetAnimation("jumpLeft");
+            }
         } else {
             std::string curr_anim = mOwner->GetComponent<AnimatedSprite>()->GetAnimName();
             if(curr_anim == "runRight" ||
                curr_anim == "jumpRight" ||
                curr_anim == "idle"){
-                std::vector<SDL_Texture*> jumpRightAnim{
-                      mOwner->GetGame()->GetTexture("Assets/Mario/JumpRight.png"),
-                };
-                Player_Animate("jumpRight", jumpRightAnim);
+                mOwner->GetComponent<AnimatedSprite>()->SetAnimation("jumpRight");
             } else {
-                std::vector<SDL_Texture*> jumpLeftAnim{
-                      mOwner->GetGame()->GetTexture("Assets/Mario/JumpLeft.png"),
-                };
-                Player_Animate("jumpLeft", jumpLeftAnim);
+                mOwner->GetComponent<AnimatedSprite>()->SetAnimation("jumpLeft");
             }
         }
     }
@@ -100,7 +107,7 @@ void PlayerMove::Update(float deltaTime){
                 mYSpeed = 0;
                 mInAir = false;
             } else if(side == CollSide::Bottom && mYSpeed < 0.0f){
-                mOwner->SetPosition(mOwner->GetPosition()-local_offset);
+                mOwner->SetPosition(mOwner->GetPosition()+local_offset);
                 mYSpeed = 0;
                 mInAir = false;
                 Mix_Chunk* bump_sound = mOwner->GetGame()->GetSound("Assets/Sounds/Bump.wav");
