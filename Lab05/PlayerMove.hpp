@@ -35,6 +35,8 @@ class PlayerMove: public MoveComponent {
     
         Vector2 mDirection;
         int facing;
+        float mDoorOffset = 130.0f;
+        float mDoorWidth = 32.0f;
 };
 
 #endif /* PlayerMove_hpp */

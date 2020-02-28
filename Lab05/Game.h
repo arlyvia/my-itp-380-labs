@@ -90,6 +90,8 @@ class Game {
         std::unordered_map<std::string, std::vector<class Door*>> doorMap;
         std::string currRoom;
         
+        //secret blocks
+        class SecretBlock* mSecretBlock;
     private:
     
         void LoadData();

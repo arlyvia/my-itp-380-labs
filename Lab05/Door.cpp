@@ -18,6 +18,7 @@ Door::Door(class Game* game)
 }
 
 void Door::SetUpDoor(DoorDirection direction, DoorState state, std::string destination){
+    mDestination = destination;
     if(direction == DoorDirection::Up){
         if(state == DoorState::Open){
             door_sc->SetTexture(GetGame()->GetTexture("Assets/Door/UpOpen.png"));

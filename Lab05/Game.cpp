@@ -16,6 +16,7 @@
 #include "CSVHelper.h"
 #include "Collider.hpp"
 #include "Door.hpp"
+#include "SecretBlock.hpp"
 #include <utility>
 #include <iostream>
 #include <vector>
@@ -294,6 +295,17 @@ void Game::loadPlayersAndColliders(std::string room){
             int y = std::stoi(y_str) + std::stoi(h_str)/2;
             collider->SetPosition(Vector2(x, y));
             mColliders.push_back(collider);
+        }
+        if(obj_csv_storage[i][0] == "SecretBlock"){
+            mSecretBlock = new SecretBlock(this);
+            std::string x_str = obj_csv_storage[i][1];
+            std::string y_str = obj_csv_storage[i][2];
+            std::string w_str = obj_csv_storage[i][3];
+            std::string h_str = obj_csv_storage[i][4];
+            int x = std::stoi(x_str) + std::stoi(w_str)/2;
+            int y = std::stoi(y_str) + std::stoi(h_str)/2;
+            mSecretBlock->SetPosition(Vector2(x, y));
+            //mSecretBlock->(std::stoi(w_str), std::stoi(h_str));
         }
         if(obj_csv_storage[i][0] == "Door"){
             Door* door = new Door(this);
