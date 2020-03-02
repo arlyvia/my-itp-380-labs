@@ -17,6 +17,7 @@
 #include "Collider.hpp"
 #include "Door.hpp"
 #include "SecretBlock.hpp"
+#include "Spawner.hpp"
 #include <utility>
 #include <iostream>
 #include <vector>
@@ -171,7 +172,7 @@ void Game::LoadData(){
     loadPlayersAndColliders("Room6");
     obj_csv_storage = readObjectCSV("Assets/Dungeon/Room7.csv");
     loadPlayersAndColliders("Room7");
-    //std::cout << bg_tc->csv_storage[0][0] << std::endl;
+    
     /*Mix_Chunk* music = GetSound("Assets/Sounds/Music.ogg");
     mChannel = Mix_PlayChannel(-1, music, -1);
     if(mChannel==-1) {
@@ -278,6 +279,8 @@ std::vector<std::vector<std::string>> Game::readObjectCSV(std::string filename){
 
 void Game::loadPlayersAndColliders(std::string room){
     std::vector<Door*> doors;
+    std::vector<SecretBlock *> secret_blx;
+    std::vector<Spawner *> spawners;
     for(int i=0; i < (int)obj_csv_storage.size(); i++){
         if(obj_csv_storage[i][0] == "Player"){
             mPlayer = new Player(this);
@@ -297,14 +300,15 @@ void Game::loadPlayersAndColliders(std::string room){
             mColliders.push_back(collider);
         }
         if(obj_csv_storage[i][0] == "SecretBlock"){
-            mSecretBlock = new SecretBlock(this);
+            SecretBlock* sb = new SecretBlock(this);
             std::string x_str = obj_csv_storage[i][1];
             std::string y_str = obj_csv_storage[i][2];
             std::string w_str = obj_csv_storage[i][3];
             std::string h_str = obj_csv_storage[i][4];
             int x = std::stoi(x_str) + std::stoi(w_str)/2;
             int y = std::stoi(y_str) + std::stoi(h_str)/2;
-            mSecretBlock->SetPosition(Vector2(x, y));
+            sb->SetPosition(Vector2(x, y));
+            secret_blx.push_back(sb);
             //mSecretBlock->(std::stoi(w_str), std::stoi(h_str));
         }
         if(obj_csv_storage[i][0] == "Door"){
@@ -340,7 +344,19 @@ void Game::loadPlayersAndColliders(std::string room){
             
             door->SetUpDoor(door->mDirection, door->mState, dest);
             doors.push_back(door);
+        } else if(obj_csv_storage[i][0] != "Type") {
+            Spawner* spawner = new Spawner(this);
+            std::string x_str = obj_csv_storage[i][1];
+            std::string y_str = obj_csv_storage[i][2];
+            std::string w_str = obj_csv_storage[i][3];
+            std::string h_str = obj_csv_storage[i][4];
+            int x = std::stoi(x_str) + std::stoi(w_str)/2;
+            int y = std::stoi(y_str) + std::stoi(h_str)/2;
+            spawner->SetPosition(Vector2(x, y));
+            spawner->mType = obj_csv_storage[i][0];
         }
     }
     doorMap.insert({room, doors});
+    SBMap.insert({room, secret_blx});
+    spawnerMap.insert({room, spawners});
 }

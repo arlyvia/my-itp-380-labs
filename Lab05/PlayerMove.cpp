@@ -6,6 +6,7 @@
 //
 
 #include "PlayerMove.hpp"
+#include "Player.hpp"
 #include "MoveComponent.h"
 #include "Math.h"
 #include"Door.hpp"
@@ -24,7 +25,6 @@ void PlayerMove::ProcessInput(const Uint8 *keyState) {
     
     if(keyState[SDL_SCANCODE_LEFT]){
         mOwner->GetComponent<AnimatedSprite>()->SetIsPaused(false);
-        //mOwner->GetComponent<AnimatedSprite>()->SetAnimation("walkLeft");
         SetForwardSpeed(player_walk_speed);
         mDirection=Vector2(-1,0);
         std::vector<SDL_Texture*> walkLeftAnim{
@@ -34,7 +34,6 @@ void PlayerMove::ProcessInput(const Uint8 *keyState) {
         Player_Animate("walkLeft", walkLeftAnim);
     } else if(keyState[SDL_SCANCODE_RIGHT]){
         mOwner->GetComponent<AnimatedSprite>()->SetIsPaused(false);
-        //mOwner->GetComponent<AnimatedSprite>()->SetAnimation("walkRight");
         SetForwardSpeed(player_walk_speed);
         mDirection=Vector2(1,0);
         std::vector<SDL_Texture*> walkRightAnim{
@@ -44,7 +43,6 @@ void PlayerMove::ProcessInput(const Uint8 *keyState) {
         Player_Animate("walkRight", walkRightAnim);
     } else if(keyState[SDL_SCANCODE_UP]){
         mOwner->GetComponent<AnimatedSprite>()->SetIsPaused(false);
-        //mOwner->GetComponent<AnimatedSprite>()->SetAnimation("walkUp");
         SetForwardSpeed(player_walk_speed);
         mDirection=Vector2(0, -1);
         std::vector<SDL_Texture*> walkUpAnim{
@@ -54,7 +52,6 @@ void PlayerMove::ProcessInput(const Uint8 *keyState) {
         Player_Animate("walkUp", walkUpAnim);
     } else if(keyState[SDL_SCANCODE_DOWN]){
         mOwner->GetComponent<AnimatedSprite>()->SetIsPaused(false);
-        //mOwner->GetComponent<AnimatedSprite>()->SetAnimation("walkDown");
         SetForwardSpeed(player_walk_speed);
         mDirection=Vector2(0, 1);
         std::vector<SDL_Texture*> walkDownAnim{
@@ -117,13 +114,33 @@ void PlayerMove::Update(float deltaTime){
           mOwner->GetGame()->currRoom = doors[i]->mDestination;
       }
     }
-    CollSide sb_side = mOwner->GetComponent<CollisionComponent>()->GetMinOverlap(mOwner->GetGame()->mSecretBlock->GetComponent<CollisionComponent>(), local_offset);
-      if(sb_side != CollSide::None){
-          if(sb_side == CollSide::Bottom){
-              SetForwardSpeed(65.0f);
-              mOwner->GetGame()->mSecretBlock->SetPosition(Vector2(mOwner->GetGame()->mSecretBlock->GetPosition().x, mOwner->GetGame()->mSecretBlock->GetPosition().y + 1));
+    
+    std::vector<SecretBlock*> secret_blx = mOwner->GetGame()->SBMap[mOwner->GetGame()->currRoom];
+    for(int i=0; i < (signed)secret_blx.size(); i++){
+        CollSide sb_side = mOwner->GetComponent<CollisionComponent>()->GetMinOverlap(secret_blx[i]->GetComponent<CollisionComponent>(), local_offset);
+          if(sb_side != CollSide::None){
+              if(sb_side == CollSide::Bottom){
+                  SetForwardSpeed(20.0f);
+                  if(block_move(secret_blx[i])){
+                      SetForwardSpeed(0);
+                      secret_blx[i]->GetGame()->camera_pos = secret_blx[i]->GetGame()->camera_pos+local_offset;
+                      secret_blx[i]->SetPosition(Vector2(secret_blx[i]->GetPosition().x, secret_blx[i]->GetPosition().y - 1));
+                      mOwner->SetPosition(mOwner->GetPosition()+local_offset);
+                  } else {
+                      secret_blx[i]->SetPosition(secret_blx[i]->GetPosition());
+                      mOwner->SetPosition(mOwner->GetPosition()+local_offset);
+                      for(int j=0; j < (signed)doors.size(); j++){
+                          doors[i]->mState = DoorState::Open;
+                          doors[i]->SetUpDoor(doors[i]->mDirection, doors[i]->mState, doors[i]->mDestination);
+                      }
+                  }
+              } else {
+                  mOwner->SetPosition(mOwner->GetPosition()+local_offset);
+                  SetForwardSpeed(0);
+                  mOwner->GetGame()->camera_pos = mOwner->GetGame()->camera_pos+local_offset;
+              }
           }
-      }
+    }
 }
 
 
@@ -132,3 +149,16 @@ void PlayerMove::Player_Animate(std::string mAnimName, std::vector<SDL_Texture *
     mOwner->GetComponent<AnimatedSprite>()->SetAnimation(mAnimName);
 }
 
+bool PlayerMove::block_move(SecretBlock* sb){
+    Vector2 local_offset(0, 0);
+    for(int i=0; i < (signed)sb->GetGame()->mColliders.size(); i++){
+        CollSide sb_side = sb->GetComponent<CollisionComponent>()->GetMinOverlap(sb->GetGame()->mColliders[i]->GetComponent<CollisionComponent>(), local_offset);
+
+        if(sb_side == CollSide::Bottom){
+            return false;
+        }
+        
+    }
+    
+    return true;
+}

@@ -18,6 +18,7 @@ class SecretBlock: public Actor {
         //constructor
         SecretBlock(class Game* game);
         CollisionComponent* secretBlock_cc;
+        class SpriteComponent* secretBlock_sc;
 };
 
 

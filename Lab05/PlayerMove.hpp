@@ -37,6 +37,8 @@ class PlayerMove: public MoveComponent {
         int facing;
         float mDoorOffset = 130.0f;
         float mDoorWidth = 32.0f;
+    
+        bool block_move(SecretBlock* sb);
 };
 
 #endif /* PlayerMove_hpp */

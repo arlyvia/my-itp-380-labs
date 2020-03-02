@@ -88,10 +88,14 @@ class Game {
     
         //doors
         std::unordered_map<std::string, std::vector<class Door*>> doorMap;
+        // secret block map
         std::string currRoom;
         
         //secret blocks
-        class SecretBlock* mSecretBlock;
+        std::unordered_map<std::string, std::vector<class SecretBlock*>> SBMap;
+    
+        //spawner
+        std::unordered_map<std::string, std::vector<class Spawner*>> spawnerMap;
     private:
     
         void LoadData();

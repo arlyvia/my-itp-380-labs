@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 #include "Actor.h"
+#include "SpriteComponent.h"
+#include <string>
 
 
 class Spawner: public Actor {
@@ -19,7 +21,9 @@ class Spawner: public Actor {
         void OnUpdate(float deltaTime) override;
     
         float dist_btw_players = 600.0f;
+        std::string mType;
     
+        SpriteComponent* spawner_sc;
 };
 
 #endif /* Spawner_hpp */
