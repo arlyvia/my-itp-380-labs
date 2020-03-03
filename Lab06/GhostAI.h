@@ -1,7 +1,10 @@
 #pragma once
 #include "Component.h"
 #include "Math.h"
+
+#include <set>
 #include <vector>
+#include <unordered_map>
 
 class GhostAI : public Component
 {
@@ -31,9 +34,29 @@ public:
 	
 	// Called when the ghost should switch to the "Dead" state
 	void Die();
+    
+    struct NodeInfo {
+        // The parent is the node at "before" current node
+        PathNode* parent = nullptr;
+        // f(x) = g(x) + h(x)
+        float f = 0.0f;
+        // g(x) true cost from start to this node
+        float g = 0.0f;
+        // h(x) heuristic estimate from this node to goal
+        float h = 0.0f;
+        // Whether or not this node is "closed"
+        bool IsClosed = false;
+    };
+    
+    void A_Star(PathNode* targetNode, PathNode* prevNode, PathNode* nextNode);
+    std::vector<PathNode*> openSet;
+    
+    float edgeCost(PathNode* curr, PathNode* adj);
+    PathNode* mMin = openSet[0];
 
 	//  Helper function to draw GhostAI's current path
 	void DebugDrawPath(struct SDL_Renderer* render);
+    
 private:
 	// Member data for pathfinding
 

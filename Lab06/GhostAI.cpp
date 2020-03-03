@@ -31,11 +31,68 @@ void GhostAI::Frighten()
 void GhostAI::Start(PathNode* startNode)
 {
 	// TODO: Implement
+    mOwner->SetPosition(startNode->GetPosition());
+    mState = State::Scatter;
+    mPrevNode = nullptr;
+    mNextNode = nullptr;
+    mTargetNode = nullptr;
 }
 
 void GhostAI::Die()
 {
 	// TODO: Implement
+}
+
+void GhostAI::A_Star(PathNode* targetNode, PathNode* prevNode, PathNode* nextNode){
+    std::unordered_map<PathNode*, NodeInfo> info;
+    PathNode* currentNode = prevNode;
+    nextNode = currentNode->mAdjacent[0];
+    info[currentNode].IsClosed = true;
+    do {
+        for(int i=1; i < (signed)currentNode->mAdjacent.size(); i++){
+            PathNode* adj = currentNode->mAdjacent[i];
+            if(adj->GetType() == PathNode::Tunnel) continue;
+            if(!info[adj].IsClosed){
+                if(std::find(openSet.begin(), openSet.end(), currentNode->mAdjacent[i]) != openSet.end()){ // Check for adoption
+                    float new_g = info[currentNode].g + edgeCost(currentNode, adj);
+                    if(new_g < info[adj].g){
+                        info[adj].parent = currentNode;
+                        info[adj].g = new_g;
+                        info[adj].f = info[currentNode->mAdjacent[i]].g + info[adj].h;
+                    }
+                    
+                } else {
+                        info[adj].parent = currentNode;
+                        info[adj].h = edgeCost(adj, targetNode);
+                        info[adj].g = info[currentNode].g + edgeCost(currentNode, adj);
+                        info[adj].f = info[adj].g + info[adj].h;
+                        openSet.push_back(adj);
+                    }
+                }
+            }
+        if(openSet.empty()) break;
+        //currentNode = Node with lowest f in openSet
+        for(int i = 0; i < (signed)openSet.size(); i++){
+            if(info[openSet[i+1]].f > info[openSet[i]].f){
+                mMin = openSet[i];
+            }
+        }
+        currentNode = mMin;
+        auto iter = std::find(openSet.begin(), openSet.end(), currentNode);
+        openSet.erase(iter);
+        info[currentNode].IsClosed = true;
+    } while (currentNode != targetNode);
+}
+
+float GhostAI::edgeCost(PathNode *curr, PathNode *adj){
+    float x = curr->GetPosition().x - adj->GetPosition().x;
+    float y = curr->GetPosition().y - adj->GetPosition().y;
+    float dist;
+
+    dist = pow(x, 2.0f) + pow(y, 2.0f);
+    dist = sqrt(dist);
+
+    return dist;
 }
 
 void GhostAI::DebugDrawPath(SDL_Renderer* render)
