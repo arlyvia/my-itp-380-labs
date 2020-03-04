@@ -2,6 +2,7 @@
 #include "AnimatedSprite.h"
 #include "Game.h"
 #include "CollisionComponent.h"
+#include "MoveComponent.h"
 #include "GhostAI.h"
 #include <SDL2/SDL.h>
 #include "PathNode.h"
@@ -13,6 +14,8 @@ Ghost::Ghost(class Game* game, Type type)
 ,mScatterNode(nullptr)
 {
 	AnimatedSprite* asc = new AnimatedSprite(this, 125);
+    
+    ghost_mc = new MoveComponent(this);
 	
 	SetupMoveAnim("right");
 	SetupMoveAnim("left");
@@ -59,6 +62,8 @@ Ghost::Ghost(class Game* game, Type type)
 	cc->SetSize(5.0f, 5.0f);
 	
 	mAI = new GhostAI(this);
+    
+    
 }
 
 void Ghost::SetupMoveAnim(const std::string& name)

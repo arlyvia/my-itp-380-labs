@@ -40,6 +40,9 @@ public:
 
 	// Helper function that sets correct color for ghost path drawing
 	void DebugDrawPath(struct SDL_Renderer* render);
+    
+    class MoveComponent* ghost_mc;
+    
 private:
 	void SetupMoveAnim(const std::string& name);
 	Type mType;

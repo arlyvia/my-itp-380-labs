@@ -46,16 +46,21 @@ public:
         float h = 0.0f;
         // Whether or not this node is "closed"
         bool IsClosed = false;
+        std::vector<PathNode*> Unusuable;
     };
     
-    void A_Star(PathNode* targetNode, PathNode* prevNode, PathNode* nextNode);
+    void A_Star(PathNode* startNode, PathNode* goalNode);
     std::vector<PathNode*> openSet;
     
     float edgeCost(PathNode* curr, PathNode* adj);
-    PathNode* mMin = openSet[0];
+    //PathNode* mMin = openSet[0];
 
 	//  Helper function to draw GhostAI's current path
 	void DebugDrawPath(struct SDL_Renderer* render);
+    
+    Vector2 mMoveDir = Vector2::Zero;
+    
+    void SetDirection(Vector2 pos);
     
 private:
 	// Member data for pathfinding

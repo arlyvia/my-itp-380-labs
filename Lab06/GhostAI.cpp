@@ -10,6 +10,8 @@
 #include "Ghost.h"
 #include "PacMan.h"
 #include "Random.h"
+#include <iostream>
+#include "MoveComponent.h"
 
 GhostAI::GhostAI(class Actor* owner)
 :Component(owner, 50)
@@ -20,6 +22,40 @@ GhostAI::GhostAI(class Actor* owner)
 void GhostAI::Update(float deltaTime)
 {
 	// TODO: Implement
+    std::cout << "update " << mMoveDir.x << " " << mMoveDir.y << std::endl;
+    if(mNextNode == nullptr) return;
+    /*if(GetState() == State::Scatter){
+        mGhost->GetComponent<MoveComponent>()->SetForwardSpeed(90.0f);
+    }*/
+    if(mGhost->GetComponent<CollisionComponent>()->Intersect(mNextNode->GetComponent<CollisionComponent>())){
+            mGhost->SetPosition(mNextNode->GetPosition());
+            std::cout << "collision" << std::endl;
+                mPrevNode = mNextNode;
+                if(mPath.empty()) return;
+                mNextNode = mPath[mPath.size()-1];
+                mPath.pop_back();
+            SetDirection(mNextNode->GetPosition());
+    }
+    Vector2 pos = mGhost->GetPosition();
+    pos += mMoveDir * 90.0f * deltaTime;
+    mGhost->SetPosition(pos);
+}
+
+void GhostAI::SetDirection(Vector2 pos){
+    if(pos.x < mGhost->GetPosition().x){
+        mMoveDir.y = 0.0f;
+        mMoveDir.x = -1.0f;
+    } else if(pos.x > mGhost->GetPosition().x){
+        mMoveDir.y = 0.0f;
+        mMoveDir.x = 1.0f;
+    }
+    if(pos.y < mGhost->GetPosition().y){
+        mMoveDir.y = -1.0f;
+        mMoveDir.x = 0.0f;
+    } else if(pos.y > mGhost->GetPosition().y){
+        mMoveDir.y = 1.0f;
+        mMoveDir.x = 0.0f;
+    }
 }
 
 
@@ -36,6 +72,10 @@ void GhostAI::Start(PathNode* startNode)
     mPrevNode = nullptr;
     mNextNode = nullptr;
     mTargetNode = nullptr;
+    A_Star(mGhost->GetSpawnNode(), mGhost->GetScatterNode());
+    std::cout << "before " << mMoveDir.x << " " << mMoveDir.y << std::endl;
+    SetDirection(mNextNode->GetPosition());
+    std::cout << "after " << mMoveDir.x << " " << mMoveDir.y << std::endl;
 }
 
 void GhostAI::Die()
@@ -43,27 +83,36 @@ void GhostAI::Die()
 	// TODO: Implement
 }
 
-void GhostAI::A_Star(PathNode* targetNode, PathNode* prevNode, PathNode* nextNode){
+void GhostAI::A_Star(PathNode* startNode, PathNode* goalNode){
     std::unordered_map<PathNode*, NodeInfo> info;
-    PathNode* currentNode = prevNode;
-    nextNode = currentNode->mAdjacent[0];
-    info[currentNode].IsClosed = true;
+    PathNode* currentNode = startNode;
+    mTargetNode = goalNode;
+    if(currentNode != goalNode) info[currentNode].IsClosed = true;
+    info[currentNode].Unusuable.push_back(mNextNode);
+    info[currentNode].Unusuable.push_back(mPrevNode);
     do {
-        for(int i=1; i < (signed)currentNode->mAdjacent.size(); i++){
+        for(int i=0; i < (signed)currentNode->mAdjacent.size(); i++){
             PathNode* adj = currentNode->mAdjacent[i];
-            if(adj->GetType() == PathNode::Tunnel) continue;
+            //mNextNode = startNode->mAdjacent[0];
+            if(adj->GetType() == PathNode::Tunnel ||
+               std::find(info[currentNode].Unusuable.begin(), info[currentNode].Unusuable.end(), adj) != info[currentNode].Unusuable.end() ||
+               info[adj].IsClosed) continue;
             if(!info[adj].IsClosed){
-                if(std::find(openSet.begin(), openSet.end(), currentNode->mAdjacent[i]) != openSet.end()){ // Check for adoption
+                if(std::find(openSet.begin(), openSet.end(), adj) != openSet.end()){
                     float new_g = info[currentNode].g + edgeCost(currentNode, adj);
                     if(new_g < info[adj].g){
                         info[adj].parent = currentNode;
+                        info[adj].Unusuable = info[info[adj].parent].Unusuable;
+                        if(!info[adj].Unusuable.empty()) info[adj].Unusuable.pop_back();
                         info[adj].g = new_g;
-                        info[adj].f = info[currentNode->mAdjacent[i]].g + info[adj].h;
+                        info[adj].f = info[adj].g + info[adj].h;
                     }
                     
                 } else {
                         info[adj].parent = currentNode;
-                        info[adj].h = edgeCost(adj, targetNode);
+                        info[adj].Unusuable = info[info[adj].parent].Unusuable;
+                        if(!info[adj].Unusuable.empty()) info[adj].Unusuable.pop_back();
+                        info[adj].h = edgeCost(adj, goalNode);
                         info[adj].g = info[currentNode].g + edgeCost(currentNode, adj);
                         info[adj].f = info[adj].g + info[adj].h;
                         openSet.push_back(adj);
@@ -72,16 +121,33 @@ void GhostAI::A_Star(PathNode* targetNode, PathNode* prevNode, PathNode* nextNod
             }
         if(openSet.empty()) break;
         //currentNode = Node with lowest f in openSet
+        float min = 10000000.0f;
+        int index;
         for(int i = 0; i < (signed)openSet.size(); i++){
-            if(info[openSet[i+1]].f > info[openSet[i]].f){
-                mMin = openSet[i];
+            if(min > info[openSet[i]].f){
+                min = info[openSet[i]].f;
+                index = i;
             }
         }
-        currentNode = mMin;
+        currentNode = openSet[index];
         auto iter = std::find(openSet.begin(), openSet.end(), currentNode);
         openSet.erase(iter);
         info[currentNode].IsClosed = true;
-    } while (currentNode != targetNode);
+    } while (currentNode != goalNode);
+    PathNode* temp = goalNode;
+    PathNode* s_node = temp;
+    while(temp){
+        mPath.push_back(temp);
+        temp = info[temp].parent;
+        if(s_node == temp) break;
+    }
+    /*for(int i=mPath.size(); i>0 ; i--){
+        mNextNode = mPath[i];
+    }*/
+    mPrevNode = mPath[mPath.size()-1];
+    mNextNode = mPath[mPath.size()-2];
+    mPath.pop_back();
+    mPath.pop_back();
 }
 
 float GhostAI::edgeCost(PathNode *curr, PathNode *adj){
