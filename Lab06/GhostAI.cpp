@@ -22,23 +22,17 @@ GhostAI::GhostAI(class Actor* owner)
 void GhostAI::Update(float deltaTime)
 {
 	// TODO: Implement
-    std::cout << "update " << mMoveDir.x << " " << mMoveDir.y << std::endl;
-    if(mNextNode == nullptr) return;
-    /*if(GetState() == State::Scatter){
-        mGhost->GetComponent<MoveComponent>()->SetForwardSpeed(90.0f);
-    }*/
-    if(mGhost->GetComponent<CollisionComponent>()->Intersect(mNextNode->GetComponent<CollisionComponent>())){
-            mGhost->SetPosition(mNextNode->GetPosition());
-            std::cout << "collision" << std::endl;
-                mPrevNode = mNextNode;
-                if(mPath.empty()) return;
-                mNextNode = mPath[mPath.size()-1];
-                mPath.pop_back();
-            SetDirection(mNextNode->GetPosition());
-    }
+    
     Vector2 pos = mGhost->GetPosition();
     pos += mMoveDir * 90.0f * deltaTime;
     mGhost->SetPosition(pos);
+    
+    if(mNextNode == nullptr){
+        return;
+    }
+    if(mGhost->GetComponent<CollisionComponent>()->Intersect(mNextNode->GetComponent<CollisionComponent>())){
+            updatePathBOS();
+    }
 }
 
 void GhostAI::SetDirection(Vector2 pos){
@@ -58,6 +52,26 @@ void GhostAI::SetDirection(Vector2 pos){
     }
 }
 
+void GhostAI::updatePathBOS(){
+    if(mState == State::Scatter){
+        updatePathScatter();
+    }
+}
+
+void GhostAI::updatePathScatter(){
+    mGhost->SetPosition(mNextNode->GetPosition());
+    mPrevNode = mNextNode;
+    if(mPath.empty()){
+        A_Star(mGhost->GetScatterNode(),  mGhost->GetScatterNode());
+    } else {
+    std::cout << "mpath size " << mPath.size() << std::endl;
+        mNextNode = mPath[mPath.size()-1];
+        mPath.pop_back();
+    } 
+    
+    SetDirection(mNextNode->GetPosition());
+}
+
 
 void GhostAI::Frighten()
 {
@@ -73,9 +87,7 @@ void GhostAI::Start(PathNode* startNode)
     mNextNode = nullptr;
     mTargetNode = nullptr;
     A_Star(mGhost->GetSpawnNode(), mGhost->GetScatterNode());
-    std::cout << "before " << mMoveDir.x << " " << mMoveDir.y << std::endl;
     SetDirection(mNextNode->GetPosition());
-    std::cout << "after " << mMoveDir.x << " " << mMoveDir.y << std::endl;
 }
 
 void GhostAI::Die()
@@ -90,14 +102,16 @@ void GhostAI::A_Star(PathNode* startNode, PathNode* goalNode){
     if(currentNode != goalNode) info[currentNode].IsClosed = true;
     info[currentNode].Unusuable.push_back(mNextNode);
     info[currentNode].Unusuable.push_back(mPrevNode);
+    int count = 0;
     do {
+        std::cout << "counter " << count++ << std::endl;
         for(int i=0; i < (signed)currentNode->mAdjacent.size(); i++){
             PathNode* adj = currentNode->mAdjacent[i];
             //mNextNode = startNode->mAdjacent[0];
             if(adj->GetType() == PathNode::Tunnel ||
                std::find(info[currentNode].Unusuable.begin(), info[currentNode].Unusuable.end(), adj) != info[currentNode].Unusuable.end() ||
                info[adj].IsClosed) continue;
-            if(!info[adj].IsClosed){
+          
                 if(std::find(openSet.begin(), openSet.end(), adj) != openSet.end()){
                     float new_g = info[currentNode].g + edgeCost(currentNode, adj);
                     if(new_g < info[adj].g){
@@ -117,7 +131,7 @@ void GhostAI::A_Star(PathNode* startNode, PathNode* goalNode){
                         info[adj].f = info[adj].g + info[adj].h;
                         openSet.push_back(adj);
                     }
-                }
+
             }
         if(openSet.empty()) break;
         //currentNode = Node with lowest f in openSet
@@ -141,6 +155,7 @@ void GhostAI::A_Star(PathNode* startNode, PathNode* goalNode){
         temp = info[temp].parent;
         if(s_node == temp) break;
     }
+    std::cout << "mpath size again " << mPath.size() << std::endl;
     /*for(int i=mPath.size(); i>0 ; i--){
         mNextNode = mPath[i];
     }*/

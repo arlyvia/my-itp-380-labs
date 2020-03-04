@@ -62,6 +62,10 @@ public:
     
     void SetDirection(Vector2 pos);
     
+    void updatePathBOS();
+    
+    void updatePathScatter();
+    
 private:
 	// Member data for pathfinding
 
