@@ -35,6 +35,10 @@ void GhostAI::Update(float deltaTime)
     if(mGhost->GetComponent<CollisionComponent>()->Intersect(mNextNode->GetComponent<CollisionComponent>())){
             updatePathBOS(deltaTime);
     }
+    
+    if(mGhost->GetComponent<CollisionComponent>()->Intersect(mGhost->GetGame()->mPlayer->GetComponent<CollisionComponent>())){
+            if(mState == State::Frightened) Die();
+        }
 }
 
 void GhostAI::SetDirection(Vector2 pos){
@@ -83,16 +87,25 @@ void GhostAI::updatePathBOS(float deltaTime){
         mNextNode = possible_nodes[r_index];
         if(mStateTimer > 5.0f){
             mGhost->GetComponent<AnimatedSprite>()->SetAnimation("scared1");
-        } else {
-            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("scared0");
         }
         
         if(mStateTimer > 7.0f){
             mStateTimer = 0.0f;
             
-            mState = State::Scatter;
-            //return;
+            mState = State::Scatter; 
         }
+        SetDirection(mNextNode->GetPosition());
+    }
+    if(mState == State::Dead){
+        mGhost->SetPosition(mNextNode->GetPosition());
+        if(mGhost->GetPosition().x == mGhost->GetGame()->mGhostPen->GetPosition().x
+              && mGhost->GetPosition().y == mGhost->GetGame()->mGhostPen->GetPosition().y){
+               Start(mGhost->GetGame()->mGhostPen);
+            return;
+        }
+        mPrevNode = mNextNode;
+        mNextNode = mPath[mPath.size()-1];
+        mPath.pop_back();
         SetDirection(mNextNode->GetPosition());
     }
 }
@@ -117,6 +130,7 @@ void GhostAI::Frighten()
 {
 	// TODO: Implement
     mStateTimer = 0;
+    mGhost->GetComponent<AnimatedSprite>()->SetAnimation("scared0");
     mGhostSpeed = 65.0f;
     std::cout << "fright2" << std::endl;
     mState = State::Frightened;
@@ -143,6 +157,9 @@ void GhostAI::Start(PathNode* startNode)
 void GhostAI::Die()
 {
 	// TODO: Implement
+    mState = State::Dead;
+    mGhostSpeed = 125.0f;
+    A_Star(mNextNode, mGhost->GetGame()->mGhostPen);
 }
 
 void GhostAI::A_Star(PathNode* startNode, PathNode* goalNode){
