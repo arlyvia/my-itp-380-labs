@@ -66,6 +66,8 @@ public:
     
     void updatePathScatter();
     
+    float mGhostSpeed = 90.0f;
+    
 private:
 	// Member data for pathfinding
 

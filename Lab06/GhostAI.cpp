@@ -24,7 +24,7 @@ void GhostAI::Update(float deltaTime)
 	// TODO: Implement
     
     Vector2 pos = mGhost->GetPosition();
-    pos += mMoveDir * 90.0f * deltaTime;
+    pos += mMoveDir * mGhostSpeed * deltaTime;
     mGhost->SetPosition(pos);
     
     if(mNextNode == nullptr){
@@ -56,18 +56,21 @@ void GhostAI::updatePathBOS(){
     if(mState == State::Scatter){
         updatePathScatter();
     }
+    /*if(mState == State::Frightened){
+        int
+    }*/
 }
 
 void GhostAI::updatePathScatter(){
+    mGhostSpeed = 90.0f;
     mGhost->SetPosition(mNextNode->GetPosition());
-    mPrevNode = mNextNode;
     if(mPath.empty()){
         A_Star(mGhost->GetScatterNode(),  mGhost->GetScatterNode());
     } else {
-    std::cout << "mpath size " << mPath.size() << std::endl;
+        mPrevNode = mNextNode;
         mNextNode = mPath[mPath.size()-1];
         mPath.pop_back();
-    } 
+    }
     
     SetDirection(mNextNode->GetPosition());
 }
@@ -76,6 +79,15 @@ void GhostAI::updatePathScatter(){
 void GhostAI::Frighten()
 {
 	// TODO: Implement
+    mGhostSpeed = 65.0f;
+    
+    mState = State::Frightened;
+    PathNode* swap = mNextNode;
+    mNextNode = mPrevNode;
+    mPrevNode = swap;
+    mPath.clear();
+    
+    
 }
 
 void GhostAI::Start(PathNode* startNode)
@@ -97,17 +109,15 @@ void GhostAI::Die()
 
 void GhostAI::A_Star(PathNode* startNode, PathNode* goalNode){
     std::unordered_map<PathNode*, NodeInfo> info;
+    openSet.clear();
     PathNode* currentNode = startNode;
     mTargetNode = goalNode;
     if(currentNode != goalNode) info[currentNode].IsClosed = true;
     info[currentNode].Unusuable.push_back(mNextNode);
     info[currentNode].Unusuable.push_back(mPrevNode);
-    int count = 0;
     do {
-        std::cout << "counter " << count++ << std::endl;
         for(int i=0; i < (signed)currentNode->mAdjacent.size(); i++){
             PathNode* adj = currentNode->mAdjacent[i];
-            //mNextNode = startNode->mAdjacent[0];
             if(adj->GetType() == PathNode::Tunnel ||
                std::find(info[currentNode].Unusuable.begin(), info[currentNode].Unusuable.end(), adj) != info[currentNode].Unusuable.end() ||
                info[adj].IsClosed) continue;
@@ -155,13 +165,8 @@ void GhostAI::A_Star(PathNode* startNode, PathNode* goalNode){
         temp = info[temp].parent;
         if(s_node == temp) break;
     }
-    std::cout << "mpath size again " << mPath.size() << std::endl;
-    /*for(int i=mPath.size(); i>0 ; i--){
-        mNextNode = mPath[i];
-    }*/
-    mPrevNode = mPath[mPath.size()-1];
-    mNextNode = mPath[mPath.size()-2];
-    mPath.pop_back();
+    mPrevNode = startNode;
+    mNextNode = mPath[mPath.size()-1];
     mPath.pop_back();
 }
 
