@@ -80,7 +80,7 @@ void GhostAI::updatePathBOS(float deltaTime){
         }
     
         mPrevNode = mNextNode;
-        mNextNode = mNextNode->mAdjacent[r_index];
+        mNextNode = possible_nodes[r_index];
         if(mStateTimer > 5.0f){
             mGhost->GetComponent<AnimatedSprite>()->SetAnimation("scared1");
         } else {
