@@ -27,11 +27,13 @@ void GhostAI::Update(float deltaTime)
     pos += mMoveDir * mGhostSpeed * deltaTime;
     mGhost->SetPosition(pos);
     
+    mStateTimer = deltaTime + mStateTimer;
+    
     if(mNextNode == nullptr){
         return;
     }
     if(mGhost->GetComponent<CollisionComponent>()->Intersect(mNextNode->GetComponent<CollisionComponent>())){
-            updatePathBOS();
+            updatePathBOS(deltaTime);
     }
 }
 
@@ -52,20 +54,55 @@ void GhostAI::SetDirection(Vector2 pos){
     }
 }
 
-void GhostAI::updatePathBOS(){
+void GhostAI::updatePathBOS(float deltaTime){
+    
     if(mState == State::Scatter){
         updatePathScatter();
     }
-    /*if(mState == State::Frightened){
-        int
-    }*/
+    if(mState == State::Frightened){
+        mGhost->SetPosition(mNextNode->GetPosition());
+    
+        std::vector<PathNode*> possible_nodes;
+        for(int i=0; i < (signed)mNextNode->mAdjacent.size(); i++){
+            if(mNextNode->mAdjacent[i] != mPrevNode
+               && mNextNode->mAdjacent[i]->GetType() != PathNode::Tunnel){
+                possible_nodes.push_back(mNextNode->mAdjacent[i]);
+            }
+        }
+        
+        int r_index = rand() % possible_nodes.size();
+        if(possible_nodes[r_index]->GetType() == PathNode::Ghost){
+            for(int i=0; i < (signed)possible_nodes.size(); i++){
+                if(possible_nodes[i]->GetType() != PathNode::Ghost){
+                    r_index = i;
+                }
+            }
+        }
+    
+        mPrevNode = mNextNode;
+        mNextNode = mNextNode->mAdjacent[r_index];
+        if(mStateTimer > 5.0f){
+            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("scared1");
+        } else {
+            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("scared0");
+        }
+        
+        if(mStateTimer > 7.0f){
+            mStateTimer = 0.0f;
+            
+            mState = State::Scatter;
+            //return;
+        }
+        SetDirection(mNextNode->GetPosition());
+    }
 }
 
 void GhostAI::updatePathScatter(){
+    mGhost->GetComponent<AnimatedSprite>()->SetAnimation("left");
     mGhostSpeed = 90.0f;
     mGhost->SetPosition(mNextNode->GetPosition());
     if(mPath.empty()){
-        A_Star(mGhost->GetScatterNode(),  mGhost->GetScatterNode());
+        A_Star(mNextNode, mGhost->GetScatterNode());
     } else {
         mPrevNode = mNextNode;
         mNextNode = mPath[mPath.size()-1];
@@ -79,14 +116,15 @@ void GhostAI::updatePathScatter(){
 void GhostAI::Frighten()
 {
 	// TODO: Implement
+    mStateTimer = 0;
     mGhostSpeed = 65.0f;
-    
+    std::cout << "fright2" << std::endl;
     mState = State::Frightened;
     PathNode* swap = mNextNode;
     mNextNode = mPrevNode;
     mPrevNode = swap;
+    SetDirection(mNextNode->GetPosition());
     mPath.clear();
-    
     
 }
 

@@ -62,11 +62,13 @@ public:
     
     void SetDirection(Vector2 pos);
     
-    void updatePathBOS();
+    void updatePathBOS(float deltaTime);
     
     void updatePathScatter();
     
     float mGhostSpeed = 90.0f;
+    
+    float mStateTimer = 0.0f;
     
 private:
 	// Member data for pathfinding
