@@ -20,6 +20,8 @@ public:
 	Mix_Chunk* GetSound(const std::string& fileName);
 
 	class Renderer* GetRenderer() {	return mRenderer; }
+    
+    class Player* mPlayer;
 private:
 	void ProcessInput();
 	void UpdateGame();
