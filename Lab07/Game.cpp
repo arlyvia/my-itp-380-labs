@@ -13,6 +13,9 @@
 #include "Renderer.h"
 #include "Random.h"
 #include "Player.hpp"
+#include "SideBlock.hpp"
+#include "MeshComponent.h"
+#include <iostream>
 
 Game::Game()
 :mIsRunning(true)
@@ -117,6 +120,31 @@ void Game::UpdateGame()
 	{
 		delete actor;
 	}
+    
+    //spawning sideblocks
+    if(dist - mPlayer->GetPosition().x < 3000.0f){
+        num_blocks++;
+    
+        SideBlock* sb_right = new SideBlock(this);
+        sb_right->SetPosition(Vector3(dist, 500, 0));
+        sb_right->SetScale(sb_right->mScale);
+        if(num_blocks%2 == 0) {
+            sb_right->GetComponent<MeshComponent>()->SetTextureIndex(4);
+        } else {
+            sb_right->GetComponent<MeshComponent>()->SetTextureIndex(3);
+        }
+        
+        SideBlock* sb_left = new SideBlock(this);
+        sb_left->SetPosition(Vector3(dist, -500, 0));
+        sb_left->SetScale(sb_left->mScale);
+        if(num_blocks%2 == 0) {
+            sb_left->GetComponent<MeshComponent>()->SetTextureIndex(4);
+        } else {
+            sb_left->GetComponent<MeshComponent>()->SetTextureIndex(3);
+        }
+        
+        dist = dist + 500.0f;
+    }
 }
 
 void Game::GenerateOutput()
@@ -136,6 +164,29 @@ void Game::LoadData()
     Vector3 tar_pos = Vector3(20, 0, 0);
     Matrix4 viewMatrix = Matrix4::CreateLookAt(eye_pos, tar_pos, Vector3::UnitZ);
     mRenderer->SetViewMatrix(viewMatrix);
+    
+    //original sideblocks
+    for(int i = 0; i < 6; i++){
+        SideBlock* sb = new SideBlock(this);
+        sb->SetPosition(Vector3(i*500, 500, 0));
+        std::cout << 500*i << std::endl;
+        sb->SetScale(sb->mScale);
+        if(i%2 == 0) {
+            sb->GetComponent<MeshComponent>()->SetTextureIndex(3);
+        } else {
+            sb->GetComponent<MeshComponent>()->SetTextureIndex(4);
+        }
+    }
+    for(int i = 0; i < 6; i++){
+        SideBlock* sb = new SideBlock(this);
+        sb->SetPosition(Vector3(i*500, -500, 0));
+        sb->SetScale(sb->mScale);
+        if(i%2 == 0) {
+            sb->GetComponent<MeshComponent>()->SetTextureIndex(3);
+        } else {
+            sb->GetComponent<MeshComponent>()->SetTextureIndex(4);
+        }
+    }
 }
 
 void Game::UnloadData()

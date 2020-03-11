@@ -22,6 +22,13 @@ public:
 	class Renderer* GetRenderer() {	return mRenderer; }
     
     class Player* mPlayer;
+    
+    class SideBlock* sb1;
+    class SideBlock* sb2;
+    
+    float dist = 3000.0f;
+    
+    int num_blocks = 6;
 private:
 	void ProcessInput();
 	void UpdateGame();

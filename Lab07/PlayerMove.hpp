@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "MoveComponent.h"
 #include "Math.h"
+#include "Actor.h"
 
 class PlayerMove: public MoveComponent {
     public:
@@ -23,6 +24,17 @@ class PlayerMove: public MoveComponent {
         Vector3 mVelocity;
         float x_speed = 400.0f;
         float z_speed = 300.0f;
+        float y_speed = 300.0f;
+    
+        Vector3 mPos = mOwner->GetPosition();
+        float zDir = 0;
+        float yDir = 0;
+    
+        float HDist = 300.0f;
+        float VDist = 100.0f;
+        float TargetDist = 20.0f;
+    
+        float last_x_pos = 0;
 };
 
 #endif /* PlayerMove_hpp */
