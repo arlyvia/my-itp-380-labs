@@ -15,6 +15,7 @@
 #include "Player.hpp"
 #include "SideBlock.hpp"
 #include "MeshComponent.h"
+#include"Block.hpp"
 #include <iostream>
 
 Game::Game()
@@ -145,6 +146,18 @@ void Game::UpdateGame()
         
         dist = dist + 500.0f;
     }
+    
+    if(block_dist - mPlayer->GetPosition().x < 3000.0f){
+        num_other_blocks++;
+        if(num_other_blocks <=20){
+            std::cout<< num_other_blocks << std::endl;
+            //std::cout<< std::to_string(num_other_blocks) << ".txt" << std::endl;
+            loadBlocks("Assets/Blocks/" + std::to_string(num_other_blocks) + ".txt");
+        } else {
+            int txt_num = rand() % 19;
+            loadBlocks("Assets/Blocks/" + std::to_string(txt_num) + ".txt");
+        }
+    }
 }
 
 void Game::GenerateOutput()
@@ -187,6 +200,9 @@ void Game::LoadData()
             sb->GetComponent<MeshComponent>()->SetTextureIndex(4);
         }
     }
+    
+    loadBlocks("Assets/Blocks/1.txt");
+    loadBlocks("Assets/Blocks/2.txt");
 }
 
 void Game::UnloadData()
@@ -254,3 +270,78 @@ void Game::RemoveActor(Actor* actor)
 		mActors.pop_back();
 	}
 }
+
+void Game::AddBlock(Block* block){
+    mBlocks.push_back(block);
+}
+
+void Game::RemoveBlock(Block* block){
+    auto it = std::find(mBlocks.begin(), mBlocks.end(), block);
+    if(it != mBlocks.end())
+    {
+        mBlocks.erase(it);
+    }
+}
+
+/*void Game::loadBlock(std::string texture, int pos_i, int pos_j){
+        Block* blockA = new Block(this);
+        Vector2 pos_blockA =
+            Vector2(start_offset_x + pos_j*32,
+            start_offset_y + pos_i*32);
+        blockA->SetPosition(pos_blockA);
+    
+}*/
+
+void Game::loadBlocks(std::string filename){
+    std::ifstream textFile;
+    textFile.open(filename);
+    if (!textFile) {
+      exit(1);
+    }
+
+    std::string str = "";
+  
+    for(int i = 0; i<20; i++){
+      std::getline(textFile, str);
+      for(int j = 0; j<(signed)str.length(); j++){
+          if(str[j] == '.'){
+              continue;
+          }
+          if(str[j] == 'A'){
+              Block* blockA = new Block(this);
+              blockA->SetPosition(Vector3(block_dist, -237.5f + 25.0f*j, 237.5f - 25.0f*i));
+              blockA->SetScale(blockA->mScale);
+          } else if(str[j] == 'B'){
+              Block* blockB = new Block(this);
+              blockB->SetPosition(Vector3(block_dist, -237.5f + 25.0f*j, 237.5f - 25.0f*j));
+              blockB->SetScale(blockB->mScale);
+          }
+      }
+      
+    }
+    block_dist = block_dist + 1000.0f;
+}
+
+/*if(dist - mPlayer->GetPosition().x < 3000.0f){
+    num_blocks++;
+
+    SideBlock* sb_right = new SideBlock(this);
+    sb_right->SetPosition(Vector3(dist, 500, 0));
+    sb_right->SetScale(sb_right->mScale);
+    if(num_blocks%2 == 0) {
+        sb_right->GetComponent<MeshComponent>()->SetTextureIndex(4);
+    } else {
+        sb_right->GetComponent<MeshComponent>()->SetTextureIndex(3);
+    }
+    
+    SideBlock* sb_left = new SideBlock(this);
+    sb_left->SetPosition(Vector3(dist, -500, 0));
+    sb_left->SetScale(sb_left->mScale);
+    if(num_blocks%2 == 0) {
+        sb_left->GetComponent<MeshComponent>()->SetTextureIndex(4);
+    } else {
+        sb_left->GetComponent<MeshComponent>()->SetTextureIndex(3);
+    }
+    
+    dist = dist + 500.0f;
+}*/

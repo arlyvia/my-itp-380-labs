@@ -60,13 +60,4 @@ void PlayerMove::Update(float deltaTime){
     
     mOwner->GetGame()->GetRenderer()->SetViewMatrix(viewMatrix);
     
-    /*if(true){
-    //float num_sides = mPlayer->GetPosition().x / 500;
-    for(int i = 0; i < 3; i++){
-        SideBlock* sb = new SideBlock(this);
-        sb->SetPosition(Vector3(0, 500*i, 0));
-        sb->sideblock_mhc->SetTextureIndex(1);
-        std::cout << 500*i << std::endl;
-        sb->SetScale(sb->mScale);
-    }*/
 }

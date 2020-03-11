@@ -29,6 +29,17 @@ public:
     float dist = 3000.0f;
     
     int num_blocks = 6;
+    
+    std::vector<class Block*> mBlocks;
+
+    void AddBlock(Block* block);
+    void RemoveBlock(Block* block);
+    
+    void loadBlocks(std::string filename);
+    
+    float block_dist = 1000.0f;
+    
+    int num_other_blocks = 2;
 private:
 	void ProcessInput();
 	void UpdateGame();
