@@ -154,7 +154,7 @@ void Game::UpdateGame()
             //std::cout<< std::to_string(num_other_blocks) << ".txt" << std::endl;
             loadBlocks("Assets/Blocks/" + std::to_string(num_other_blocks) + ".txt");
         } else {
-            int txt_num = rand() % 19;
+            int txt_num = rand() % 20 + 1;
             loadBlocks("Assets/Blocks/" + std::to_string(txt_num) + ".txt");
         }
     }
@@ -283,15 +283,6 @@ void Game::RemoveBlock(Block* block){
     }
 }
 
-/*void Game::loadBlock(std::string texture, int pos_i, int pos_j){
-        Block* blockA = new Block(this);
-        Vector2 pos_blockA =
-            Vector2(start_offset_x + pos_j*32,
-            start_offset_y + pos_i*32);
-        blockA->SetPosition(pos_blockA);
-    
-}*/
-
 void Game::loadBlocks(std::string filename){
     std::ifstream textFile;
     textFile.open(filename);
@@ -313,7 +304,7 @@ void Game::loadBlocks(std::string filename){
               blockA->SetScale(blockA->mScale);
           } else if(str[j] == 'B'){
               Block* blockB = new Block(this);
-              blockB->SetPosition(Vector3(block_dist, -237.5f + 25.0f*j, 237.5f - 25.0f*j));
+              blockB->SetPosition(Vector3(block_dist, -237.5f + 25.0f*j, 237.5f - 25.0f*i));
               blockB->SetScale(blockB->mScale);
           }
       }
@@ -321,27 +312,3 @@ void Game::loadBlocks(std::string filename){
     }
     block_dist = block_dist + 1000.0f;
 }
-
-/*if(dist - mPlayer->GetPosition().x < 3000.0f){
-    num_blocks++;
-
-    SideBlock* sb_right = new SideBlock(this);
-    sb_right->SetPosition(Vector3(dist, 500, 0));
-    sb_right->SetScale(sb_right->mScale);
-    if(num_blocks%2 == 0) {
-        sb_right->GetComponent<MeshComponent>()->SetTextureIndex(4);
-    } else {
-        sb_right->GetComponent<MeshComponent>()->SetTextureIndex(3);
-    }
-    
-    SideBlock* sb_left = new SideBlock(this);
-    sb_left->SetPosition(Vector3(dist, -500, 0));
-    sb_left->SetScale(sb_left->mScale);
-    if(num_blocks%2 == 0) {
-        sb_left->GetComponent<MeshComponent>()->SetTextureIndex(4);
-    } else {
-        sb_left->GetComponent<MeshComponent>()->SetTextureIndex(3);
-    }
-    
-    dist = dist + 500.0f;
-}*/
