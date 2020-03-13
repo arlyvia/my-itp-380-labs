@@ -23,6 +23,10 @@ class Block: public Actor {
         class CollisionComponent* block_cc;
     
         void OnUpdate(float deltaTime) override;
+    
+        bool mExploding;
+    
+        void explode();
 };
 
 #endif /* Block_hpp */

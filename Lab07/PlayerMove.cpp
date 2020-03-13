@@ -11,6 +11,7 @@
 #include "Game.h"
 #include "SideBlock.hpp"
 #include "Renderer.h"
+#include "Bullet.hpp"
 #include <iostream>
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_image.h>
@@ -29,6 +30,7 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
     } else {
         zDir = 0;
     }
+    
     if(keyState[SDL_SCANCODE_A]){
         yDir = -y_speed;
     } else if(keyState[SDL_SCANCODE_D]){
@@ -36,9 +38,21 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
     } else {
         yDir = 0;
     }
+    
+    if (keyState[SDL_SCANCODE_SPACE]){
+        if(mElapsedTime > 1.0f){
+            Bullet* bullet = new Bullet(mOwner->GetGame());
+            Vector3 bullet_pos = mOwner->GetPosition();
+            bullet->SetPosition(bullet_pos);
+            mElapsedTime = 0.0f;
+        }
+        
+    }
 }
 
 void PlayerMove::Update(float deltaTime){
+    mElapsedTime = deltaTime + mElapsedTime;
+    
     SetForwardSpeed(x_speed);
     mVelocity = mOwner->GetForward() * GetForwardSpeed();
     mPos = mOwner->GetPosition() + mVelocity * deltaTime;

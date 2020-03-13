@@ -302,10 +302,14 @@ void Game::loadBlocks(std::string filename){
               Block* blockA = new Block(this);
               blockA->SetPosition(Vector3(block_dist, -237.5f + 25.0f*j, 237.5f - 25.0f*i));
               blockA->SetScale(blockA->mScale);
+              blockA->GetComponent<MeshComponent>()->SetTextureIndex(2);
+              blockA->mExploding = false;
           } else if(str[j] == 'B'){
               Block* blockB = new Block(this);
               blockB->SetPosition(Vector3(block_dist, -237.5f + 25.0f*j, 237.5f - 25.0f*i));
               blockB->SetScale(blockB->mScale);
+              blockB->GetComponent<MeshComponent>()->SetTextureIndex(4);
+              blockB->mExploding = true;
           }
       }
       

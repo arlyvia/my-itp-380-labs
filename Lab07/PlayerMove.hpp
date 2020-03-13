@@ -35,6 +35,8 @@ class PlayerMove: public MoveComponent {
         float TargetDist = 20.0f;
     
         float last_x_pos = 0;
+    
+        float mElapsedTime = 0;
 };
 
 #endif /* PlayerMove_hpp */
