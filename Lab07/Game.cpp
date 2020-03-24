@@ -150,8 +150,6 @@ void Game::UpdateGame()
     if(block_dist - mPlayer->GetPosition().x < 3000.0f){
         num_other_blocks++;
         if(num_other_blocks <=20){
-            std::cout<< num_other_blocks << std::endl;
-            //std::cout<< std::to_string(num_other_blocks) << ".txt" << std::endl;
             loadBlocks("Assets/Blocks/" + std::to_string(num_other_blocks) + ".txt");
         } else {
             int txt_num = rand() % 20 + 1;
@@ -182,7 +180,6 @@ void Game::LoadData()
     for(int i = 0; i < 6; i++){
         SideBlock* sb = new SideBlock(this);
         sb->SetPosition(Vector3(i*500, 500, 0));
-        std::cout << 500*i << std::endl;
         sb->SetScale(sb->mScale);
         if(i%2 == 0) {
             sb->GetComponent<MeshComponent>()->SetTextureIndex(3);
@@ -203,6 +200,12 @@ void Game::LoadData()
     
     loadBlocks("Assets/Blocks/1.txt");
     loadBlocks("Assets/Blocks/2.txt");
+    
+    Mix_Chunk* music = GetSound("Assets/Sounds/ShipLoop.wav");
+    mChannel = Mix_PlayChannel(-1, music, -1);
+    if(mChannel==-1) {
+        printf("Mix_PlayChannel: %s\n",Mix_GetError());
+    }
 }
 
 void Game::UnloadData()

@@ -12,7 +12,9 @@
 #include "CollisionComponent.h"
 #include "MoveComponent.h"
 #include "Player.hpp"
+#include "PlayerMove.hpp"
 #include "Block.hpp"
+#include <iostream>
 
 Bullet::Bullet(class Game* game)
 :Actor(game)
@@ -21,7 +23,7 @@ Bullet::Bullet(class Game* game)
     bullet_mhc->SetMesh(GetGame()->GetRenderer()->GetMesh("Assets/Sphere.gpmesh"));
     
     bullet_mc = new MoveComponent(this);
-    bullet_mc->SetForwardSpeed(900.0f);
+    bullet_mc->SetForwardSpeed(500 + GetGame()->mPlayer->GetComponent<MoveComponent>()->GetForwardSpeed());
     
     bullet_cc = new CollisionComponent(this);
     bullet_cc->SetSize(10, 10, 10);
@@ -38,6 +40,8 @@ void Bullet::OnUpdate(float deltaTime){
         if(GetComponent<CollisionComponent>()->Intersect(GetGame()->mBlocks[i]->GetComponent<CollisionComponent>())){
                 SetState(ActorState::Destroy);
                 if(GetGame()->mBlocks[i]->mExploding == true){
+                    Mix_Chunk* explode = GetGame()->GetSound("Assets/Sounds/BlockExplode.wav");
+                    Mix_PlayChannel(-1, explode, 0);
                     GetGame()->mBlocks[i]->explode();
                 }
         }

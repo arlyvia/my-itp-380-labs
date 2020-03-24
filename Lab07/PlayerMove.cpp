@@ -15,6 +15,8 @@
 #include <iostream>
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_image.h>
+#include "CollisionComponent.h"
+#include "Block.hpp"
 
 PlayerMove::PlayerMove(class Actor* owner)
     :MoveComponent(owner)
@@ -24,17 +26,17 @@ PlayerMove::PlayerMove(class Actor* owner)
 
 void PlayerMove::ProcessInput(const Uint8 *keyState){
     if(keyState[SDL_SCANCODE_W]){
-        zDir = z_speed;
+        zDir = z_speed * speed_multiplier;
     } else if(keyState[SDL_SCANCODE_S]){
-        zDir = -z_speed;
+        zDir = -z_speed * speed_multiplier;
     } else {
         zDir = 0;
     }
     
     if(keyState[SDL_SCANCODE_A]){
-        yDir = -y_speed;
+        yDir = -y_speed * speed_multiplier;
     } else if(keyState[SDL_SCANCODE_D]){
-        yDir = y_speed;
+        yDir = y_speed * speed_multiplier;
     } else {
         yDir = 0;
     }
@@ -45,6 +47,8 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
             Vector3 bullet_pos = mOwner->GetPosition();
             bullet->SetPosition(bullet_pos);
             mElapsedTime = 0.0f;
+            Mix_Chunk* pew = mOwner->GetGame()->GetSound("Assets/Sounds/Shoot.wav");
+            Mix_PlayChannel(-1, pew, 0);
         }
         
     }
@@ -52,8 +56,14 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
 
 void PlayerMove::Update(float deltaTime){
     mElapsedTime = deltaTime + mElapsedTime;
+    mSpeedTimer = deltaTime + mSpeedTimer;
     
-    SetForwardSpeed(x_speed);
+    if(mSpeedTimer > 10.0f){
+        mSpeedTimer = 0;
+        speed_multiplier = speed_multiplier + 0.15f;
+    }
+    
+    SetForwardSpeed(x_speed * speed_multiplier);
     mVelocity = mOwner->GetForward() * GetForwardSpeed();
     mPos = mOwner->GetPosition() + mVelocity * deltaTime;
     mOwner->SetPosition(mPos);
@@ -75,4 +85,12 @@ void PlayerMove::Update(float deltaTime){
     
     mOwner->GetGame()->GetRenderer()->SetViewMatrix(viewMatrix);
     
+    for(int i=0; i < (signed)(int)mOwner->GetGame()->mBlocks.size(); i++){
+        if(mOwner->GetComponent<CollisionComponent>()->Intersect(mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>())){
+            mOwner->SetState(ActorState::Paused);
+            Mix_Chunk* die_sound = mOwner->GetGame()->GetSound("Assets/Sounds/ShipDie.wav");
+            Mix_HaltChannel(mOwner->GetGame()->mChannel);
+            Mix_PlayChannel(-1, die_sound, 0);
+        }
+    }
 }

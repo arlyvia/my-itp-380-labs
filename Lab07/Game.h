@@ -40,6 +40,9 @@ public:
     float block_dist = 1000.0f;
     
     int num_other_blocks = 2;
+    
+    int mChannel;
+    
 private:
 	void ProcessInput();
 	void UpdateGame();
