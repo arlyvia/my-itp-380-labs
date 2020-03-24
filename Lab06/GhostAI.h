@@ -35,6 +35,8 @@ public:
 	// Called when the ghost should switch to the "Dead" state
 	void Die();
     
+    void Chasin();
+    
     struct NodeInfo {
         // The parent is the node at "before" current node
         PathNode* parent = nullptr;
@@ -69,6 +71,13 @@ public:
     float mGhostSpeed = 90.0f;
     
     float mStateTimer = 0.0f;
+    
+    void blinkyChase();
+    void pinkyChase();
+    void inkyChase();
+    void clydeChase();
+    
+    PathNode* closest(Vector2 pos);
     
 private:
 	// Member data for pathfinding

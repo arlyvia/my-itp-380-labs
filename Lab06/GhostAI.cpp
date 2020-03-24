@@ -45,23 +45,32 @@ void GhostAI::SetDirection(Vector2 pos){
     if(pos.x < mGhost->GetPosition().x){
         mMoveDir.y = 0.0f;
         mMoveDir.x = -1.0f;
+        mGhost->GetComponent<AnimatedSprite>()->SetAnimation("left");
     } else if(pos.x > mGhost->GetPosition().x){
         mMoveDir.y = 0.0f;
         mMoveDir.x = 1.0f;
+        //depending on state (3 states)
+        mGhost->GetComponent<AnimatedSprite>()->SetAnimation("right");
     }
     if(pos.y < mGhost->GetPosition().y){
         mMoveDir.y = -1.0f;
         mMoveDir.x = 0.0f;
+        mGhost->GetComponent<AnimatedSprite>()->SetAnimation("up");
     } else if(pos.y > mGhost->GetPosition().y){
         mMoveDir.y = 1.0f;
         mMoveDir.x = 0.0f;
+        mGhost->GetComponent<AnimatedSprite>()->SetAnimation("down");
     }
 }
 
 void GhostAI::updatePathBOS(float deltaTime){
     
+    
     if(mState == State::Scatter){
         updatePathScatter();
+        if(mStateTimer > 5.0f){
+            Chasin();
+        }
     }
     if(mState == State::Frightened){
         mGhost->SetPosition(mNextNode->GetPosition());
@@ -90,7 +99,7 @@ void GhostAI::updatePathBOS(float deltaTime){
         }
         
         if(mStateTimer > 7.0f){
-            mStateTimer = 0.0f;
+            mStateTimer = 0;
             
             mState = State::Scatter; 
         }
@@ -108,10 +117,27 @@ void GhostAI::updatePathBOS(float deltaTime){
         mPath.pop_back();
         SetDirection(mNextNode->GetPosition());
     }
+    if(mState == State::Chase){
+        if(mGhost->GetType() == Ghost::Type::Blinky){
+            blinkyChase();
+        }
+        if(mGhost->GetType() == Ghost::Type::Pinky){
+            pinkyChase();
+        }
+        if(mGhost->GetType() == Ghost::Type::Inky){
+            inkyChase();
+        }
+        if(mGhost->GetType() == Ghost::Type::Clyde){
+            clydeChase();
+        }
+        if(mStateTimer > 20.0f){
+            mStateTimer = 0;
+            mState = State::Scatter;
+        }
+    }
 }
 
 void GhostAI::updatePathScatter(){
-    mGhost->GetComponent<AnimatedSprite>()->SetAnimation("left");
     mGhostSpeed = 90.0f;
     mGhost->SetPosition(mNextNode->GetPosition());
     if(mPath.empty()){
@@ -158,8 +184,123 @@ void GhostAI::Die()
 {
 	// TODO: Implement
     mState = State::Dead;
+    mGhost->GetComponent<AnimatedSprite>()->SetAnimation("deadright");
     mGhostSpeed = 125.0f;
     A_Star(mNextNode, mGhost->GetGame()->mGhostPen);
+}
+
+void GhostAI::Chasin(){
+    mStateTimer = 0;
+    mState = State::Chase;
+}
+
+void GhostAI::blinkyChase(){
+    PathNode* pm_prev = mOwner->GetGame()->mPlayer->GetPrevNode();
+    
+    if(pm_prev->GetType() == PathNode::Tunnel){
+        //pm_prev = closest pathnode::default;
+        pm_prev = closest(mOwner->GetGame()->mPlayer->GetPosition());
+    }
+    
+    mGhost->GetComponent<AnimatedSprite>()->SetAnimation("left");
+    mGhostSpeed = 90.0f;
+    mGhost->SetPosition(mNextNode->GetPosition());
+    if(mPath.empty()){
+        A_Star(mNextNode, pm_prev);
+    } else {
+        mPrevNode = mNextNode;
+        mNextNode = mPath[mPath.size()-1];
+        mPath.pop_back();
+    }
+    
+    SetDirection(mNextNode->GetPosition());
+}
+
+void GhostAI::pinkyChase(){
+    Vector2 target_pos = mOwner->GetGame()->mPlayer->GetPointInFrontOf(80.0f);
+    PathNode* target = closest(target_pos);
+    
+    mGhost->GetComponent<AnimatedSprite>()->SetAnimation("left");
+    mGhostSpeed = 90.0f;
+    mGhost->SetPosition(mNextNode->GetPosition());
+    if(mPath.empty()){
+        A_Star(mNextNode, target);
+    } else {
+        mPrevNode = mNextNode;
+        mNextNode = mPath[mPath.size()-1];
+        mPath.pop_back();
+    }
+    
+    SetDirection(mNextNode->GetPosition());
+}
+
+void GhostAI::inkyChase(){
+    Vector2 target_pos = mOwner->GetGame()->mPlayer->GetPointInFrontOf(40.0f);
+    Vector2 v = target_pos - mOwner->GetGame()->mGhosts[0]->GetPosition();
+    Vector2 Q = (2 * v) + mOwner->GetGame()->mGhosts[0]->GetPosition();
+    std::cout << mOwner->GetGame()->mGhosts[0] << std::endl;
+    
+    PathNode* target = closest(Q);
+    
+    mGhost->GetComponent<AnimatedSprite>()->SetAnimation("left");
+    mGhostSpeed = 90.0f;
+    mGhost->SetPosition(mNextNode->GetPosition());
+    if(mPath.empty()){
+        A_Star(mNextNode, target);
+    } else {
+        mPrevNode = mNextNode;
+        mNextNode = mPath[mPath.size()-1];
+        mPath.pop_back();
+    }
+    
+    SetDirection(mNextNode->GetPosition());
+}
+
+void GhostAI::clydeChase(){
+    float x = mOwner->GetGame()->mPlayer->GetPosition().x - mOwner->GetPosition().x;
+    float y = mOwner->GetGame()->mPlayer->GetPosition().y - mOwner->GetPosition().y;
+    float dist = pow(x, 2.0f) + pow(y, 2.0f);
+    dist = sqrt(dist);
+    
+    PathNode* target;
+    
+    if(dist > 150.0f){
+        target = mOwner->GetGame()->mPlayer->GetPrevNode();
+    } else{
+        target = mGhost->GetScatterNode();
+    }
+    
+    mGhost->GetComponent<AnimatedSprite>()->SetAnimation("left");
+    mGhostSpeed = 90.0f;
+    mGhost->SetPosition(mNextNode->GetPosition());
+    if(mPath.empty()){
+        A_Star(mNextNode, target);
+    } else {
+        mPrevNode = mNextNode;
+        mNextNode = mPath[mPath.size()-1];
+        mPath.pop_back();
+    }
+    
+    SetDirection(mNextNode->GetPosition());
+    
+}
+
+PathNode* GhostAI::closest(Vector2 pos){
+    float min = 100000;
+    PathNode* minNode;
+    
+    for(int i=0; i < (signed)(int)mOwner->GetGame()->mPathNodes.size(); i++){
+        float x = mOwner->GetGame()->mPathNodes[i]->GetPosition().x - pos.x;
+        float y = mOwner->GetGame()->mPathNodes[i]->GetPosition().y - pos.y;
+        float dist = pow(x, 2.0f) + pow(y, 2.0f);
+        dist = sqrt(dist);
+        if(dist < min &&
+           mOwner->GetGame()->mPathNodes[i]->GetType() == PathNode::Type::Default){
+            min = dist;
+            minNode = mOwner->GetGame()->mPathNodes[i];
+        }
+    }
+    return minNode;
 }
 
 void GhostAI::A_Star(PathNode* startNode, PathNode* goalNode){
@@ -286,3 +427,5 @@ void GhostAI::DebugDrawPath(SDL_Renderer* render)
 			static_cast<int>(mPath[i + 1]->GetPosition().y));
 	}
 }
+
+

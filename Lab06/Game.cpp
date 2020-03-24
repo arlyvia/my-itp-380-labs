@@ -57,7 +57,7 @@ bool Game::Initialize()
 
 	// TODO: When you're finished with part 1-3, uncomment this
 	// line so that the sounds play!!
-	//Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 	
 	Random::Init();
 	

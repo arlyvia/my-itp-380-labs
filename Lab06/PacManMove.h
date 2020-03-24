@@ -24,7 +24,7 @@ private:
 	const float RESPAWN_TIME = 1.1f;
 	// TODO: When you complete parts 1-3, change the
 	// INTRO_TIME constant to 4.0f
-	const float INTRO_TIME = 0.1f;
+	const float INTRO_TIME = 4.0f;
 	const float CHOMP_GRACE_TIME = 0.1f;
 	
 	Vector2 mMoveDir = Vector2::Zero;
