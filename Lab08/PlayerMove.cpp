@@ -28,14 +28,12 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
         SetPressed(false);
     }
     
-    if (!(keyState[SDL_SCANCODE_A] && keyState[SDL_SCANCODE_D])){
-        if(keyState[SDL_SCANCODE_A]){
-            SetTurn(Turn::Left);
-        } else if(keyState[SDL_SCANCODE_D]){
-            SetTurn(Turn::Right);
-        }
+    if(keyState[SDL_SCANCODE_A]){
+        SetTurn(Turn::Left);
+    } else if(keyState[SDL_SCANCODE_D]){
+        SetTurn(Turn::Right);
     } else {
-        SetTurn(Turn::None);
+    SetTurn(Turn::None);
     }
 }
 

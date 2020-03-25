@@ -35,7 +35,6 @@ public:
     void SetTurn(Turn turn) { mTurn = turn; }
     
     Vector3 mVelocity;
-    Vector3 mPosition;
     
     float mAngularVelocity;
     

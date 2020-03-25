@@ -32,7 +32,7 @@ void VehicleMove::Update(float deltaTime)
         mDriveTimer = 0.0f;
     }
     
-    mPosition = mPosition + mVelocity * deltaTime;
+    mOwner->SetPosition(mOwner->GetPosition() + mVelocity * deltaTime);
     
     if(mPressed){
        mVelocity = mVelocity * linDragCoeffPressed;
@@ -41,12 +41,13 @@ void VehicleMove::Update(float deltaTime)
    }
     
     if(mTurn == Turn::Left){
-        mAngularVelocity = mAngularVelocity + mAngularVelocity * -1.0f * deltaTime;
+        mAngularVelocity = mAngularVelocity + angularAccel * -1.0f * deltaTime;
     } else if(mTurn == Turn::Right){
-        mAngularVelocity = mAngularVelocity + mAngularVelocity * 1.0f * deltaTime;
+        mAngularVelocity = mAngularVelocity + angularAccel * 1.0f * deltaTime;
     }
     
-    angularAccel = angularAccel + mAngularVelocity * deltaTime;
+    //angularAccel = angularAccel + mAngularVelocity * deltaTime;
     
     mAngularVelocity = mAngularVelocity * angularDragCoeff;
+    mOwner->SetRotation(mOwner->GetRotation() + mAngularVelocity * deltaTime);
 }
