@@ -11,6 +11,10 @@
 #include "Actor.h"
 #include <fstream>
 #include "Renderer.h"
+#include "Random.h"
+#include "Player.hpp"
+#include "MeshComponent.h"
+#include <iostream>
 
 Game::Game()
 :mIsRunning(true)
@@ -20,6 +24,8 @@ Game::Game()
 
 bool Game::Initialize()
 {
+	Random::Init();
+
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0)
 	{
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -27,6 +33,8 @@ bool Game::Initialize()
 	}
 
 	// TODO: Create renderer
+    mRenderer = new Renderer(this);
+    if(!mRenderer->Initialize(1024.0f, 768.0f)) return false;;
 
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 
@@ -111,55 +119,32 @@ void Game::UpdateGame()
 	{
 		delete actor;
 	}
+    
 }
 
 void Game::GenerateOutput()
 {
 	// TODO: tell renderer to draw
+    mRenderer->Draw();
 }
 
 void Game::LoadData()
 {
-	LoadLevel("Assets/Level.txt");
-}
-
-void Game::LoadLevel(const std::string& fileName)
-{
-	std::ifstream file(fileName);
-	if (!file.is_open())
-	{
-		SDL_Log("Failed to load level: %s", fileName.c_str());
-	}
-
-	const float topLeftX = -512.0f + 32.0f;
-	const float topLeftY = -384.0f + 32.0f;
-	size_t row = 0;
-	std::string line;
-	while (!file.eof())
-	{
-		std::getline(file, line);
-		for (size_t col = 0; col < line.size(); col++)
-		{
-			// Calculate position at this row/column
-			Vector3 pos;
-			pos.x = topLeftX + 64.0f * col;
-			pos.y = topLeftY + 64.0f * row;
-
-			if (line[col] == 'B')
-			{
-				// TODO: Create block
-			}
-			else if (line[col] == 'P')
-			{
-				// TODO: Create player 1
-			}
-			else if (line[col] == 'Q')
-			{
-				// TODO: Create player 2
-			}
-		}
-		row++;
-	}
+    mPlayer = new Player(this);
+    
+    Matrix4 projMatrix = Matrix4::CreatePerspectiveFOV(1.22f, 1024.0f, 768.0f, 10.0f, 10000.0f);
+    mRenderer->SetProjectionMatrix(projMatrix);
+    
+    Vector3 eye_pos = Vector3(-300, 0, 100);
+    Vector3 tar_pos = Vector3(20, 0, 0);
+    Matrix4 viewMatrix = Matrix4::CreateLookAt(eye_pos, tar_pos, Vector3::UnitZ);
+    mRenderer->SetViewMatrix(viewMatrix);
+    
+    Actor* track_actor = new Actor(this);
+    track_actor->SetRotation(Math::Pi);
+    MeshComponent* track_mesh = new MeshComponent(track_actor);
+    track_mesh->SetMesh(GetRenderer()->GetMesh("Assets/Track.gpmesh"));
+    
 }
 
 void Game::UnloadData()
@@ -170,13 +155,6 @@ void Game::UnloadData()
 	{
 		delete mActors.back();
 	}
-
-	// Destroy textures
-	for (auto i : mTextures)
-	{
-		SDL_DestroyTexture(i.second);
-	}
-	mTextures.clear();
 
 	// Destroy sounds
 	for (auto s : mSounds)
@@ -213,6 +191,8 @@ void Game::Shutdown()
 	UnloadData();
 	Mix_CloseAudio();
 	// TODO: Delete renderer
+    mRenderer->Shutdown();
+    delete mRenderer;
 	SDL_Quit();
 }
 
@@ -232,3 +212,4 @@ void Game::RemoveActor(Actor* actor)
 		mActors.pop_back();
 	}
 }
+
