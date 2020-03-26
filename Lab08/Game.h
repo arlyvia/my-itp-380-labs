@@ -27,6 +27,8 @@ public:
 
     int mChannel;
     
+    class HeightMap* mHeightMap;
+    
 private:
 	void ProcessInput();
 	void UpdateGame();

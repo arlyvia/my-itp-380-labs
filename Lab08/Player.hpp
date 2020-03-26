@@ -18,6 +18,7 @@ class Player: public Actor {
         
         class MeshComponent* player_mhc;
         class PlayerMove* player_move;
+        class CameraComponent* player_cc;
 };
 
 #endif /* Player_hpp */

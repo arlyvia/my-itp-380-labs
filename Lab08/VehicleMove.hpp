@@ -34,9 +34,9 @@ public:
     Turn mTurn = None;
     void SetTurn(Turn turn) { mTurn = turn; }
     
-    Vector3 mVelocity;
+    Vector3 mVelocity = Vector3(0,0,0);
     
-    float mAngularVelocity;
+    float mAngularVelocity = 0.0f;
     
     float mDriveTimer = 0.0f;
     

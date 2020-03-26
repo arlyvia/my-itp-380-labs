@@ -31,9 +31,6 @@ class PlayerMove: public VehicleMove {
         //float zDir = 0;
         //float yDir = 0;
     
-        float HDist = 60.0f;
-        float VDist = 70.0f;
-        float TargetDist = 50.0f;
 };
 
 #endif /* PlayerMove_hpp */

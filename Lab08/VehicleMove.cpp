@@ -7,6 +7,8 @@
 
 #include "VehicleMove.hpp"
 #include "Actor.h"
+#include "Game.h"
+#include "HeightMap.hpp"
 #include <iostream>
 
 VehicleMove::VehicleMove(class Actor* owner)
@@ -33,6 +35,14 @@ void VehicleMove::Update(float deltaTime)
     }
     
     mOwner->SetPosition(mOwner->GetPosition() + mVelocity * deltaTime);
+    
+    float z_pos = Math::Lerp(mOwner->GetPosition().z, mOwner->GetGame()->mHeightMap->GetHeight(mOwner->GetPosition().x,
+                                                                                              mOwner->GetPosition().y), 0.1f);
+    
+    if(mOwner->GetGame()->mHeightMap->IsOnTrack(mOwner->GetPosition().x, mOwner->GetPosition().y)){
+        mOwner->SetPosition(Vector3(mOwner->GetPosition().x, mOwner->GetPosition().y, z_pos));
+    }
+       //bool HeightMap::IsOnTrack(float x, float y){
     
     if(mPressed){
        mVelocity = mVelocity * linDragCoeffPressed;

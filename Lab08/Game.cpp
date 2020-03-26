@@ -14,6 +14,8 @@
 #include "Random.h"
 #include "Player.hpp"
 #include "MeshComponent.h"
+#include "CSVHelper.h"
+#include "HeightMap.hpp"
 #include <iostream>
 
 Game::Game()
@@ -119,6 +121,7 @@ void Game::UpdateGame()
 	{
 		delete actor;
 	}
+
     
 }
 
@@ -130,6 +133,7 @@ void Game::GenerateOutput()
 
 void Game::LoadData()
 {
+    mHeightMap = new HeightMap(this);
     mPlayer = new Player(this);
     
     Matrix4 projMatrix = Matrix4::CreatePerspectiveFOV(1.22f, 1024.0f, 768.0f, 10.0f, 10000.0f);

@@ -10,6 +10,7 @@
 #include "MoveComponent.h"
 #include "Game.h"
 #include "Renderer.h"
+#include "HeightMap.hpp"
 #include <iostream>
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_image.h>
@@ -18,7 +19,11 @@
 PlayerMove::PlayerMove(class Actor* owner)
     :VehicleMove(owner)
 {
-    
+    mOwner->SetPosition(mOwner->GetGame()->mHeightMap->CellToWorld(39, 58));
+    /*std::cout << "celltoworld" << mOwner->GetGame()->mHeightMap->CellToWorld(39, 58).x <<std::endl;
+    std::cout << "celltoworld" << mOwner->GetGame()->mHeightMap->CellToWorld(39, 58).y <<std::endl;
+    std::cout << "celltoworld" << mOwner->GetGame()->mHeightMap->CellToWorld(39, 58).z <<std::endl;*/
+    std::cout << "z" << mOwner->GetPosition().z << std::endl;
 }
 
 void PlayerMove::ProcessInput(const Uint8 *keyState){
@@ -50,16 +55,10 @@ void PlayerMove::Update(float deltaTime){
         mPos.z += zDir * deltaTime;
     }
     mOwner->SetPosition(mPos);*/
+    std::cout << "x" << mOwner->GetPosition().x << std::endl;
+    std::cout << "y" << mOwner->GetPosition().y << std::endl;
+    std::cout << "z" << mOwner->GetPosition().z << std::endl;
     
     VehicleMove::Update(deltaTime);
-    
-    Vector3 cameraPos = mOwner->GetPosition() - (mOwner->GetForward() * HDist) +
-    (Vector3::UnitZ * VDist);
-    
-    Vector3 targetPos = mOwner->GetPosition() + (mOwner ->GetForward() * TargetDist);
-    
-    Matrix4 viewMatrix = Matrix4::CreateLookAt(cameraPos, targetPos, Vector3::UnitZ);
-    
-    mOwner->GetGame()->GetRenderer()->SetViewMatrix(viewMatrix);
     
 }
