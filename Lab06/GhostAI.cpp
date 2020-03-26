@@ -278,7 +278,7 @@ void GhostAI::clydeChase(){
     
     PathNode* target;
     
-    if(dist > 150.0f){
+    if(dist > 150.0f && mOwner->GetGame()->mPlayer->GetPrevNode()->GetType() == PathNode::Type::Default){
         target = mOwner->GetGame()->mPlayer->GetPrevNode();
     } else{
         target = mGhost->GetScatterNode();
