@@ -25,11 +25,11 @@ public:
     
     Vector3 CellToWorld(int row, int col);
     
-    Vector2 WorldToCell(float x, float y);
+    Vector2 WorldToCell(int x, int y);
     
-    bool IsOnTrack(float x, float y);
+    bool IsOnTrack(int x, int y);
     
-    int GetHeight(float x, float y);
+    int GetHeight(int x, int y);
     
 private:
     bool IsCellOnTrack(int row, int col);

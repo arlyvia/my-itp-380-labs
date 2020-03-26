@@ -45,21 +45,37 @@ void GhostAI::SetDirection(Vector2 pos){
     if(pos.x < mGhost->GetPosition().x){
         mMoveDir.y = 0.0f;
         mMoveDir.x = -1.0f;
-        mGhost->GetComponent<AnimatedSprite>()->SetAnimation("left");
+        if(mState == State::Scatter){
+            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("left");
+        } else if (mState == State::Dead){
+            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("deadleft");
+        }
     } else if(pos.x > mGhost->GetPosition().x){
         mMoveDir.y = 0.0f;
         mMoveDir.x = 1.0f;
         //depending on state (3 states)
-        mGhost->GetComponent<AnimatedSprite>()->SetAnimation("right");
+        if(mState == State::Scatter){
+            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("right");
+        } else if (mState == State::Dead){
+            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("deadright");
+        }
     }
     if(pos.y < mGhost->GetPosition().y){
         mMoveDir.y = -1.0f;
         mMoveDir.x = 0.0f;
-        mGhost->GetComponent<AnimatedSprite>()->SetAnimation("up");
+       if(mState == State::Scatter){
+            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("up");
+        } else if (mState == State::Dead){
+            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("deadup");
+        }
     } else if(pos.y > mGhost->GetPosition().y){
         mMoveDir.y = 1.0f;
         mMoveDir.x = 0.0f;
-        mGhost->GetComponent<AnimatedSprite>()->SetAnimation("down");
+        if(mState == State::Scatter){
+            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("down");
+        } else if (mState == State::Dead){
+            mGhost->GetComponent<AnimatedSprite>()->SetAnimation("deaddown");
+        }
     }
 }
 
@@ -158,7 +174,6 @@ void GhostAI::Frighten()
     mStateTimer = 0;
     mGhost->GetComponent<AnimatedSprite>()->SetAnimation("scared0");
     mGhostSpeed = 65.0f;
-    std::cout << "fright2" << std::endl;
     mState = State::Frightened;
     PathNode* swap = mNextNode;
     mNextNode = mPrevNode;
@@ -238,7 +253,6 @@ void GhostAI::inkyChase(){
     Vector2 target_pos = mOwner->GetGame()->mPlayer->GetPointInFrontOf(40.0f);
     Vector2 v = target_pos - mOwner->GetGame()->mGhosts[0]->GetPosition();
     Vector2 Q = (2 * v) + mOwner->GetGame()->mGhosts[0]->GetPosition();
-    std::cout << mOwner->GetGame()->mGhosts[0] << std::endl;
     
     PathNode* target = closest(Q);
     

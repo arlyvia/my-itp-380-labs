@@ -28,7 +28,6 @@ void VehicleMove::Update(float deltaTime)
     if(mPressed){
         if (lerp > 1.0) lerp = 1.0f;
         float accelerationMagnitude = Math::Lerp(minLinAccelMag, maxLinAccelMag, lerp);
-        std::cout << lerp << std::endl;
         mVelocity = mVelocity + mOwner->GetForward() * accelerationMagnitude * deltaTime;
     } else {
         mDriveTimer = 0.0f;
@@ -36,7 +35,7 @@ void VehicleMove::Update(float deltaTime)
     
     mOwner->SetPosition(mOwner->GetPosition() + mVelocity * deltaTime);
     
-    float z_pos = Math::Lerp(mOwner->GetPosition().z, mOwner->GetGame()->mHeightMap->GetHeight(mOwner->GetPosition().x,
+    int z_pos = Math::Lerp(mOwner->GetPosition().z, mOwner->GetGame()->mHeightMap->GetHeight(mOwner->GetPosition().x,
                                                                                               mOwner->GetPosition().y), 0.1f);
     
     if(mOwner->GetGame()->mHeightMap->IsOnTrack(mOwner->GetPosition().x, mOwner->GetPosition().y)){

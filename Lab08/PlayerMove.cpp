@@ -20,10 +20,6 @@ PlayerMove::PlayerMove(class Actor* owner)
     :VehicleMove(owner)
 {
     mOwner->SetPosition(mOwner->GetGame()->mHeightMap->CellToWorld(39, 58));
-    /*std::cout << "celltoworld" << mOwner->GetGame()->mHeightMap->CellToWorld(39, 58).x <<std::endl;
-    std::cout << "celltoworld" << mOwner->GetGame()->mHeightMap->CellToWorld(39, 58).y <<std::endl;
-    std::cout << "celltoworld" << mOwner->GetGame()->mHeightMap->CellToWorld(39, 58).z <<std::endl;*/
-    std::cout << "z" << mOwner->GetPosition().z << std::endl;
 }
 
 void PlayerMove::ProcessInput(const Uint8 *keyState){
@@ -43,21 +39,6 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
 }
 
 void PlayerMove::Update(float deltaTime){
-    /*SetForwardSpeed(x_speed);
-    mVelocity = mOwner->GetForward() * GetForwardSpeed();
-    mPos = mOwner->GetPosition() + mVelocity * deltaTime;
-    mOwner->SetPosition(mPos);
-    
-    if(mPos.y + yDir * deltaTime < 195.0f && mPos.y + yDir * deltaTime > -195.0f){
-        mPos.y += yDir * deltaTime;
-    }
-    if(mPos.z + zDir * deltaTime < 225.0f && mPos.z + zDir * deltaTime > -225.0f){
-        mPos.z += zDir * deltaTime;
-    }
-    mOwner->SetPosition(mPos);*/
-    std::cout << "x" << mOwner->GetPosition().x << std::endl;
-    std::cout << "y" << mOwner->GetPosition().y << std::endl;
-    std::cout << "z" << mOwner->GetPosition().z << std::endl;
     
     VehicleMove::Update(deltaTime);
     
