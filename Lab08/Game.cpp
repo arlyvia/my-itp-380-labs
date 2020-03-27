@@ -16,6 +16,7 @@
 #include "MeshComponent.h"
 #include "CSVHelper.h"
 #include "HeightMap.hpp"
+#include "Enemy.hpp"
 #include <iostream>
 
 Game::Game()
@@ -135,6 +136,7 @@ void Game::LoadData()
 {
     mHeightMap = new HeightMap(this);
     mPlayer = new Player(this);
+    mEnemy = new Enemy(this);
     
     Matrix4 projMatrix = Matrix4::CreatePerspectiveFOV(1.22f, 1024.0f, 768.0f, 10.0f, 10000.0f);
     mRenderer->SetProjectionMatrix(projMatrix);

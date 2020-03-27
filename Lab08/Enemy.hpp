@@ -19,8 +19,6 @@ class Enemy: public Actor {
         
         class MeshComponent* enemy_mhc;
         class EnemyMove* enemy_move;
-    
-        std::vector<Vector3>
 };
 
 

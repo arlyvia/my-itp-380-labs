@@ -22,6 +22,7 @@ public:
 	class Renderer* GetRenderer() {	return mRenderer; }
     
     class Player* mPlayer;
+    class Enemy* mEnemy;
     
     float dist = 3000.0f;
 
