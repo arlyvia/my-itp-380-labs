@@ -9,5 +9,14 @@
 #define EnemyMove_hpp
 
 #include <stdio.h>
+#include "VehicleMove.hpp"
+
+class EnemyMove : public VehicleMove
+{
+public:
+    EnemyMove(class Actor* owner);
+    
+    void Update(float deltaTime) override;
+};
 
 #endif /* EnemyMove_hpp */

@@ -6,3 +6,13 @@
 //
 
 #include "EnemyMove.hpp"
+
+EnemyMove::EnemyMove(class Actor* owner)
+:VehicleMove(owner)
+{
+   
+}
+
+void EnemyMove::Update(float deltaTime){
+    VehicleMove::Update(deltaTime);
+}
