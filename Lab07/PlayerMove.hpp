@@ -36,10 +36,12 @@ class PlayerMove: public MoveComponent {
     
         float last_x_pos = 0;
     
-        float mElapsedTime = 0;
         float mSpeedTimer = 0;
     
         float speed_multiplier = 1.0f;
+    
+        bool last_frame = false;
+        bool bullet_shot = false;
 };
 
 #endif /* PlayerMove_hpp */

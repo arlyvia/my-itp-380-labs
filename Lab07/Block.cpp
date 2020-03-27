@@ -44,7 +44,8 @@ void Block::explode(){
     
     for(int i = 0; i < (int)(unsigned)GetGame()->mBlocks.size(); i++){
         Vector3 temp = original_block_pos - GetGame()->mBlocks[i]->GetPosition();
-        float distance = sqrt(temp.x*temp.x + temp.y*temp.y + temp.z*temp.z);
+        //float distance = sqrt(temp.x*temp.x + temp.y*temp.y + temp.z*temp.z);
+        float distance = Vector3(temp.x*temp.x, temp.y*temp.y, temp.z*temp.z).Length();
         if(distance <= 50.0f){
             toDestroy.push_back(GetGame()->mBlocks[i]);
         }

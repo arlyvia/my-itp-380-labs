@@ -40,22 +40,21 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
     } else {
         yDir = 0;
     }
-    
-    if (keyState[SDL_SCANCODE_SPACE]){
-        if(mElapsedTime > 1.0f){
+
+    if(keyState[SDL_SCANCODE_SPACE]){
+        if(!last_frame && keyState[SDL_SCANCODE_SPACE]){
             Bullet* bullet = new Bullet(mOwner->GetGame());
             Vector3 bullet_pos = mOwner->GetPosition();
             bullet->SetPosition(bullet_pos);
-            mElapsedTime = 0.0f;
             Mix_Chunk* pew = mOwner->GetGame()->GetSound("Assets/Sounds/Shoot.wav");
             Mix_PlayChannel(-1, pew, 0);
         }
-        
     }
+    
+    last_frame = keyState[SDL_SCANCODE_SPACE];
 }
 
 void PlayerMove::Update(float deltaTime){
-    mElapsedTime = deltaTime + mElapsedTime;
     mSpeedTimer = deltaTime + mSpeedTimer;
     
     if(mSpeedTimer > 10.0f){
