@@ -15,7 +15,7 @@
 Block::Block(class Game* game)
 :Actor(game)
 {
-    this->GetGame()->AddBlock(this);
+    GetGame()->AddBlock(this);
     
     block_mhc = new MeshComponent(this);
     block_mhc->SetMesh(GetGame()->GetRenderer()->GetMesh("Assets/Cube.gpmesh"));
@@ -26,7 +26,7 @@ Block::Block(class Game* game)
 
 Block::~Block()
 {
-    this->GetGame()->RemoveBlock(this);
+    GetGame()->RemoveBlock(this);
 }
 
 void Block::OnUpdate(float deltaTime){
