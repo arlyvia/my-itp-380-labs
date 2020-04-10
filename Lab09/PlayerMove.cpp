@@ -30,14 +30,16 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
     }
     
     /*if(keyState[SDL_SCANCODE_A]){
-        yDir = -y_speed * speed_multiplier;
+        mOwner->SetPosition(Vector3(mOwner->GetPosition().x,
+                                    mOwner->GetPosition().y - 5.0f,
+                                    mOwner->GetPosition().z));
     } else if(keyState[SDL_SCANCODE_D]){
-        yDir = y_speed * speed_multiplier;
+        //yDir = y_speed * speed_multiplier;
     } else {
-        yDir = 0;
+        //yDir = 0;
     }
 
-    if(keyState[SDL_SCANCODE_SPACE]){
+    /*if(keyState[SDL_SCANCODE_SPACE]){
         if(!last_frame && keyState[SDL_SCANCODE_SPACE]){
             Bullet* bullet = new Bullet(mOwner->GetGame());
             Vector3 bullet_pos = mOwner->GetPosition();

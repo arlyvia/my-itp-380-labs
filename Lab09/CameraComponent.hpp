@@ -23,15 +23,7 @@ public:
     //spring camera
      Vector3 idealPos();
     
-    float HDist = 60.0f;
-    //float VDist = 70.0f;
     float TargetDist = 50.0f;
-    float SpringConstant = 256.0f;
-    float DampeningConstant = 0.0f;
-    Vector3 CameraPos = idealPos();
-    Vector3 CameraVelocity = Vector3(0,0,0);
-    
-    void SnapToIdeal();
 };
 
 #endif /* CameraComponent_hpp */
