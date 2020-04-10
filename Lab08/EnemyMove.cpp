@@ -10,11 +10,13 @@
 #include "HeightMap.hpp"
 #include "Game.h"
 #include "VehicleMove.hpp"
+#include "Player.hpp"
 #include "Actor.h"
 #include "Math.h"
 #include <fstream>
 #include <vector>
 #include <string>
+#include <iostream>
 
 EnemyMove::EnemyMove(class Actor* owner)
 :VehicleMove(owner)
@@ -26,18 +28,48 @@ EnemyMove::EnemyMove(class Actor* owner)
    }
    std::string str = "";
    
+    std::getline(textFile,str);
+    std::cout << "str1:" << str << std::endl;
+    //int i = 0;
    while(textFile){
        std::getline(textFile, str);
-       if(str != ""){
-           std::vector line = CSVHelper::Split(str);
-            Vector3 point = mOwner->GetGame()->mHeightMap->CellToWorld(std::stoi(temp[1]), std::stoi(temp[2]));
+       std::cout << str << std::endl;
+       std::vector line = CSVHelper::Split(str);
+       if (line[0] == "Node"){
+            Vector3 point = mOwner->GetGame()->mHeightMap->CellToWorld(std::stoi(line[1]), std::stoi(line[2]));
             route_points.push_back(point);
        }
-
+    }
     
     mOwner->SetPosition(route_points[0]);
 }
 
-//void EnemyMove::Update(float deltaTime){
-    //VehicleMove::Update(deltaTime);
+void EnemyMove::Update(float deltaTime){
+    Vector3 v;
+    v = route_points[currentTarget] - mOwner->GetPosition();
+    v.Normalize();
+    if(Vector3::Dot(mOwner->GetForward(), v) < 1.1f &&
+       Vector3::Dot(mOwner->GetForward(), v) > 0.9f){
+        mForwardSpeed = 300.0f;
+        mOwner->SetPosition(mOwner->GetPosition() + mForwardSpeed * mOwner->GetForward() * deltaTime);
+    } else {
+        Vector3 turn = Vector3::Cross(mOwner->GetForward(), v);
+        if(turn.z > 0){
+            //right
+            mAngularSpeed = Math::TwoPi;
+        } else {
+            //left
+            mAngularSpeed = -Math::TwoPi;
+        }
+        mOwner->SetRotation(mOwner->GetRotation() + mAngularSpeed * deltaTime);
+    }
+    if( (route_points[currentTarget] - mOwner->GetPosition()).Length() < 40.0f){
+        currentTarget = currentTarget+1;
+        if((unsigned)currentTarget == route_points.size()) currentTarget = 0;
+    }
+    if( (mOwner->GetGame()->mPlayer->GetPosition() - mOwner->GetPosition()).Length() < 100.0f){
+        mTarget = mOwner->GetGame()->mPlayer->GetPosition() - mOwner->GetPosition();
+    }
+    
+    VehicleMove::Update(deltaTime);
 }

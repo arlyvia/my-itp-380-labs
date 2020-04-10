@@ -11,6 +11,8 @@
 #include "Game.h"
 #include "Renderer.h"
 #include "HeightMap.hpp"
+#include "Player.hpp"
+#include "PlayerUI.h"
 #include <iostream>
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_image.h>
@@ -42,4 +44,8 @@ void PlayerMove::Update(float deltaTime){
     
     VehicleMove::Update(deltaTime);
     
+}
+
+void PlayerMove::OnLapChange(int newLap){
+    mOwner->GetGame()->mPlayer->player_ui->PlayerUI::OnLapChange(newLap);
 }

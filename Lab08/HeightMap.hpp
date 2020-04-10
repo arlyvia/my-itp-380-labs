@@ -29,7 +29,7 @@ public:
     
     bool IsOnTrack(int x, int y);
     
-    int GetHeight(int x, int y);
+    float GetHeight(int x, int y);
     
 private:
     bool IsCellOnTrack(int row, int col);

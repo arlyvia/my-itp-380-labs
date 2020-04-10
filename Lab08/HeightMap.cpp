@@ -36,7 +36,7 @@ HeightMap::HeightMap(Game* game){
 }
 
 bool HeightMap::IsCellOnTrack(int row, int col){
-    if (row > 64 || col > 64 || row < 0 || col < 0){
+    if (row > 63 || col > 63 || row < 0 || col < 0){
         return false;
     } else if (mGrid[row][col] == -1) {
         return false;
@@ -46,7 +46,7 @@ bool HeightMap::IsCellOnTrack(int row, int col){
 }
 
 float HeightMap::GetHeightFromCell(int row, int col){
-    int cellValue = mGrid[row][col];
+    float cellValue = mGrid[row][col];
     float temp = -40.0f + cellValue * 5.0f;
     return temp;
 }
@@ -64,8 +64,8 @@ Vector3 HeightMap::CellToWorld(int row, int col){
 }
 
 Vector2 HeightMap::WorldToCell(int x, int y){
-    int row = (abs(x-grid_top) + cell_size/2.0f) / cell_size;
-    int col = (abs(y-grid_left) + cell_size/2.0f) / cell_size;
+    float row = (abs(x-grid_top) + cell_size/2.0f) / cell_size;
+    float col = (abs(y-grid_left) + cell_size/2.0f) / cell_size;
     return Vector2(row, col);
 }
 
@@ -77,10 +77,10 @@ bool HeightMap::IsOnTrack(int x, int y){
     }
 }
 
-int HeightMap::GetHeight(int x, int y){
+float HeightMap::GetHeight(int x, int y){
     if(IsCellOnTrack(WorldToCell(x,y).x, WorldToCell(x,y).y)){
        return GetHeightFromCell(WorldToCell(x,y).x, WorldToCell(x,y).y);
     } else{
-       return -1000;
+        return -1000.0f;
     }
 }

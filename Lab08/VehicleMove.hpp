@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "Component.h"
 #include "Math.h"
+#include <vector>
 
 class VehicleMove : public Component
 {
@@ -48,6 +49,13 @@ public:
     float linDragCoeff = 0.9f;
     float linDragCoeffPressed = 0.975f;
     float angularDragCoeff = 0.9f;
+    
+    std::vector<int> four_checkpoint;
+    std::vector<std::vector<int>> all_checkpoints;
+    int current_lap = 0;
+    int last_checkpoint = -1;
+    
+    virtual void OnLapChange(int newLap){ }
 };
 
 #endif /* VehicleMove_hpp */

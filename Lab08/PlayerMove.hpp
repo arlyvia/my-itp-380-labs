@@ -22,6 +22,10 @@ class PlayerMove: public VehicleMove {
         void ProcessInput(const Uint8* keyState)override;
         void Update(float deltaTime) override;
     
+        void OnLapChange(int newLap) override;
+    
+        VehicleMove* player_vm;
+
         //Vector3 mVelocity;
         //float x_speed = 400.0f;
         //float z_speed = 300.0f;

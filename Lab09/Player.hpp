@@ -16,10 +16,9 @@ class Player: public Actor {
         //constructor
         Player(class Game* game);
         
-        class MeshComponent* player_mhc;
         class PlayerMove* player_move;
         class CameraComponent* player_cc;
-        class PlayerUI* player_ui;
+        class CollisionComponent* player_coc;
 };
 
 #endif /* Player_hpp */
