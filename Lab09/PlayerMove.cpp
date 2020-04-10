@@ -29,14 +29,12 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
          SetForwardSpeed(0);
     }
     
-    /*if(keyState[SDL_SCANCODE_A]){
-        mOwner->SetPosition(Vector3(mOwner->GetPosition().x,
-                                    mOwner->GetPosition().y - 5.0f,
-                                    mOwner->GetPosition().z));
+    if(keyState[SDL_SCANCODE_A]){
+        SetStrafeSpeed(-350.0f);
     } else if(keyState[SDL_SCANCODE_D]){
-        //yDir = y_speed * speed_multiplier;
+        SetStrafeSpeed(350.0f);
     } else {
-        //yDir = 0;
+        SetStrafeSpeed(0);
     }
 
     /*if(keyState[SDL_SCANCODE_SPACE]){

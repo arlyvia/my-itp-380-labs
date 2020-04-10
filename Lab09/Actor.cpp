@@ -85,6 +85,6 @@ Vector3 Actor::GetRight() {
     float x_comp = Math::Cos(theta + Math::PiOver2);
     float y_comp = Math::Sin(theta + Math::PiOver2);
     float z_comp = 0.0f;
-    Vector3 forward = Vector3(x_comp, y_comp, z_comp);
-    return forward;
+    Vector3 right = Vector3(x_comp, y_comp, z_comp);
+    return right;
 }
