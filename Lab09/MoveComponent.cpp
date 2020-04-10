@@ -16,4 +16,6 @@ void MoveComponent::Update(float deltaTime)
     
     Vector3 velocity = mOwner->GetForward() * GetForwardSpeed();
     mOwner->SetPosition(mOwner->GetPosition() + velocity * deltaTime);
+    
+    
 }

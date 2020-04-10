@@ -65,7 +65,7 @@ public:
     Matrix4 mRotationMatrix;
     Matrix4 mPositionMatrix;
     
-    
+    Vector3 GetRight();
 protected:
     // Any actor-specific update code (overridable)
     virtual void OnUpdate(float deltaTime);
