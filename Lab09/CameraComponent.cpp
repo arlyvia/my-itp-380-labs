@@ -18,11 +18,9 @@ CameraComponent::CameraComponent(class Actor* owner)
 
 void CameraComponent::Update(float deltaTime)
 {
-    //CameraPos += CameraVelocity * deltaTime;
+    Vector3 targetPos = mOwner->GetPosition() + (mOwner ->GetForward() * TargetDist);
     
-    //Vector3 targetPos = mOwner->GetPosition() + (mOwner ->GetForward() * TargetDist);
-    
-    Matrix4 viewMatrix = Matrix4::CreateLookAt(mOwner->GetPosition(), mOwner ->GetForward() * TargetDist, Vector3::UnitZ);
+    Matrix4 viewMatrix = Matrix4::CreateLookAt(mOwner->GetPosition(),targetPos, Vector3::UnitZ);
     
     mOwner->GetGame()->GetRenderer()->SetViewMatrix(viewMatrix);
 }

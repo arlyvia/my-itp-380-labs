@@ -36,7 +36,17 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
     } else {
         SetStrafeSpeed(0);
     }
-
+    
+    //mouse rotation
+    int x, y;
+    SDL_GetRelativeMouseState(&x, &y);
+    
+    float a = (float)x;
+    a = float(x / 500.0f);
+   
+    a = x * Math::Pi * 10.0f;
+   
+    SetAngularSpeed(x);
     /*if(keyState[SDL_SCANCODE_SPACE]){
         if(!last_frame && keyState[SDL_SCANCODE_SPACE]){
             Bullet* bullet = new Bullet(mOwner->GetGame());

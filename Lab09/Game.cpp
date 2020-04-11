@@ -42,6 +42,9 @@ bool Game::Initialize()
 	LoadData();
 
 	mTicksCount = SDL_GetTicks();
+    
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+    SDL_GetRelativeMouseState(nullptr, nullptr);
 	
 	return true;
 }
