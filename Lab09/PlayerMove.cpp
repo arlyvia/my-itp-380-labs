@@ -10,6 +10,7 @@
 #include "MoveComponent.h"
 #include "Game.h"
 #include "Renderer.h"
+#include "CameraComponent.hpp"
 #include <iostream>
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_image.h>
@@ -18,6 +19,7 @@
 PlayerMove::PlayerMove(class Actor* owner)
     :MoveComponent(owner)
 {
+    ChangeState(MoveState::Falling);
 }
 
 void PlayerMove::ProcessInput(const Uint8 *keyState){
@@ -41,25 +43,96 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
     int x, y;
     SDL_GetRelativeMouseState(&x, &y);
     
-    float a = (float)x;
+    /*float a = (float)x;
     a = float(x / 500.0f);
    
-    a = x * Math::Pi * 10.0f;
+    a = float(x * Math::Pi * 10.0f);*/
    
     SetAngularSpeed(x);
-    /*if(keyState[SDL_SCANCODE_SPACE]){
-        if(!last_frame && keyState[SDL_SCANCODE_SPACE]){
-            Bullet* bullet = new Bullet(mOwner->GetGame());
-            Vector3 bullet_pos = mOwner->GetPosition();
-            bullet->SetPosition(bullet_pos);
-            Mix_Chunk* pew = mOwner->GetGame()->GetSound("Assets/Sounds/Shoot.wav");
-            Mix_PlayChannel(-1, pew, 0);
-        }
-    }*/
+
+    float b = (float)y;
+    mOwner->GetComponent<CameraComponent>()->SetPitchSpeed(y);
     
-    //last_frame = keyState[SDL_SCANCODE_SPACE];
+    if(keyState[SDL_SCANCODE_SPACE]){
+        if(!last_frame && keyState[SDL_SCANCODE_SPACE] && mCurrentState == MoveState::OnGround){
+            mZSpeed = JumpSpeed;
+            ChangeState(MoveState::Jump);
+        }
+    }
+    
+    last_frame = keyState[SDL_SCANCODE_SPACE];
 }
 
 void PlayerMove::Update(float deltaTime){
+    if(mCurrentState == MoveState::OnGround) UpdateOnGround(deltaTime);
+    if(mCurrentState == MoveState::Jump) UpdateJump(deltaTime);
+    if(mCurrentState == MoveState::Falling) UpdateFalling(deltaTime);
+}
+
+void PlayerMove::ChangeState(MoveState ms){
+    mCurrentState = ms;
+}
+
+void PlayerMove::UpdateOnGround(float deltaTime){
     MoveComponent::Update(deltaTime);
+    for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
+        CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
+        if(side == CollSide::Top) standing = true;
+    }
+    if(standing){
+        standing = false;
+        ChangeState(MoveState::Falling);
+    }
+}
+
+void PlayerMove::UpdateJump(float deltaTime){
+    MoveComponent::Update(deltaTime);
+    mZSpeed = mZSpeed + (Gravity * deltaTime);
+    mOwner->SetPosition(Vector3(mOwner->GetPosition().x,
+                        mOwner->GetPosition().y,
+                        mOwner->GetPosition().z + (mZSpeed * deltaTime)));
+    for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
+        CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
+        if(side == CollSide::Bottom) hit_head = true;
+    }
+    if(hit_head){
+        hit_head = false;
+        mZSpeed = 0.0f;
+    } else if(mZSpeed <= 0.0f){
+        //make sure this if statement is in the right place
+        ChangeState(MoveState::Falling);
+    }
+}
+
+void PlayerMove::UpdateFalling(float deltaTime){
+    MoveComponent::Update(deltaTime);
+    mZSpeed = mZSpeed + (Gravity * deltaTime);
+    mOwner->SetPosition(Vector3(mOwner->GetPosition().x,
+                        mOwner->GetPosition().y,
+                        mOwner->GetPosition().z + (mZSpeed * deltaTime)));
+    for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
+        CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
+        if(side == CollSide::Top){
+            mZSpeed = 0;
+            ground = true;
+        }
+    }
+    if(ground){
+        ground = false;
+        ChangeState(MoveState::OnGround);
+    }
+}
+
+CollSide PlayerMove::FixCollision(class CollisionComponent *self, class CollisionComponent* block){
+    Vector3 local_offset;
+    CollSide side = mOwner->GetComponent<CollisionComponent>()->GetMinOverlap(block, local_offset);
+    if(side != CollSide::None){
+        if(side == CollSide::Top){
+            mOwner->SetPosition(mOwner->GetPosition()+local_offset);
+        } else if(side == CollSide::Bottom){
+            mOwner->SetPosition(mOwner->GetPosition()-local_offset);
+        }
+    }
+    return side;
+    
 }

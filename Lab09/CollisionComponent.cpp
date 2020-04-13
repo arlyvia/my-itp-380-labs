@@ -59,6 +59,57 @@ CollSide CollisionComponent::GetMinOverlap(
 	const CollisionComponent* other, Vector3& offset)
 {
 	offset = Vector3::Zero;
+    // TODO: Implement
+    if(!(this->Intersect(other))){
+        return CollSide::None;
+    } else {
+        float otherMinYDiff = other->GetMin().y - this->GetMax().y;
+        float otherMaxYDiff = other->GetMax().y - this->GetMin().y;
+        float otherMinXDiff = other->GetMin().x - this->GetMax().x;
+        float otherMaxXDiff = other->GetMax().x - this->GetMin().x;
+        float otherMinZDiff = other->GetMin().z - this->GetMax().z;
+        float otherMaxZDiff = other->GetMax().z - this->GetMin().z;
+        
+        if((Math::Abs(otherMinYDiff) <= Math::Abs(otherMaxYDiff))
+            && (Math::Abs(otherMinYDiff) <= Math::Abs(otherMinXDiff))
+            && (Math::Abs(otherMinYDiff) <= Math::Abs(otherMaxXDiff))
+            && (Math::Abs(otherMinYDiff) <= Math::Abs(otherMinZDiff))
+            && (Math::Abs(otherMinYDiff) <= Math::Abs(otherMaxZDiff))){
+            offset.y = otherMinYDiff;
+            return CollSide::Side;
+        } else if((Math::Abs(otherMaxYDiff) <= Math::Abs(otherMinYDiff))
+            && (Math::Abs(otherMaxYDiff) <= Math::Abs(otherMinXDiff))
+            && (Math::Abs(otherMaxYDiff) <= Math::Abs(otherMaxXDiff))
+            && (Math::Abs(otherMaxYDiff) <= Math::Abs(otherMinZDiff))
+            && (Math::Abs(otherMaxYDiff) <= Math::Abs(otherMaxZDiff))){
+            offset.y = otherMaxYDiff;
+            return CollSide::Side;
+        } else if((Math::Abs(otherMinXDiff) <= Math::Abs(otherMinYDiff))
+            && (Math::Abs(otherMinXDiff) <= Math::Abs(otherMaxYDiff))
+            && (Math::Abs(otherMinXDiff) <= Math::Abs(otherMaxXDiff))
+            && (Math::Abs(otherMinXDiff) <= Math::Abs(otherMinZDiff))
+            && (Math::Abs(otherMinXDiff) <= Math::Abs(otherMaxZDiff))){
+            offset.x = otherMinXDiff;
+            return CollSide::Side;
+        } else if((Math::Abs(otherMaxXDiff) <= Math::Abs(otherMinYDiff))
+            && (Math::Abs(otherMaxXDiff) <= Math::Abs(otherMaxYDiff))
+            && (Math::Abs(otherMaxXDiff) <= Math::Abs(otherMinXDiff))
+            && (Math::Abs(otherMaxXDiff) <= Math::Abs(otherMinZDiff))
+            && (Math::Abs(otherMaxXDiff) <= Math::Abs(otherMaxZDiff))){
+            offset.x = otherMaxXDiff;
+            return CollSide::Side;
+        } else if((Math::Abs(otherMinZDiff) <= Math::Abs(otherMaxYDiff))
+            && (Math::Abs(otherMinZDiff) <= Math::Abs(otherMinXDiff))
+            && (Math::Abs(otherMinZDiff) <= Math::Abs(otherMaxXDiff))
+            && (Math::Abs(otherMinZDiff) <= Math::Abs(otherMinYDiff))
+            && (Math::Abs(otherMinZDiff) <= Math::Abs(otherMaxZDiff))){
+            offset.z = otherMinZDiff;
+            return CollSide::Bottom;
+        } else {
+            offset.z = otherMaxZDiff;
+            return CollSide::Top;
+        }
+    }
 	// TODO: Implement
 	return CollSide::None;
 }

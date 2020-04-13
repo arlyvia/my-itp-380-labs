@@ -24,6 +24,21 @@ public:
      Vector3 idealPos();
     
     float TargetDist = 50.0f;
+    
+    float mPitchAngle = 0;
+    float mPitchSpeed = 0;
+    
+    float GetPitchSpeed() const { return mPitchSpeed; }
+    float SetPitchSpeed(float speed) { return mPitchSpeed = speed; }
+    
+    Matrix4 mPitchMatrix;
+    Matrix4 mYawMatrix;
+    Matrix4 mRotationMatrix;
+   
+    //mRotationMatrix = Matrix4::CreateRotationZ(mRotation);
+    //mPositionMatrix = Matrix4::CreateTranslation(mPosition);
+    
+    //mWorldTransform = mScaleMatrix * mRotationMatrix * mPositionMatrix;
 };
 
 #endif /* CameraComponent_hpp */
