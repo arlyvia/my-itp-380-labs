@@ -11,6 +11,7 @@
 #include "Game.h"
 #include "Renderer.h"
 #include "CameraComponent.hpp"
+#include "Math.h"
 #include <iostream>
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_image.h>
@@ -24,19 +25,21 @@ PlayerMove::PlayerMove(class Actor* owner)
 
 void PlayerMove::ProcessInput(const Uint8 *keyState){
     if(keyState[SDL_SCANCODE_W]){
-        SetForwardSpeed(350.0f);
+        //SetForwardSpeed(350.0f);
+        AddForce(Vector3(-700.0f, mOwner->GetForward().y, mOwner->GetForward().z));
     } else if(keyState[SDL_SCANCODE_S]){
-        SetForwardSpeed(-350.0f);
+        //SetForwardSpeed(-350.0f);
+        AddForce(Vector3(700.0f, mOwner->GetForward().y, mOwner->GetForward().z));
     } else {
-         SetForwardSpeed(0);
+        AddForce(Vector3::Zero);
     }
     
     if(keyState[SDL_SCANCODE_A]){
-        SetStrafeSpeed(-350.0f);
+        AddForce(Vector3(mOwner->GetRight().x, 700.0f, mOwner->GetRight().z));
     } else if(keyState[SDL_SCANCODE_D]){
-        SetStrafeSpeed(350.0f);
+        AddForce(Vector3(mOwner->GetRight().x, -700.0f, mOwner->GetRight().z));
     } else {
-        SetStrafeSpeed(0);
+        AddForce(Vector3::Zero);
     }
     
     //mouse rotation
@@ -55,7 +58,7 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
     
     if(keyState[SDL_SCANCODE_SPACE]){
         if(!last_frame && keyState[SDL_SCANCODE_SPACE] && mCurrentState == MoveState::OnGround){
-            mZSpeed = JumpSpeed;
+            AddForce(mJumpForce);
             ChangeState(MoveState::Jump);
         }
     }
@@ -74,7 +77,8 @@ void PlayerMove::ChangeState(MoveState ms){
 }
 
 void PlayerMove::UpdateOnGround(float deltaTime){
-    MoveComponent::Update(deltaTime);
+    //MoveComponent::Update(deltaTime);
+    PhysicsUpdate(deltaTime);
     for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
         CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
         if(side == CollSide::Top) standing = true;
@@ -86,34 +90,42 @@ void PlayerMove::UpdateOnGround(float deltaTime){
 }
 
 void PlayerMove::UpdateJump(float deltaTime){
-    MoveComponent::Update(deltaTime);
-    mZSpeed = mZSpeed + (Gravity * deltaTime);
-    mOwner->SetPosition(Vector3(mOwner->GetPosition().x,
-                        mOwner->GetPosition().y,
-                        mOwner->GetPosition().z + (mZSpeed * deltaTime)));
+    //MoveComponent::Update(deltaTime);
+    //mZSpeed = mZSpeed + (Gravity * deltaTime);
+    //mOwner->SetPosition(Vector3(mOwner->GetPosition().x,
+    //mOwner->GetPosition().y,
+    //mOwner->GetPosition().z + (mZSpeed * deltaTime)));
+    
+    AddForce(mGravity);
+    PhysicsUpdate(deltaTime);
+    
     for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
         CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
         if(side == CollSide::Bottom) hit_head = true;
     }
     if(hit_head){
         hit_head = false;
-        mZSpeed = 0.0f;
-    } else if(mZSpeed <= 0.0f){
+        mVelocity.z = 0.0f;
+    } else if(mVelocity.z <= 0.0f){
         //make sure this if statement is in the right place
         ChangeState(MoveState::Falling);
     }
 }
 
 void PlayerMove::UpdateFalling(float deltaTime){
-    MoveComponent::Update(deltaTime);
-    mZSpeed = mZSpeed + (Gravity * deltaTime);
-    mOwner->SetPosition(Vector3(mOwner->GetPosition().x,
-                        mOwner->GetPosition().y,
-                        mOwner->GetPosition().z + (mZSpeed * deltaTime)));
+    //MoveComponent::Update(deltaTime);
+    //mZSpeed = mZSpeed + (Gravity * deltaTime);
+    //mOwner->SetPosition(Vector3(mOwner->GetPosition().x,
+                        //mOwner->GetPosition().y,
+                        //mOwner->GetPosition().z + (mZSpeed * deltaTime)));
+    
+    AddForce(mGravity);
+    PhysicsUpdate(deltaTime);
+    
     for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
         CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
         if(side == CollSide::Top){
-            mZSpeed = 0;
+            mVelocity.z = 0;
             ground = true;
         }
     }
@@ -135,4 +147,47 @@ CollSide PlayerMove::FixCollision(class CollisionComponent *self, class Collisio
     }
     return side;
     
+}
+
+void PlayerMove::AddForce(const Vector3 &force){
+    mPendingForces += force;
+}
+
+void PlayerMove::PhysicsUpdate(float deltaTime){
+    mAcceleration = mPendingForces * (1.0f / mMass);
+    mVelocity += mAcceleration * deltaTime;
+    
+    FixXYVelocity();
+    
+    mOwner->SetPosition(mOwner->GetPosition() + (mAcceleration * deltaTime));
+    
+    mOwner->SetRotation(mOwner->GetRotation() + (GetAngularSpeed() * deltaTime));
+    
+    mPendingForces = Vector3::Zero;
+}
+
+void PlayerMove::FixXYVelocity(){
+    Vector2 xyVelocity = Vector2(mVelocity.x, mVelocity.y);
+    if(xyVelocity.Length() > 400.0f){
+        //normalize function from math would not work here:
+        float length = xyVelocity.Length();
+        xyVelocity.x /= length;
+        xyVelocity.y /= length;
+        xyVelocity * 400.0f;
+    }
+    
+    //braking
+    if((mAcceleration.x > 0 && xyVelocity.x < 0)
+       || (mAcceleration.x < 0 && xyVelocity.x > 0)){
+        if(mCurrentState == MoveState::OnGround){
+            if(Math::NearZero(mAcceleration.x)){
+                xyVelocity.x *= 0.9f;
+            }
+            if(Math::NearZero(mAcceleration.y)){
+                xyVelocity.y *= 0.9f;
+            }
+        }
+        mVelocity.x = xyVelocity.x;
+        mVelocity.y = xyVelocity.y;
+    }
 }
