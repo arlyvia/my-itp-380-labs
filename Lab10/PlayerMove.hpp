@@ -65,6 +65,8 @@ class PlayerMove: public MoveComponent {
     
         //Wall climbing
         bool CanWallClimb(CollSide side);
+        Vector3 mClimbForce = Vector3(0.0f, 0.0f, 1800.0f);
+        bool collide_side = false;
 };
 
 #endif /* PlayerMove_hpp */

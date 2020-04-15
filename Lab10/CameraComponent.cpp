@@ -18,7 +18,7 @@ CameraComponent::CameraComponent(class Actor* owner)
 
 void CameraComponent::Update(float deltaTime)
 {
-    mPitchAngle = mPitchSpeed * deltaTime;
+    mPitchAngle += mPitchSpeed * deltaTime;
     
     if (mPitchAngle >= Math::PiOver2/2.0f)
     {

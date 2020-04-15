@@ -25,19 +25,17 @@ PlayerMove::PlayerMove(class Actor* owner)
 
 void PlayerMove::ProcessInput(const Uint8 *keyState){
     if(keyState[SDL_SCANCODE_W]){
-        //SetForwardSpeed(350.0f);
-        AddForce(Vector3(-700.0f, mOwner->GetForward().y, mOwner->GetForward().z));
+        AddForce(mOwner->GetForward() * 700.0f);
     } else if(keyState[SDL_SCANCODE_S]){
-        //SetForwardSpeed(-350.0f);
-        AddForce(Vector3(700.0f, mOwner->GetForward().y, mOwner->GetForward().z));
+        AddForce(mOwner->GetForward() * -700.0f);
     } else {
         AddForce(Vector3::Zero);
     }
     
     if(keyState[SDL_SCANCODE_A]){
-        AddForce(Vector3(mOwner->GetRight().x, 700.0f, mOwner->GetRight().z));
+        AddForce(mOwner->GetRight() * -700.0f);
     } else if(keyState[SDL_SCANCODE_D]){
-        AddForce(Vector3(mOwner->GetRight().x, -700.0f, mOwner->GetRight().z));
+        AddForce(mOwner->GetRight() * 700.0f);
     } else {
         AddForce(Vector3::Zero);
     }
@@ -45,16 +43,11 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
     //mouse rotation
     int x, y;
     SDL_GetRelativeMouseState(&x, &y);
-    
-    /*float a = (float)x;
-    a = float(x / 500.0f);
    
-    a = float(x * Math::Pi * 10.0f);*/
-   
-    SetAngularSpeed(x);
+    SetAngularSpeed(x / 500.0f * Math::Pi * 10.0f);
 
-    float b = (float)y;
-    mOwner->GetComponent<CameraComponent>()->SetPitchSpeed(y);
+    float b = (float)y / 500.0f * Math::Pi * 10.0f;
+    mOwner->GetComponent<CameraComponent>()->SetPitchSpeed(b);
     
     if(keyState[SDL_SCANCODE_SPACE]){
         if(!last_frame && keyState[SDL_SCANCODE_SPACE] && mCurrentState == MoveState::OnGround){
@@ -78,8 +71,9 @@ void PlayerMove::ChangeState(MoveState ms){
 }
 
 void PlayerMove::UpdateOnGround(float deltaTime){
-    //MoveComponent::Update(deltaTime);
     PhysicsUpdate(deltaTime);
+    
+    standing = false;
     for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
         CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
         if(side == CollSide::Top) standing = true;
@@ -87,26 +81,22 @@ void PlayerMove::UpdateOnGround(float deltaTime){
            || side == CollSide::SideMinY
            || side == CollSide::SideMaxX
            || side == CollSide::SideMinX){
-            CanWallClimb(side);
+            //CanWallClimb(side);
             if(CanWallClimb(side)){
-                std::cout << "can climb" << std::endl;
+                ChangeState(MoveState::WallClimb);
+                return;
             } else {
                 std::cout << "cannot climb" << std::endl;
             }
         }
     }
-    if(standing){
+    if(!standing){
         standing = false;
         ChangeState(MoveState::Falling);
     }
 }
 
 void PlayerMove::UpdateJump(float deltaTime){
-    //MoveComponent::Update(deltaTime);
-    //mZSpeed = mZSpeed + (Gravity * deltaTime);
-    //mOwner->SetPosition(Vector3(mOwner->GetPosition().x,
-    //mOwner->GetPosition().y,
-    //mOwner->GetPosition().z + (mZSpeed * deltaTime)));
     
     AddForce(mGravity);
     PhysicsUpdate(deltaTime);
@@ -125,11 +115,6 @@ void PlayerMove::UpdateJump(float deltaTime){
 }
 
 void PlayerMove::UpdateFalling(float deltaTime){
-    //MoveComponent::Update(deltaTime);
-    //mZSpeed = mZSpeed + (Gravity * deltaTime);
-    //mOwner->SetPosition(Vector3(mOwner->GetPosition().x,
-                        //mOwner->GetPosition().y,
-                        //mOwner->GetPosition().z + (mZSpeed * deltaTime)));
     
     AddForce(mGravity);
     PhysicsUpdate(deltaTime);
@@ -148,18 +133,31 @@ void PlayerMove::UpdateFalling(float deltaTime){
 }
 
 void PlayerMove::UpdateWallClimb(float deltaTime){
-    
+    AddForce(mGravity);
+    AddForce(mClimbForce);
+    PhysicsUpdate(deltaTime);
+    collide_side = false;
+    for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
+        CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
+        if(side == CollSide::SideMaxY
+           || side == CollSide::SideMinY
+           || side == CollSide::SideMaxX
+           || side == CollSide::SideMinX){
+            collide_side = true;
+        }
+    }
+    if(!collide_side || mVelocity.z <= 0.0f){
+        mVelocity.z = 0.0f;
+        ChangeState(MoveState::Falling);
+    }
 }
 
 CollSide PlayerMove::FixCollision(class CollisionComponent *self, class CollisionComponent* block){
     Vector3 local_offset;
     CollSide side = mOwner->GetComponent<CollisionComponent>()->GetMinOverlap(block, local_offset);
+    
     if(side != CollSide::None){
-        if(side == CollSide::Top){
-            mOwner->SetPosition(mOwner->GetPosition()+local_offset);
-        } else if(side == CollSide::Bottom){
-            mOwner->SetPosition(mOwner->GetPosition()-local_offset);
-        }
+        mOwner->SetPosition(mOwner->GetPosition() + local_offset);
     }
     return side;
     
@@ -175,7 +173,7 @@ void PlayerMove::PhysicsUpdate(float deltaTime){
     
     FixXYVelocity();
     
-    mOwner->SetPosition(mOwner->GetPosition() + (mAcceleration * deltaTime));
+    mOwner->SetPosition(mOwner->GetPosition() + (mVelocity * deltaTime));
     
     mOwner->SetRotation(mOwner->GetRotation() + (GetAngularSpeed() * deltaTime));
     
@@ -189,23 +187,26 @@ void PlayerMove::FixXYVelocity(){
         float length = xyVelocity.Length();
         xyVelocity.x /= length;
         xyVelocity.y /= length;
-        xyVelocity * 400.0f;
+        xyVelocity *= 400.0f;
     }
     
     //braking
-    if((mAcceleration.x > 0 && xyVelocity.x < 0)
-       || (mAcceleration.x < 0 && xyVelocity.x > 0)){
-        if(mCurrentState == MoveState::OnGround){
-            if(Math::NearZero(mAcceleration.x)){
-                xyVelocity.x *= 0.9f;
-            }
-            if(Math::NearZero(mAcceleration.y)){
-                xyVelocity.y *= 0.9f;
-            }
+    if(mCurrentState == MoveState::OnGround){
+        if(Math::NearZero(mAcceleration.x)
+           || (mAcceleration.x > 0 && xyVelocity.x < 0)
+           || (mAcceleration.x < 0 && xyVelocity.x > 0)){
+            xyVelocity.x *= 0.9f;
         }
-        mVelocity.x = xyVelocity.x;
-        mVelocity.y = xyVelocity.y;
+        if(Math::NearZero(mAcceleration.y)
+           || (mAcceleration.y < 0 && xyVelocity.y > 0)
+           || (mAcceleration.y > 0 && xyVelocity.y < 0)){
+            xyVelocity.y *= 0.9f;
+        }
+        
     }
+
+    mVelocity.x = xyVelocity.x;
+    mVelocity.y = xyVelocity.y;
 }
 
 //Wall climbing
@@ -240,8 +241,8 @@ bool PlayerMove::CanWallClimb(CollSide side){
     
     float xyDot = Vector2::Dot(xyVelocity, xyNormal);
     
-    if((dot > 0.7f && dot < 1.3f) && xyVelocity.Length() > 350.0f
-       && xyDot > 0.7f && xyDot < 1.3f){
+    if(dot < -0.9f && xyVelocity.Length() > 350.0f
+       && xyDot < 0.9f){
         return true;
     } else {
         return false;
