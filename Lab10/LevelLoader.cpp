@@ -71,6 +71,7 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 			if (GetQuaternionFromJSON(actorValue, "quat", q))
 			{
 				// TODO: Set actor's quaternion member to q
+                actor->SetQuaternion(q);
 			}
 
 			int textureIdx = 0;

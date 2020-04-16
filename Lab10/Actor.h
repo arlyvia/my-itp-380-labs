@@ -2,6 +2,7 @@
 #include <vector>
 #include <SDL2/SDL_stdinc.h>
 #include "Math.h"
+#include "CollisionComponent.h"
 
 enum class ActorState
 {
@@ -63,9 +64,18 @@ public:
     
     Matrix4 mScaleMatrix;
     Matrix4 mRotationMatrix;
+    Matrix4 mQMatrix;
     Matrix4 mPositionMatrix;
     
     Vector3 GetRight();
+    
+    //Quaternion
+    Quaternion mQuaternion;
+    Quaternion GetQuaternion() { return mQuaternion; }
+    void SetQuaternion(Quaternion q) { mQuaternion = q; }
+    
+    Vector3 GetQuatForward();
+    
 protected:
     // Any actor-specific update code (overridable)
     virtual void OnUpdate(float deltaTime);

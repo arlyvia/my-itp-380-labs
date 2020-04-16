@@ -39,9 +39,10 @@ void Actor::Update(float deltaTime)
     
     mScaleMatrix = Matrix4::CreateScale(mScale);
     mRotationMatrix = Matrix4::CreateRotationZ(mRotation);
+    mQMatrix = Matrix4::CreateFromQuaternion(mQuaternion);
     mPositionMatrix = Matrix4::CreateTranslation(mPosition);
     
-    mWorldTransform = mScaleMatrix * mRotationMatrix * mPositionMatrix;
+    mWorldTransform = mScaleMatrix * mRotationMatrix * mQMatrix * mPositionMatrix;
 }
 
 void Actor::OnUpdate(float deltaTime)
@@ -87,4 +88,10 @@ Vector3 Actor::GetRight() {
     float z_comp = 0.0f;
     Vector3 right = Vector3(x_comp, y_comp, z_comp);
     return right;
+}
+
+Vector3 Actor::GetQuatForward(){
+    Vector3 result = Vector3::Transform(Vector3::UnitX, mQuaternion);
+    result.Normalize();
+    return result;
 }
