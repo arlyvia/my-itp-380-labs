@@ -76,6 +76,8 @@ Matrix4 LaserComponent::worldTransform(LineSegment lineSegment){
     float theta = Math::Acos(Vector3::Dot(normal_x, normal_ls));
     
     float check = Vector3::Dot(normal_x, normal_ls);
+
+    Quaternion new_rotation;
     
     if(check != 1 && check != -1){
         Vector3 cross = Vector3::Cross(normal_x, normal_ls);
@@ -84,11 +86,11 @@ Matrix4 LaserComponent::worldTransform(LineSegment lineSegment){
             cross.y / cross.Length(),
             cross.z / cross.Length());
         
-        Quaternion new_rotation = Quaternion(axis, theta);
+        new_rotation = Quaternion(axis, theta);
     } else if (check == 1){
-        Quaternion new_rotation = Quaternion::Identity;
+        new_rotation = Quaternion::Identity;
     } else if (check == -1){
-        Quaternion new_rotation = Quaternion(Vector3::UnitZ, theta);
+        new_rotation = Quaternion(Vector3::UnitZ, theta);
     }
 
     
@@ -96,7 +98,7 @@ Matrix4 LaserComponent::worldTransform(LineSegment lineSegment){
 
     Matrix4 ScaleMatrix = Matrix4::CreateScale(Scale);
     //Matrix4 RotationMatrix = Matrix4::CreateRotationZ(mOwner->GetRotation());
-    Matrix4 RotationMatrix = Matrix4::CreateRotationZ(theta);
+    Matrix4 RotationMatrix = Matrix4::CreateFromQuaternion(new_rotation);
     Matrix4 PositionMatrix = Matrix4::CreateTranslation(Position);
     
     Matrix4 WorldTransform = ScaleMatrix * RotationMatrix * PositionMatrix;
