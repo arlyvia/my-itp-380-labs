@@ -139,7 +139,7 @@ void Game::LoadData()
     Matrix4 projMatrix = Matrix4::CreatePerspectiveFOV(1.22f, 1024.0f, 768.0f, 10.0f, 10000.0f);
     mRenderer->SetProjectionMatrix(projMatrix);
     
-    LevelLoader::Load(this, "Assets/Level01.json");
+    LevelLoader::Load(this, "Assets/Level03.json");
 }
 
 void Game::UnloadData()

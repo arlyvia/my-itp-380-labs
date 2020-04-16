@@ -64,6 +64,7 @@ void PlayerMove::Update(float deltaTime){
     if(mCurrentState == MoveState::Jump) UpdateJump(deltaTime);
     if(mCurrentState == MoveState::Falling) UpdateFalling(deltaTime);
     if(mCurrentState == MoveState::WallClimb) UpdateWallClimb(deltaTime);
+    if(mCurrentState == MoveState::WallRun) UpdateWallRun(deltaTime);
 }
 
 void PlayerMove::ChangeState(MoveState ms){
@@ -83,10 +84,9 @@ void PlayerMove::UpdateOnGround(float deltaTime){
            || side == CollSide::SideMinX){
             //CanWallClimb(side);
             if(CanWallClimb(side)){
+                mWallClimbTimer = 0.0f;
                 ChangeState(MoveState::WallClimb);
                 return;
-            } else {
-                std::cout << "cannot climb" << std::endl;
             }
         }
     }
@@ -104,6 +104,23 @@ void PlayerMove::UpdateJump(float deltaTime){
     for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
         CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
         if(side == CollSide::Bottom) hit_head = true;
+        if(side == CollSide::SideMaxY
+           || side == CollSide::SideMinY
+           || side == CollSide::SideMaxX
+           || side == CollSide::SideMinX){
+            if(CanWallClimb(side)){
+                mWallClimbTimer = 0.0f;
+                ChangeState(MoveState::WallClimb);
+                return;
+            } else {
+                if(CanWallRun(side)){
+                    mWallRunTimer = 0.0f;
+                    //mSide = side;
+                    ChangeState(MoveState::WallRun);
+                    return;
+                }
+            }
+        }
     }
     if(hit_head){
         hit_head = false;
@@ -134,7 +151,13 @@ void PlayerMove::UpdateFalling(float deltaTime){
 
 void PlayerMove::UpdateWallClimb(float deltaTime){
     AddForce(mGravity);
-    AddForce(mClimbForce);
+    
+    mWallClimbTimer = deltaTime + mWallClimbTimer;
+    
+    if(mWallClimbTimer < 0.4f){
+        AddForce(mClimbForce);
+    }
+    
     PhysicsUpdate(deltaTime);
     collide_side = false;
     for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
@@ -158,6 +181,15 @@ CollSide PlayerMove::FixCollision(class CollisionComponent *self, class Collisio
     
     if(side != CollSide::None){
         mOwner->SetPosition(mOwner->GetPosition() + local_offset);
+        if(side == CollSide::SideMinX){
+            AddForce(Vector3(-700.0f, 0.0f, 0.0f));
+        } else if(side == CollSide::SideMaxX){
+            AddForce(Vector3(700.0f, 0.0f, 0.0f));
+        } else if(side == CollSide::SideMinY){
+            AddForce(Vector3(0.0f, -700.0f, 0.0f));
+        } else if(side == CollSide::SideMaxX){
+            AddForce(Vector3(0.0f, 700.0f, 0.0f));
+        }
     }
     return side;
     
@@ -191,7 +223,8 @@ void PlayerMove::FixXYVelocity(){
     }
     
     //braking
-    if(mCurrentState == MoveState::OnGround){
+    if(mCurrentState == MoveState::OnGround
+       || mCurrentState == MoveState::WallClimb){
         if(Math::NearZero(mAcceleration.x)
            || (mAcceleration.x > 0 && xyVelocity.x < 0)
            || (mAcceleration.x < 0 && xyVelocity.x > 0)){
@@ -248,3 +281,72 @@ bool PlayerMove::CanWallClimb(CollSide side){
         return false;
     }
 }
+
+//Horizontal wall climbing
+void PlayerMove::UpdateWallRun(float deltaTime){
+    AddForce(mGravity);
+    
+    mWallRunTimer = deltaTime + mWallRunTimer;
+    
+    if(mWallRunTimer < 0.4f){
+        AddForce(mWallRunForce);
+    }
+    
+    PhysicsUpdate(deltaTime);
+    
+    //Vector3 normal;
+    
+    /*for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
+        CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
+        mWallRunSide = side;
+    }*/
+    
+    if(mVelocity.z <= 0.0f){
+        mVelocity.z = 0.0f;
+        ChangeState(MoveState::Falling);
+    }
+}
+
+bool PlayerMove::CanWallRun(CollSide side){
+    float dot;
+    Vector3 normal;
+    
+    if(side == CollSide::SideMinX){
+        normal = Vector3(-1, 0, 0);
+    } else if(side == CollSide::SideMaxX){
+        normal = Vector3(1, 0, 0);
+    } else if(side == CollSide::SideMinY){
+        normal = Vector3(0, -1, 0);
+    } else {
+        normal = Vector3(0, 1, 0);
+    }
+    
+    dot = Vector3::Dot(normal, mOwner->GetForward());
+    
+    Vector2 xyNormal;
+    if(side == CollSide::SideMinX){
+        xyNormal = Vector2(-1, 0);
+    } else if(side == CollSide::SideMaxX){
+        xyNormal = Vector2(1, 0);
+    } else if(side == CollSide::SideMinY){
+        xyNormal = Vector2(0, -1);
+    } else {
+        xyNormal = Vector2(0, 1);
+    }
+    Vector2 xyVelocity = Vector2(mVelocity.x, mVelocity.y);
+    
+    float xyDot = Vector2::Dot(xyVelocity, xyNormal);
+    
+    std::cout << "dot: " << dot << std::endl;
+    std::cout << "length: " << xyVelocity.Length() << std::endl;
+    std::cout << "xyDot: " << xyDot << std::endl;
+    
+    if(dot < 0.0f && xyVelocity.Length() > 350.0f
+       && xyDot < 0.9f){
+        std::cout << "climb" << std::endl;
+        return true;
+    } else {
+        return false;
+    }
+}
+

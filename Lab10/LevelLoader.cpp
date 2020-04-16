@@ -7,6 +7,7 @@
 #include "Actor.h"
 #include "MeshComponent.h"
 #include "Block.hpp"
+#include "LaserMine.hpp"
 #include "Player.hpp"
 #include "Game.h"
 
@@ -41,7 +42,10 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
             actor = player;
 		}
 		// TODO: Add else ifs for other actor types
-
+        else if (type == "LaserMine") {
+            LaserMine* laserMine = new LaserMine(game);
+            actor = laserMine;
+        }
 		// Set properties of actor
 		if (actor)
 		{

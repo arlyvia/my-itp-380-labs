@@ -19,7 +19,8 @@ enum class MoveState
     OnGround,
     Jump,
     Falling,
-    WallClimb
+    WallClimb,
+    WallRun
 };
 
 class PlayerMove: public MoveComponent {
@@ -37,6 +38,7 @@ class PlayerMove: public MoveComponent {
         void UpdateJump(float deltaTime);
         void UpdateFalling(float deltaTime);
         void UpdateWallClimb(float deltaTime);
+        void UpdateWallRun(float deltaTime);
     
         //float mZSpeed = 0.0f;
         //const float Gravity = -980.0f;
@@ -67,6 +69,15 @@ class PlayerMove: public MoveComponent {
         bool CanWallClimb(CollSide side);
         Vector3 mClimbForce = Vector3(0.0f, 0.0f, 1800.0f);
         bool collide_side = false;
+        float mWallClimbTimer = 0.0f;
+    
+        //Horizontal wall running
+        Vector3 mWallRunForce = Vector3(0.0f, 0.0f, 1200.0f);
+        float mWallRunTimer = 0.0f;
+    
+        bool CanWallRun(CollSide side);
+        //CollSide mSide;
+        //CollSide GetWallRunSide() { return mSide; }
 };
 
 #endif /* PlayerMove_hpp */
