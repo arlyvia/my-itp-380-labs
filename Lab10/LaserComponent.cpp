@@ -29,7 +29,6 @@ void LaserComponent::Update(float deltaTime){
     mLineSegment = LineSegment(mOwner->GetPosition(), mOwner->GetPosition() + dir * 500.0f);
     
     CastInfo OI;
-    std::cout << "cc: " << mOwner->GetGame()->mPlayer->player_coc << std::endl;
     /*if(mOwner->GetGame()->mPlayer){
         std::cout << "yes" << std::endl;
     } else {
