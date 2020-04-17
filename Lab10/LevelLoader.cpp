@@ -10,6 +10,7 @@
 #include "LaserMine.hpp"
 #include "Player.hpp"
 #include "Game.h"
+#include <iostream>
 
 namespace
 {
@@ -33,7 +34,12 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 		if (type == "Block")
 		{
 			Block* block = new Block(game);
-			actor = block;
+            bool mirror;
+            GetBoolFromJSON(actorValue, "mirror", mirror);
+            if(mirror){
+                block->SetIsMirror(true);
+            }
+            actor = block;
 		}
 		else if (type == "Player")
 		{

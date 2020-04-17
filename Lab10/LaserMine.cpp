@@ -19,5 +19,4 @@ LaserMine::LaserMine(class Game* game)
     laserMine_mc->SetMesh(GetGame()->GetRenderer()->GetMesh("Assets/LaserMine.gpmesh"));
     
     laser_lc = new LaserComponent(this);
-    std::cout << "x laser" << GetPosition().x << std::endl;
 }
