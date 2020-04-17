@@ -29,16 +29,12 @@ void LaserComponent::Update(float deltaTime){
     mLineSegment = LineSegment(mOwner->GetPosition(), mOwner->GetPosition() + dir * 500.0f);
     
     CastInfo OI;
-    /*if(mOwner->GetGame()->mPlayer){
-        std::cout << "yes" << std::endl;
-    } else {
-        std::cout << "no" << std::endl;
-    }*/
-    /*if(SegmentCast(mOwner->GetGame()->mPlayer, mLineSegment, OI)){
+    
+    if(SegmentCast(mOwner->GetGame()->mPlayer, mLineSegment, OI)){
         mLineSegment.mEnd = OI.mPoint;
     } else if(SegmentCast(mOwner->GetGame()->mBlocks, mLineSegment, OI)){
         mLineSegment.mEnd = OI.mPoint;
-    }*/
+    }
 }
 
 void LaserComponent::Draw(class Shader *shader){

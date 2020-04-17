@@ -40,6 +40,7 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 			// TODO: Handle construction of a player!
             Player* player = new Player(game);
             actor = player;
+            game->mPlayer = player;
 		}
 		// TODO: Add else ifs for other actor types
         else if (type == "LaserMine") {
