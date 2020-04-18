@@ -81,6 +81,7 @@ void PlayerUI::OnLapChange(int lapNum)
 bool PlayerUI::IsPlayerInFirst() const
 {
 	// TODO: Implement correctly!!
+    
 	return false;
 }
 

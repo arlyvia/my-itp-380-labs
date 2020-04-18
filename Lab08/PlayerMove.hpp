@@ -25,6 +25,8 @@ class PlayerMove: public VehicleMove {
         void OnLapChange(int newLap) override;
     
         VehicleMove* player_vm;
+    
+        //int GetLapNum();
 
         //Vector3 mVelocity;
         //float x_speed = 400.0f;

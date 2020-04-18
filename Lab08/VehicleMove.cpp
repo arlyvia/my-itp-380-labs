@@ -27,6 +27,7 @@ VehicleMove::VehicleMove(class Actor* owner)
     std::getline(textFile,str);
     //int i = 0;
    while(textFile){
+       std::vector<int> four_checkpoint;
        std::getline(textFile, str);
        std::vector line = CSVHelper::Split(str);
        if (line[0] == "Checkpoint"){
@@ -81,36 +82,35 @@ void VehicleMove::Update(float deltaTime)
     
     mAngularVelocity = mAngularVelocity * angularDragCoeff;
     mOwner->SetRotation(mOwner->GetRotation() + mAngularVelocity * deltaTime);
-    
-    /*for(int i = 0; i < all_checkpoints.size(); i++){
-        for(int j = 0; j < 4; j++){
-            std::cout << "all" << all_checkpoints[i][j] <<std::endl;
-        }
-    }*/
    
     Vector2 playerPos = mOwner->GetGame()->mHeightMap->WorldToCell(mOwner->GetPosition().x, mOwner->GetPosition().y);
-    int next_checkpoint;
     
-    if(last_checkpoint < 8){
-        next_checkpoint = last_checkpoint+1;
-    } else if(last_checkpoint == 8) {
-        next_checkpoint = 0;
-    }
     
     int int_playerPosX = (int)playerPos.x;
     int int_playerPosY = (int)playerPos.y;
     
     //std::cout<< "next" << next_checkpoint <<std::endl;
+    /*if(last_checkpoint < 8){
+        next_checkpoint = last_checkpoint+1;
+    } else if(last_checkpoint == 8) {
+        next_checkpoint = 0;
+    }*/
+    
+    int next_checkpoint;
+    if((unsigned)next_checkpoint >= 0 && next_checkpoint < all_checkpoints.size()){
+        next_checkpoint = last_checkpoint + 1;
+    }
+    if((unsigned)next_checkpoint >= all_checkpoints.size()){
+        next_checkpoint = 0;
+    }
+    
     if(int_playerPosX >= all_checkpoints[next_checkpoint][0]
        && int_playerPosX <= all_checkpoints[next_checkpoint][1]
        && int_playerPosY >= all_checkpoints[next_checkpoint][2]
        && int_playerPosY <= all_checkpoints[next_checkpoint][3]){
         
-        if(last_checkpoint == 8){
-            last_checkpoint = 0;
-        } else {
-            last_checkpoint++;
-        }
+        last_checkpoint = next_checkpoint;
+    
         if(last_checkpoint == 0){
             current_lap++;
             OnLapChange(current_lap);

@@ -46,11 +46,10 @@ public:
     float maxLinAccelMag = 2500.0f;
     float accelRampTime = 2.0f;
     float angularAccel = 5 * Math::Pi;
-    float linDragCoeff = 0.9f;
-    float linDragCoeffPressed = 0.975f;
+    float linDragCoeff = 0.975f;
+    float linDragCoeffPressed = 0.9f;
     float angularDragCoeff = 0.9f;
     
-    std::vector<int> four_checkpoint;
     std::vector<std::vector<int>> all_checkpoints;
     int current_lap = 0;
     int last_checkpoint = -1;

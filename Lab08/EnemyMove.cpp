@@ -48,28 +48,29 @@ void EnemyMove::Update(float deltaTime){
     Vector3 v;
     v = route_points[currentTarget] - mOwner->GetPosition();
     v.Normalize();
-    if(Vector3::Dot(mOwner->GetForward(), v) < 1.1f &&
-       Vector3::Dot(mOwner->GetForward(), v) > 0.9f){
-        mForwardSpeed = 300.0f;
-        mOwner->SetPosition(mOwner->GetPosition() + mForwardSpeed * mOwner->GetForward() * deltaTime);
-    } else {
-        Vector3 turn = Vector3::Cross(mOwner->GetForward(), v);
-        if(turn.z > 0){
-            //right
-            mAngularSpeed = Math::TwoPi;
-        } else {
-            //left
-            mAngularSpeed = -Math::TwoPi;
-        }
-        mOwner->SetRotation(mOwner->GetRotation() + mAngularSpeed * deltaTime);
-    }
-    if( (route_points[currentTarget] - mOwner->GetPosition()).Length() < 40.0f){
+    
+    //or 40.0f
+    if( (route_points[currentTarget] - mOwner->GetPosition()).Length() < 65.0f){
         currentTarget = currentTarget+1;
         if((unsigned)currentTarget == route_points.size()) currentTarget = 0;
     }
-    if( (mOwner->GetGame()->mPlayer->GetPosition() - mOwner->GetPosition()).Length() < 100.0f){
-        mTarget = mOwner->GetGame()->mPlayer->GetPosition() - mOwner->GetPosition();
+    
+    if(Vector3::Dot(mOwner->GetForward(), v) > 0.7f){
+        SetPressed(true);
+    } else {
+        SetPressed(false);
     }
+    
+    Vector3 turn = Vector3::Cross(mOwner->GetForward(), v);
+    if(turn.z > 0){
+        SetTurn(Turn::Right);
+    } else {
+        SetTurn(Turn::Left);
+    }
+
+    /*if( (mOwner->GetGame()->mPlayer->GetPosition() - mOwner->GetPosition()).Length() < 100.0f){
+        mTarget = mOwner->GetGame()->mPlayer->GetPosition() - mOwner->GetPosition();
+    }*/
     
     VehicleMove::Update(deltaTime);
 }
