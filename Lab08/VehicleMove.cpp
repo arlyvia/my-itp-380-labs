@@ -89,18 +89,24 @@ void VehicleMove::Update(float deltaTime)
     }*/
    
     Vector2 playerPos = mOwner->GetGame()->mHeightMap->WorldToCell(mOwner->GetPosition().x, mOwner->GetPosition().y);
-    int next_checkpoint = last_checkpoint+1;
+    int next_checkpoint;
+    
+    if(last_checkpoint < 8){
+        next_checkpoint = last_checkpoint+1;
+    } else if(last_checkpoint == 8) {
+        next_checkpoint = 0;
+    }
+    
     int int_playerPosX = (int)playerPos.x;
     int int_playerPosY = (int)playerPos.y;
-    std::cout<< "x " << int_playerPosX <<std::endl;
-    std::cout<< "y " << int_playerPosY <<std::endl;
     
+    //std::cout<< "next" << next_checkpoint <<std::endl;
     if(int_playerPosX >= all_checkpoints[next_checkpoint][0]
        && int_playerPosX <= all_checkpoints[next_checkpoint][1]
        && int_playerPosY >= all_checkpoints[next_checkpoint][2]
        && int_playerPosY <= all_checkpoints[next_checkpoint][3]){
         
-        if(next_checkpoint >= (unsigned)all_checkpoints.size()){
+        if(last_checkpoint == 8){
             last_checkpoint = 0;
         } else {
             last_checkpoint++;
