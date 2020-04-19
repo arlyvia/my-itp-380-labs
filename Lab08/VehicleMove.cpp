@@ -36,6 +36,7 @@ VehicleMove::VehicleMove(class Actor* owner)
            }
            all_checkpoints.push_back(four_checkpoint);
        }
+       four_checkpoint.clear();
     }
     
 }
@@ -117,6 +118,15 @@ void VehicleMove::Update(float deltaTime)
         }
     }
     
-    std::cout << "lap: " << current_lap << std::endl;
-    std::cout << "checkpoint: " << last_checkpoint << std::endl;
+    //std::cout << "lap: " << current_lap << std::endl;
+    //std::cout << "checkpoint: " << last_checkpoint << std::endl;
+}
+
+float VehicleMove::distToCP(Vector2 pos, int checkpoint){
+    if(checkpoint == -1) checkpoint = 0;
+    Vector2 cp_pos = Vector2(all_checkpoints[checkpoint][1],
+                             all_checkpoints[checkpoint][2]);
+    Vector2 diff = cp_pos-pos;
+    float dist = diff.Length();
+    return dist;
 }

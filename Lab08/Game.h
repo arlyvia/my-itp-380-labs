@@ -24,6 +24,9 @@ public:
     class Player* mPlayer;
     class Enemy* mEnemy;
     
+    class Player* GetPlayer() const { return mPlayer; }
+    class Enemy* GetEnemy() const { return mEnemy; }
+    
     float dist = 3000.0f;
 
     int mChannel;
@@ -32,6 +35,13 @@ public:
     
     float mStartTimer = 8.5f;
     bool firstTime = false;
+    
+    Mix_Chunk * final_lap_sound;
+    Mix_Chunk * lost_sound;
+    Mix_Chunk * race_start_sound;
+    Mix_Chunk * won_sound;
+    Mix_Chunk * music;
+    Mix_Chunk * music_fast;
     
 private:
 	void ProcessInput();

@@ -29,11 +29,11 @@ EnemyMove::EnemyMove(class Actor* owner)
    std::string str = "";
    
     std::getline(textFile,str);
-    std::cout << "str1:" << str << std::endl;
+    //std::cout << "str1:" << str << std::endl;
     //int i = 0;
    while(textFile){
        std::getline(textFile, str);
-       std::cout << str << std::endl;
+       //std::cout << str << std::endl;
        std::vector line = CSVHelper::Split(str);
        if (line[0] == "Node"){
             Vector3 point = mOwner->GetGame()->mHeightMap->CellToWorld(std::stoi(line[1]), std::stoi(line[2]));

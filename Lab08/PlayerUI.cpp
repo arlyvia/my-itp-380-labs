@@ -2,6 +2,9 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Game.h"
+#include "Enemy.hpp"
+#include "VehicleMove.hpp"
+#include "Player.hpp"
 #include "Renderer.h"
 #include "Actor.h"
 
@@ -81,7 +84,26 @@ void PlayerUI::OnLapChange(int lapNum)
 bool PlayerUI::IsPlayerInFirst() const
 {
 	// TODO: Implement correctly!!
+    class Player* p = mOwner->GetGame()->GetPlayer();
+    class Enemy* e = mOwner->GetGame()->GetEnemy();
     
-	return false;
+    int p_lap = p->GetComponent<VehicleMove>()->GetCurrentLap();
+    int e_lap = e->GetComponent<VehicleMove>()->GetCurrentLap();
+    int p_checkpoint = p->GetComponent<VehicleMove>()->GetCheckPoint();
+    int e_checkpoint = e->GetComponent<VehicleMove>()->GetCheckPoint();
+    
+    Vector2 p_pos = Vector2(p->GetPosition().x, p->GetPosition().y);
+    Vector2 e_pos = Vector2(e->GetPosition().x, e->GetPosition().y);
+    float p_dist = p->GetComponent<VehicleMove>()->distToCP(p_pos, p_checkpoint);
+    float e_dist = e->GetComponent<VehicleMove>()->distToCP(e_pos, e_checkpoint);
+    
+    if(p_lap > e_lap || p_checkpoint > e_checkpoint){
+        return true;
+    } else if (p_lap == e_lap && p_checkpoint == e_checkpoint){
+        if(p_dist < e_dist) return true;
+    } else {
+        return false;
+    }
 }
+
 

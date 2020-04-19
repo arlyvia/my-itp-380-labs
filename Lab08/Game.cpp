@@ -129,6 +129,11 @@ void Game::UpdateGame()
         firstTime = true;
         mPlayer->SetState(ActorState::Active);
         mEnemy->SetState(ActorState::Active);
+        
+        mChannel = Mix_PlayChannel(-1, music, -1);
+        if(mChannel==-1) {
+            printf("Mix_PlayChannel: %s\n",Mix_GetError());
+        }
     }
 }
 
@@ -147,11 +152,6 @@ void Game::LoadData()
     Matrix4 projMatrix = Matrix4::CreatePerspectiveFOV(1.22f, 1024.0f, 768.0f, 10.0f, 10000.0f);
     mRenderer->SetProjectionMatrix(projMatrix);
     
-    Vector3 eye_pos = Vector3(-300, 0, 100);
-    Vector3 tar_pos = Vector3(20, 0, 0);
-    Matrix4 viewMatrix = Matrix4::CreateLookAt(eye_pos, tar_pos, Vector3::UnitZ);
-    //mRenderer->SetViewMatrix(viewMatrix);
-    
     Actor* track_actor = new Actor(this);
     track_actor->SetRotation(Math::Pi);
     MeshComponent* track_mesh = new MeshComponent(track_actor);
@@ -159,6 +159,17 @@ void Game::LoadData()
     
     mPlayer->SetState(ActorState::Paused);
     mEnemy->SetState(ActorState::Paused);
+    
+    final_lap_sound = GetSound("Assets/Sounds/FinalLap.wav");
+    lost_sound = GetSound("Assets/Sounds/Lost.wav");
+    race_start_sound = GetSound("Assets/Sounds/RaceStart.wav");
+    won_sound = GetSound("Assets/Sounds/Won.wav");
+    music = GetSound("Assets/Sounds/Music.ogg");
+    music_fast = GetSound("Assets/Sounds/MusicFast.ogg");
+    
+    if(Mix_PlayChannel(-1, race_start_sound, 0)==-1) {
+        printf("Mix_PlayChannel: %s\n",Mix_GetError());
+    }
 }
 
 void Game::UnloadData()

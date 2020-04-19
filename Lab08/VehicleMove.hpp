@@ -54,7 +54,12 @@ public:
     int current_lap = 0;
     int last_checkpoint = -1;
     
-    virtual void OnLapChange(int newLap){ }
+    int GetCurrentLap() { return current_lap; }
+    int GetCheckPoint() { return last_checkpoint; }
+    
+    virtual void OnLapChange(int newLap){}
+    
+    float distToCP(Vector2 pos, int checkpoint);
 };
 
 #endif /* VehicleMove_hpp */

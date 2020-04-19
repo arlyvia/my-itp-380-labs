@@ -8,6 +8,8 @@
 #include "PlayerMove.hpp"
 #include "Actor.h"
 #include "MoveComponent.h"
+#include "VehicleMove.hpp"
+#include "Enemy.hpp"
 #include "Game.h"
 #include "Renderer.h"
 #include "HeightMap.hpp"
@@ -47,5 +49,31 @@ void PlayerMove::Update(float deltaTime){
 }
 
 void PlayerMove::OnLapChange(int newLap){
+    if(newLap == 4){
+        Mix_FadeOutChannel(mOwner->GetGame()->mChannel, 250);
+        
+        if(Mix_PlayChannel(-1, mOwner->GetGame()->final_lap_sound, 0)==-1) {
+            printf("Mix_PlayChannel: %s\n",Mix_GetError());
+        }
+        
+        Mix_FadeInChannel(mOwner->GetGame()->mChannel, mOwner->GetGame()->music, -1, 400);
+    }
+    if(newLap >= 5){
+        Mix_FadeOutChannel(mOwner->GetGame()->mChannel, 250);
+        //std::cout << "2" << std::endl;
+        if(mOwner->GetGame()->GetPlayer()->GetComponent<VehicleMove>()->GetCurrentLap() > mOwner->GetGame()->GetEnemy()->GetComponent<VehicleMove>()->GetCurrentLap()){
+            if(Mix_PlayChannel(-1, mOwner->GetGame()->won_sound, 0)==-1) {
+                printf("Mix_PlayChannel: %s\n",Mix_GetError());
+            }
+            mOwner->GetComponent<PlayerUI>()->SetRaceState(PlayerUI::Won);
+        } else {
+            if(Mix_PlayChannel(-1, mOwner->GetGame()->lost_sound, 0)==-1) {
+                printf("Mix_PlayChannel: %s\n",Mix_GetError());
+            }
+            mOwner->GetComponent<PlayerUI>()->SetRaceState(PlayerUI::Lost);
+        }
+        mOwner->GetGame()->GetEnemy()->SetState(ActorState::Paused);
+        mOwner->GetGame()->GetPlayer()->SetState(ActorState::Paused);
+    }
     mOwner->GetGame()->mPlayer->player_ui->PlayerUI::OnLapChange(newLap);
 }
