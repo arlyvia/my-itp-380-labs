@@ -150,7 +150,7 @@ void Game::LoadData()
     Vector3 eye_pos = Vector3(-300, 0, 100);
     Vector3 tar_pos = Vector3(20, 0, 0);
     Matrix4 viewMatrix = Matrix4::CreateLookAt(eye_pos, tar_pos, Vector3::UnitZ);
-    mRenderer->SetViewMatrix(viewMatrix);
+    //mRenderer->SetViewMatrix(viewMatrix);
     
     Actor* track_actor = new Actor(this);
     track_actor->SetRotation(Math::Pi);
