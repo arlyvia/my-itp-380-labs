@@ -30,6 +30,9 @@ public:
     
     class HeightMap* mHeightMap;
     
+    float mStartTimer = 8.5f;
+    bool firstTime = false;
+    
 private:
 	void ProcessInput();
 	void UpdateGame();

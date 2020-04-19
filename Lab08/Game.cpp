@@ -123,7 +123,13 @@ void Game::UpdateGame()
 		delete actor;
 	}
 
-    
+    //timer
+    mStartTimer -= deltaTime;
+    if(mStartTimer <= 0.0f && firstTime == false){
+        firstTime = true;
+        mPlayer->SetState(ActorState::Active);
+        mEnemy->SetState(ActorState::Active);
+    }
 }
 
 void Game::GenerateOutput()
@@ -151,6 +157,8 @@ void Game::LoadData()
     MeshComponent* track_mesh = new MeshComponent(track_actor);
     track_mesh->SetMesh(GetRenderer()->GetMesh("Assets/Track.gpmesh"));
     
+    mPlayer->SetState(ActorState::Paused);
+    mEnemy->SetState(ActorState::Paused);
 }
 
 void Game::UnloadData()
