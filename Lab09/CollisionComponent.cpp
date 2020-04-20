@@ -76,28 +76,28 @@ CollSide CollisionComponent::GetMinOverlap(
             && (Math::Abs(otherMinYDiff) <= Math::Abs(otherMinZDiff))
             && (Math::Abs(otherMinYDiff) <= Math::Abs(otherMaxZDiff))){
             offset.y = otherMinYDiff;
-            return CollSide::Side;
+            return CollSide::SideMinY;
         } else if((Math::Abs(otherMaxYDiff) <= Math::Abs(otherMinYDiff))
             && (Math::Abs(otherMaxYDiff) <= Math::Abs(otherMinXDiff))
             && (Math::Abs(otherMaxYDiff) <= Math::Abs(otherMaxXDiff))
             && (Math::Abs(otherMaxYDiff) <= Math::Abs(otherMinZDiff))
             && (Math::Abs(otherMaxYDiff) <= Math::Abs(otherMaxZDiff))){
             offset.y = otherMaxYDiff;
-            return CollSide::Side;
+            return CollSide::SideMaxY;
         } else if((Math::Abs(otherMinXDiff) <= Math::Abs(otherMinYDiff))
             && (Math::Abs(otherMinXDiff) <= Math::Abs(otherMaxYDiff))
             && (Math::Abs(otherMinXDiff) <= Math::Abs(otherMaxXDiff))
             && (Math::Abs(otherMinXDiff) <= Math::Abs(otherMinZDiff))
             && (Math::Abs(otherMinXDiff) <= Math::Abs(otherMaxZDiff))){
             offset.x = otherMinXDiff;
-            return CollSide::Side;
+            return CollSide::SideMinX;
         } else if((Math::Abs(otherMaxXDiff) <= Math::Abs(otherMinYDiff))
             && (Math::Abs(otherMaxXDiff) <= Math::Abs(otherMaxYDiff))
             && (Math::Abs(otherMaxXDiff) <= Math::Abs(otherMinXDiff))
             && (Math::Abs(otherMaxXDiff) <= Math::Abs(otherMinZDiff))
             && (Math::Abs(otherMaxXDiff) <= Math::Abs(otherMaxZDiff))){
             offset.x = otherMaxXDiff;
-            return CollSide::Side;
+            return CollSide::SideMaxX;
         } else if((Math::Abs(otherMinZDiff) <= Math::Abs(otherMaxYDiff))
             && (Math::Abs(otherMinZDiff) <= Math::Abs(otherMinXDiff))
             && (Math::Abs(otherMinZDiff) <= Math::Abs(otherMaxXDiff))

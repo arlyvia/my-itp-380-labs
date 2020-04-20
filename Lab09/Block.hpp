@@ -19,6 +19,10 @@ class Block: public Actor {
         
         class MeshComponent* block_mc;
         class CollisionComponent* block_cc;
+    
+        bool mIsMirror = false;
+        bool GetIsMirror()  { return mIsMirror; }
+        bool SetIsMirror(bool isMirror) { return mIsMirror = isMirror; }
 };
 
 #endif /* Block_hpp */

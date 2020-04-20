@@ -7,8 +7,10 @@
 #include "Actor.h"
 #include "MeshComponent.h"
 #include "Block.hpp"
+#include "LaserMine.hpp"
 #include "Player.hpp"
 #include "Game.h"
+#include <iostream>
 
 namespace
 {
@@ -32,16 +34,25 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 		if (type == "Block")
 		{
 			Block* block = new Block(game);
-			actor = block;
+            bool mirror;
+            GetBoolFromJSON(actorValue, "mirror", mirror);
+            if(mirror){
+                block->SetIsMirror(true);
+            }
+            actor = block;
 		}
 		else if (type == "Player")
 		{
 			// TODO: Handle construction of a player!
             Player* player = new Player(game);
             actor = player;
+            game->mPlayer = player;
 		}
 		// TODO: Add else ifs for other actor types
-
+        else if (type == "LaserMine") {
+            LaserMine* laserMine = new LaserMine(game);
+            actor = laserMine;
+        }
 		// Set properties of actor
 		if (actor)
 		{
@@ -67,6 +78,7 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 			if (GetQuaternionFromJSON(actorValue, "quat", q))
 			{
 				// TODO: Set actor's quaternion member to q
+                actor->SetQuaternion(q);
 			}
 
 			int textureIdx = 0;

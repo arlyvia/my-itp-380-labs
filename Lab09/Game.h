@@ -21,7 +21,7 @@ public:
 
 	class Renderer* GetRenderer() {	return mRenderer; }
     
-    class Player* mPlayer;
+    class Player* mPlayer = nullptr;
     
     float dist = 3000.0f;
 
