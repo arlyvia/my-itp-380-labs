@@ -14,7 +14,7 @@ enum class ActorState
 class Actor
 {
 public:
-    Actor(class Game* game);
+    Actor(class Game* game, Actor* parent);
     virtual ~Actor();
 
     // Update function called from Game (not overridable)
@@ -75,6 +75,20 @@ public:
     void SetQuaternion(Quaternion q) { mQuaternion = q; }
     
     Vector3 GetQuatForward();
+    
+    //actor parenting
+    void CalcWorldTransform();
+    Matrix4 CalcWorldRotTrans();
+    
+    Vector3 GetWorldPosition();
+    Vector3 GetWorldForward();
+    
+    Actor* mParent;
+    std::vector<Actor*> mChildren;
+    bool mInheritScale = false;
+    
+    void AddChild(Actor* child);
+    void RemoveChild(Actor* child);
     
 protected:
     // Any actor-specific update code (overridable)

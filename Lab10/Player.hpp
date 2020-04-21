@@ -14,7 +14,7 @@
 class Player: public Actor {
     public:
         //constructor
-        Player(class Game* game);
+        Player(class Game* game, Actor* parent);
         
         class PlayerMove* player_move;
         class CameraComponent* player_cc;

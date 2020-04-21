@@ -12,8 +12,8 @@
 #include "LaserComponent.hpp"
 #include <iostream>
 
-LaserMine::LaserMine(class Game* game)
-:Actor(game)
+LaserMine::LaserMine(class Game* game, class Actor* parent)
+:Actor(game, parent)
 {
     laserMine_mc = new MeshComponent(this);
     laserMine_mc->SetMesh(GetGame()->GetRenderer()->GetMesh("Assets/LaserMine.gpmesh"));

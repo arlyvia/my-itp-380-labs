@@ -13,8 +13,8 @@
 #include "Renderer.h"
 #include "PlayerMove.hpp"
 
-Player::Player(class Game* game)
-:Actor(game)
+Player::Player(class Game* game, class Actor* parent)
+:Actor(game, parent)
 {
     player_move = new PlayerMove(this);
     

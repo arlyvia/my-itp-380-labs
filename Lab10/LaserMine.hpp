@@ -14,7 +14,7 @@
 class LaserMine: public Actor {
     public:
         //constructor
-        LaserMine(class Game* game);
+        LaserMine(class Game* game, Actor* parent);
     
         class MeshComponent* laserMine_mc;
         class LaserComponent* laser_lc;

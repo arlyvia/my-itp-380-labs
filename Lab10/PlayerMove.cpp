@@ -296,11 +296,11 @@ void PlayerMove::UpdateWallRun(float deltaTime){
     
     //Vector3 normal;
     
-    /*for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
+    for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
         CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
-        mWallRunSide = side;
-    }*/
-    
+        //mWallRunSide = side;
+    }
+
     if(mVelocity.z <= 0.0f){
         mVelocity.z = 0.0f;
         ChangeState(MoveState::Falling);

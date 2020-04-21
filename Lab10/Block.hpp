@@ -14,7 +14,7 @@
 class Block: public Actor {
     public:
         //constructor
-        Block(class Game* game);
+        Block(class Game* game, Actor* parent);
         ~Block();
         
         class MeshComponent* block_mc;

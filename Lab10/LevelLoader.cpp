@@ -33,7 +33,7 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 
 		if (type == "Block")
 		{
-			Block* block = new Block(game);
+			Block* block = new Block(game, parent);
             bool mirror;
             GetBoolFromJSON(actorValue, "mirror", mirror);
             if(mirror){
@@ -44,13 +44,13 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 		else if (type == "Player")
 		{
 			// TODO: Handle construction of a player!
-            Player* player = new Player(game);
+            Player* player = new Player(game, parent);
             actor = player;
             game->mPlayer = player;
 		}
 		// TODO: Add else ifs for other actor types
         else if (type == "LaserMine") {
-            LaserMine* laserMine = new LaserMine(game);
+            LaserMine* laserMine = new LaserMine(game, parent);
             actor = laserMine;
         }
 		// Set properties of actor

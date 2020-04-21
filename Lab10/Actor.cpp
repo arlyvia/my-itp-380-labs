@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 
-Actor::Actor(Game* game)
+Actor::Actor(Game* game, Actor* parent)
     :mGame(game)
     ,mState(ActorState::Active)
     ,mPosition(Vector3::Zero)
@@ -13,13 +13,30 @@ Actor::Actor(Game* game)
     ,mRotation(0.0f)
 {
     // TODO
-    mGame->AddActor(this);
+    mParent = parent;
+    if(mParent == nullptr) {
+        mGame->AddActor(this);
+    } else {
+        mParent->AddChild(this);
+    }
+   
 }
 
 Actor::~Actor()
 {
     // TODO
-    mGame->RemoveActor(this);
+    if(mParent == nullptr){
+        mGame->RemoveActor(this);
+    } else {
+        mParent->RemoveChild(this);
+    }
+    
+    //deleting children
+    while (!mChildren.empty())
+    {
+        delete mChildren.back();
+    }
+    
     for(auto& component : mComponents)
     {
         delete component;
@@ -30,6 +47,8 @@ Actor::~Actor()
 void Actor::Update(float deltaTime)
 {
     // TODO
+    CalcWorldTransform();
+    
     if(this->GetState() == ActorState::Active){
         for(int i = 0; i < int(mComponents.size()); i++){
             mComponents[i]->Update(deltaTime);
@@ -37,12 +56,11 @@ void Actor::Update(float deltaTime)
         OnUpdate(deltaTime);
     }
     
-    mScaleMatrix = Matrix4::CreateScale(mScale);
-    mRotationMatrix = Matrix4::CreateRotationZ(mRotation);
-    mQMatrix = Matrix4::CreateFromQuaternion(mQuaternion);
-    mPositionMatrix = Matrix4::CreateTranslation(mPosition);
+    CalcWorldTransform();
     
-    mWorldTransform = mScaleMatrix * mRotationMatrix * mQMatrix * mPositionMatrix;
+    for(int unsigned i=0; i < mChildren.size(); i++){
+        mChildren[i]->Update(deltaTime);
+    }
 }
 
 void Actor::OnUpdate(float deltaTime)
@@ -94,4 +112,59 @@ Vector3 Actor::GetQuatForward(){
     Vector3 result = Vector3::Transform(Vector3::UnitX, mQuaternion);
     result.Normalize();
     return result;
+}
+
+void Actor::CalcWorldTransform(){
+    mScaleMatrix = Matrix4::CreateScale(mScale);
+    mRotationMatrix = Matrix4::CreateRotationZ(mRotation);
+    mQMatrix = Matrix4::CreateFromQuaternion(mQuaternion);
+    mPositionMatrix = Matrix4::CreateTranslation(mPosition);
+    
+    mWorldTransform = mScaleMatrix * mRotationMatrix * mQMatrix * mPositionMatrix;
+    
+    if(mParent){
+        if(mInheritScale){
+            mWorldTransform *= mParent->mWorldTransform;
+        } else {
+            mWorldTransform *= CalcWorldRotTrans();
+        }
+    }
+    
+}
+
+Matrix4 Actor::CalcWorldRotTrans(){
+    mRotationMatrix = Matrix4::CreateRotationZ(mRotation);
+    mQMatrix = Matrix4::CreateFromQuaternion(mQuaternion);
+    mPositionMatrix = Matrix4::CreateTranslation(mPosition);
+    
+    mWorldTransform = mRotationMatrix * mQMatrix * mPositionMatrix;
+    
+    if(mParent){
+        mWorldTransform *= mParent->CalcWorldRotTrans();
+    }
+    
+    return mWorldTransform;
+}
+
+Vector3 Actor::GetWorldPosition(){
+    return mWorldTransform.GetTranslation();
+}
+
+Vector3 Actor::GetWorldForward(){
+    return mWorldTransform.GetXAxis();
+}
+
+void Actor::AddChild(Actor* child){
+    mChildren.push_back(child);
+}
+
+void Actor::RemoveChild(Actor* child){
+    auto iter = std::find(mChildren.begin(), mChildren.end(), child);
+    if (iter != mChildren.end())
+    {
+        // Swap to end of vector and pop off (avoid erase copies)
+        auto iter2 = mChildren.end() - 1;
+        std::iter_swap(iter, iter2);
+        mChildren.pop_back();
+    }
 }

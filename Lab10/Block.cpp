@@ -12,8 +12,8 @@
 #include "Actor.h"
 #include "Renderer.h"
 
-Block::Block(class Game* game)
-:Actor(game)
+Block::Block(class Game* game, Actor* parent)
+:Actor(game, parent)
 {
     SetScale(64.0f);
     
