@@ -14,10 +14,13 @@ Actor::Actor(Game* game, Actor* parent)
 {
     // TODO
     mParent = parent;
-    if(mParent == nullptr) {
+    std::cout << parent << std::endl;
+    if(!mParent) {
         mGame->AddActor(this);
+        //mInheritScale = false;
     } else {
         mParent->AddChild(this);
+        //mInheritScale = true;
     }
    
 }
@@ -25,12 +28,6 @@ Actor::Actor(Game* game, Actor* parent)
 Actor::~Actor()
 {
     // TODO
-    if(mParent == nullptr){
-        mGame->RemoveActor(this);
-    } else {
-        mParent->RemoveChild(this);
-    }
-    
     //deleting children
     while (!mChildren.empty())
     {
@@ -42,6 +39,12 @@ Actor::~Actor()
         delete component;
     }
     mComponents.clear();
+    
+    if(!mParent){
+        mGame->RemoveActor(this);
+    } else {
+        mParent->RemoveChild(this);
+    }
 }
 
 void Actor::Update(float deltaTime)
@@ -126,7 +129,7 @@ void Actor::CalcWorldTransform(){
         if(mInheritScale){
             mWorldTransform *= mParent->mWorldTransform;
         } else {
-            mWorldTransform *= CalcWorldRotTrans();
+            mWorldTransform *= mParent->CalcWorldRotTrans();
         }
     }
     

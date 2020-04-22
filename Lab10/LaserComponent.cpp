@@ -29,11 +29,11 @@ void LaserComponent::Update(float deltaTime){
     //making the first line segment
     mLineSegments.clear();
     
-    Vector3 dir = mOwner->GetQuatForward();
-    mLineSegment = LineSegment(mOwner->GetPosition(), mOwner->GetPosition() + dir * 500.0f);
-    
     //Vector3 dir = mOwner->GetQuatForward();
-    //mLineSegment = LineSegment(mOwner->GetWorldPosition(), mOwner->GetWorldForward());
+    //mLineSegment = LineSegment(mOwner->GetPosition(), mOwner->GetPosition() + dir * 500.0f);
+    
+    Vector3 dir = mOwner->GetQuatForward();
+    mLineSegment = LineSegment(mOwner->GetWorldPosition(), mOwner->GetWorldForward());
     
     CastInfo OI;
     
