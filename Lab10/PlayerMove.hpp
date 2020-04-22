@@ -76,8 +76,8 @@ class PlayerMove: public MoveComponent {
         float mWallRunTimer = 0.0f;
     
         bool CanWallRun(CollSide side);
-        //CollSide mSide;
-        //CollSide GetWallRunSide() { return mSide; }
+        CollSide mSide;
+        CollSide GetWallRunSide() { return mSide; }
 };
 
 #endif /* PlayerMove_hpp */

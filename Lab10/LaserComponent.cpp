@@ -32,14 +32,17 @@ void LaserComponent::Update(float deltaTime){
     //Vector3 dir = mOwner->GetQuatForward();
     //mLineSegment = LineSegment(mOwner->GetPosition(), mOwner->GetPosition() + dir * 500.0f);
     
-    Vector3 dir = mOwner->GetQuatForward();
-    mLineSegment = LineSegment(mOwner->GetWorldPosition(), mOwner->GetWorldForward());
+    //Vector3 dir = mOwner->GetQuatForward();
+    //mLineSegment = LineSegment(mOwner->GetWorldPosition(), mOwner->GetWorldForward());
+    mLineSegment = LineSegment(mOwner->GetWorldPosition(), mOwner->GetWorldPosition() + mOwner->GetQuatForward() * 500.0f);
     
     CastInfo OI;
     
     Block* block;
     
     bool shouldKeepGoing = true;
+    
+    //Block* last_mirror;
     
     while(shouldKeepGoing){
         if(SegmentCast(mOwner->GetGame()->mPlayer, mLineSegment, OI)){
@@ -51,6 +54,7 @@ void LaserComponent::Update(float deltaTime){
             mLineSegments.push_back(mLineSegment);
             block = (Block*)OI.mActor;
             if(block->GetIsMirror()){
+                //last_mirror = block;
                 Vector3 current_dir = mLineSegment.mEnd - mLineSegment.mStart;
                 current_dir.Normalize();
                 mLineSegment.mStart = mLineSegment.mEnd;

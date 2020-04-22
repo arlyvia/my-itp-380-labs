@@ -298,7 +298,7 @@ void PlayerMove::UpdateWallRun(float deltaTime){
     
     for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
         CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
-        //mWallRunSide = side;
+        mSide = side;
     }
 
     if(mVelocity.z <= 0.0f){

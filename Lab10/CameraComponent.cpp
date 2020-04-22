@@ -30,6 +30,10 @@ void CameraComponent::Update(float deltaTime)
         mPitchAngle = -Math::PiOver2/2.0f;
     }
     
+    mPitchMatrix = Matrix4::CreateRotationY(mPitchAngle);
+    mYawMatrix = Matrix4::CreateRotationZ(mOwner->GetRotation());
+    
+    //camera rotation
     mRollAngle += mRollSpeed * deltaTime;
     
     if (mRollAngle >= Math::PiOver2/2.0f)
@@ -40,10 +44,14 @@ void CameraComponent::Update(float deltaTime)
         mRollAngle = -Math::PiOver2/2.0f;
     }
     
-    mPitchMatrix = Matrix4::CreateRotationY(mPitchAngle);
-    mYawMatrix = Matrix4::CreateRotationZ(mOwner->GetRotation());
+    CollSide side = mOwner->GetGame()->mPlayer->player_move->GetWallRunSide();
+    if(side == CollSide::SideMinY || side == CollSide::SideMaxY){
+        mRollMatrix = Matrix4::CreateRotationX(mRollAngle);
+    } else {
+        mRollMatrix = Matrix4::CreateRotationY(mRollAngle);
+    }
     
-    mRotationMatrix =  mPitchMatrix * mYawMatrix;
+    mRotationMatrix =  mPitchMatrix * mYawMatrix * mRollMatrix;
     
     Vector3 transform_vec = Vector3(1, 0, 0);
     
@@ -54,14 +62,6 @@ void CameraComponent::Update(float deltaTime)
     Matrix4 viewMatrix = Matrix4::CreateLookAt(mOwner->GetPosition(),targetPos, Vector3::UnitZ);
     
     mOwner->GetGame()->GetRenderer()->SetViewMatrix(viewMatrix);
-    
-    //CollSide side = mOwner->GetGame()->mPlayer->player_move->mWallRunSide;
-    /*Matrix4 rollMatrix;
-    if(mOwner->GetGame()->mPlayer->player_move->GetWallRunSide() == CollSide::SideMinY || mOwner->GetGame()->mPlayer->player_move->GetWallRunSide() == CollSide::SideMaxY){
-        rollMatrix = Matrix4::CreateRotationX(mRollAngle);
-    } else {
-        rollMatrix = Matrix4::CreateRotationY(mRollAngle);
-    }*/
 }
 
 /*Vector3 CameraComponent::idealPos(){

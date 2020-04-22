@@ -136,17 +136,17 @@ void Actor::CalcWorldTransform(){
 }
 
 Matrix4 Actor::CalcWorldRotTrans(){
-    mRotationMatrix = Matrix4::CreateRotationZ(mRotation);
-    mQMatrix = Matrix4::CreateFromQuaternion(mQuaternion);
-    mPositionMatrix = Matrix4::CreateTranslation(mPosition);
+    Matrix4 RotationMatrix = Matrix4::CreateRotationZ(mRotation);
+    Matrix4 QMatrix = Matrix4::CreateFromQuaternion(mQuaternion);
+    Matrix4 PositionMatrix = Matrix4::CreateTranslation(mPosition);
     
-    mWorldTransform = mRotationMatrix * mQMatrix * mPositionMatrix;
+    Matrix4 WorldTransform = RotationMatrix * QMatrix * PositionMatrix;
     
     if(mParent){
-        mWorldTransform *= mParent->CalcWorldRotTrans();
+        WorldTransform *= mParent->CalcWorldRotTrans();
     }
     
-    return mWorldTransform;
+    return WorldTransform;
 }
 
 Vector3 Actor::GetWorldPosition(){
