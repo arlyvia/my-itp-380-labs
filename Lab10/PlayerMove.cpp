@@ -300,10 +300,10 @@ void PlayerMove::UpdateWallRun(float deltaTime){
     std::cout <<"change" <<std::endl;
     
     
-    /*for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
+    for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
         CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
-        mSide = side;
-    }*/
+        //mSide = side;
+    }
 
     if(mSide == CollSide::SideMinX || mSide == CollSide::SideMaxY){
         mOwner->GetComponent<CameraComponent>()->mRollSpeed = Math::Pi;

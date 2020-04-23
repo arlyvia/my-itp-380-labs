@@ -49,7 +49,7 @@ void LaserComponent::Update(float deltaTime){
             mLineSegment.mEnd = OI.mPoint;
             shouldKeepGoing = false;
             mLineSegments.push_back(mLineSegment);
-        } else if(SegmentCast(mOwner->GetGame()->mBlocks, mLineSegment, OI)){
+        } else if(SegmentCast(mOwner->GetGame()->mBlocks, mLineSegment, OI, OI.mActor)){
             mLineSegment.mEnd = OI.mPoint;
             mLineSegments.push_back(mLineSegment);
             block = (Block*)OI.mActor;
