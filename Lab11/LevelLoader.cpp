@@ -6,9 +6,15 @@
 #include <sstream>
 #include "Actor.h"
 #include "MeshComponent.h"
-#include "Block.h"
-#include "Player.h"
+#include "Block.hpp"
+#include "LaserMine.hpp"
+#include "Player.hpp"
+#include "Checkpoint.hpp"
+#include "SecurityCamera.hpp"
 #include "Game.h"
+#include "Coin.hpp"
+#include <queue>
+#include <iostream>
 
 namespace
 {
@@ -31,15 +37,39 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 
 		if (type == "Block")
 		{
-			Block* block = new Block(game);
-			actor = block;
+			Block* block = new Block(game, parent);
+            bool mirror;
+            GetBoolFromJSON(actorValue, "mirror", mirror);
+            if(mirror){
+                block->SetIsMirror(true);
+            }
+            actor = block;
 		}
 		else if (type == "Player")
 		{
 			// TODO: Handle construction of a player!
+            Player* player = new Player(game, parent);
+            actor = player;
+            game->mPlayer = player;
+            //game->mPlayer->respawn = pos;
 		}
 		// TODO: Add else ifs for other actor types
-
+        else if (type == "LaserMine") {
+            LaserMine* laserMine = new LaserMine(game, parent);
+            actor = laserMine;
+        } else if (type == "Checkpoint"){
+            Checkpoint* checkpoint = new Checkpoint(game, parent);
+            checkpoint->checkpoint_mc->SetTextureIndex(1);
+            game->mCheckpoints.push(checkpoint);
+            actor = checkpoint;
+            
+        } else if (type == "SecurityCamera"){
+            SecurityCamera* security = new SecurityCamera(game,parent);
+            actor = security;
+        } else if (type == "Coin"){
+            Coin* coin = new Coin(game, parent);
+            actor = coin;
+        }
 		// Set properties of actor
 		if (actor)
 		{
@@ -47,6 +77,9 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 			if (GetVectorFromJSON(actorValue, "pos", pos))
 			{
 				actor->SetPosition(pos);
+                if(game->mPlayer){
+                    game->mPlayer->SetRespawn(pos);
+                }
 			}
 
 			float scale = 1.0f;
@@ -65,6 +98,7 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 			if (GetQuaternionFromJSON(actorValue, "quat", q))
 			{
 				// TODO: Set actor's quaternion member to q
+                actor->SetQuaternion(q);
 			}
 
 			int textureIdx = 0;

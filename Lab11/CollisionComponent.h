@@ -7,8 +7,10 @@ enum class CollSide
 	None,
 	Top,
 	Bottom,
-	Left,
-	Right
+	SideMinX,
+    SideMaxX,
+    SideMinY,
+    SideMaxY
 };
 
 class CollisionComponent : public Component

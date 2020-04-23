@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <queue>
 #include "Math.h"
 
 class Game
@@ -19,9 +20,20 @@ public:
 
 	Mix_Chunk* GetSound(const std::string& fileName);
 
-	void LoadLevel(const std::string& fileName);
-
 	class Renderer* GetRenderer() {	return mRenderer; }
+    
+    class Player* mPlayer = nullptr;
+    
+    float dist = 3000.0f;
+
+    int mChannel;
+    
+    std::vector<Actor*> mBlocks;
+    
+    std::queue <class Checkpoint*> mCheckpoints;
+    
+    class Arrow* mArrow = nullptr;
+    
 private:
 	void ProcessInput();
 	void UpdateGame();
@@ -29,8 +41,6 @@ private:
 	void LoadData();
 	void UnloadData();
 
-	// Map of textures loaded
-	std::unordered_map<std::string, SDL_Texture*> mTextures;
 	std::unordered_map<std::string, Mix_Chunk*> mSounds;
 
 	// All the actors in the game

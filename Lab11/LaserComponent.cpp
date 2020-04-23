@@ -69,6 +69,13 @@ void LaserComponent::Update(float deltaTime){
             shouldKeepGoing = false;
         }
     }
+    
+    
+    
+    
+    if(SegmentCast(mOwner->GetGame()->mPlayer, mLineSegment, OI)){
+        mOwner->GetGame()->mPlayer->SetPosition(mOwner->GetGame()->mPlayer->mRespawn);
+    }
 
 }
 
