@@ -22,8 +22,14 @@ Arrow::Arrow(class Game* game, class Actor* parent)
 }
 
 void Arrow::OnUpdate(float deltaTime){
-    Vector3 result = GetGame()->mCheckpoints.front()->GetPosition() - GetGame()->mPlayer->GetPosition();
+
+    if(GetGame()->mCheckpoints.empty()){
+        arrow_q = Quaternion::Identity;
+        SetQuaternion(arrow_q);
+        return;
+    }
     
+    Vector3 result = GetGame()->mCheckpoints.front()->GetPosition() - GetGame()->mPlayer->GetPosition();
     
     result.Normalize();
     
@@ -50,7 +56,5 @@ void Arrow::OnUpdate(float deltaTime){
     }
     SetQuaternion(arrow_q);
     SetPosition(GetGame()->GetRenderer()->Unproject(Vector3(0, 250.0f, 0.1f)));
-    
-    
     
 }
