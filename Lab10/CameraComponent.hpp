@@ -41,7 +41,6 @@ public:
     
     float GetRollSpeed() const { return mRollSpeed; }
     float SetRollSpeed(float speed) { return mRollSpeed = speed; }
-    Matrix4 mRollMatrix;
    
     //mRotationMatrix = Matrix4::CreateRotationZ(mRotation);
     //mPositionMatrix = Matrix4::CreateTranslation(mPosition);

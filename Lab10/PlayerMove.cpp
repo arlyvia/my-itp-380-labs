@@ -11,6 +11,7 @@
 #include "Game.h"
 #include "Renderer.h"
 #include "CameraComponent.hpp"
+#include "Component.h"
 #include "Math.h"
 #include <iostream>
 #include <SDL2/SDL_log.h>
@@ -296,14 +297,40 @@ void PlayerMove::UpdateWallRun(float deltaTime){
     
     //Vector3 normal;
     
+    std::cout <<"change" <<std::endl;
+    
+    
     for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
         CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
         mSide = side;
     }
 
+    if(mSide == CollSide::SideMinX || mSide == CollSide::SideMaxY){
+        mOwner->GetComponent<CameraComponent>()->mRollSpeed = Math::Pi;
+    } else {
+        mOwner->GetComponent<CameraComponent>()->mRollSpeed = -Math::Pi;
+    }
+    
     if(mVelocity.z <= 0.0f){
         mVelocity.z = 0.0f;
         ChangeState(MoveState::Falling);
+        mOwner->GetComponent<CameraComponent>()->mRollSpeed *= -1.0f;
+    
+        /*float roll_ang =  mOwner->GetComponent<CameraComponent>()->mRollAngle;
+        if(mSide == CollSide::SideMinX || mSide == CollSide::SideMaxY){
+            mOwner->GetComponent<CameraComponent>()->mRollSpeed = -Math::Pi;
+            if (roll_ang <= 0.0f){
+                roll_ang = 0.0f;
+                mOwner->GetComponent<CameraComponent>()->mRollSpeed = 0.0f;
+            }
+        } else {
+            mOwner->GetComponent<CameraComponent>()->mRollSpeed = Math::Pi;
+            if (roll_ang >= 0.0f) {
+                roll_ang = 0.0f;
+                mOwner->GetComponent<CameraComponent>()->mRollSpeed = 0.0f;
+            }
+        }*/
+        
     }
 }
 
