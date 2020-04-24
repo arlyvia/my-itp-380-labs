@@ -35,9 +35,14 @@ void CameraComponent::Update(float deltaTime)
     mYawMatrix = Matrix4::CreateRotationZ(mOwner->GetRotation());
     
     //camera rotation
-    mRollAngle += mRollSpeed * deltaTime;
-    std::cout << "rollsp " << mRollSpeed << std::endl;
-    
+    if(mOwner->GetGame()->mPlayer->player_move->mWallRunning){
+        mRollAngle += mRollSpeed * deltaTime;
+        mRollAngle = Math::Clamp(mRollAngle, -Math::Pi / 6.0f, 0.0f);
+        //std::cout << "rollsp " << mRollSpeed << std::endl;
+    } else {
+        mRollAngle -= mRollSpeed * deltaTime;
+        mRollAngle = Math::Clamp(mRollAngle, 0.0f, Math::Pi / 6.0f);
+    }
     /*if (mRollAngle >= Math::PiOver2/2.0f)
     {
         mRollAngle = Math::PiOver2/2.0f;
@@ -50,12 +55,12 @@ void CameraComponent::Update(float deltaTime)
     CollSide side = mOwner->GetGame()->mPlayer->player_move->GetWallRunSide();
     
     
-    if(side == CollSide::SideMinX || side == CollSide::SideMaxY){
+    /*if(side == CollSide::SideMinX || side == CollSide::SideMaxY){
         mRollAngle = Math::Clamp(mRollAngle, -Math::Pi / 6.0f, 0.0f);
     } else {
         //0 to pi/6
         mRollAngle = Math::Clamp(mRollAngle, 0.0f, Math::Pi / 6.0f);
-    }
+    }*/
     
     Matrix4 rollMatrix;
     if(side == CollSide::SideMaxY || side == CollSide::SideMinY){
@@ -63,6 +68,13 @@ void CameraComponent::Update(float deltaTime)
     } else {
         rollMatrix = Matrix4::CreateRotationY(mRollAngle);
     }
+    //minx maxy
+    if(side == CollSide::SideMinX || side == CollSide::SideMaxY){
+        mOwner->GetComponent<CameraComponent>()->mRollSpeed = Math::Pi;
+    } else {
+        mOwner->GetComponent<CameraComponent>()->mRollSpeed = -Math::Pi;
+    }
+    
     //else not in wall run
     //increment or decrement angle depending on if angle is > 0 >
     //if >0 < 0.1 , then set angle to zero
@@ -76,7 +88,7 @@ void CameraComponent::Update(float deltaTime)
     
     Vector3 targetPos = mOwner->GetPosition() + (camera_forward * TargetDist);
     
-    Vector3 transform_vec2 = Vector3(0, 0, 1);
+    Vector3 transform_vec2 = Vector3::UnitZ;
     
     Vector3 camera_up = Vector3::Transform(transform_vec2, rollMatrix);
     

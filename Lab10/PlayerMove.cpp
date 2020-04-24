@@ -285,6 +285,8 @@ bool PlayerMove::CanWallClimb(CollSide side){
 
 //Horizontal wall climbing
 void PlayerMove::UpdateWallRun(float deltaTime){
+    mWallRunning = true;
+    
     AddForce(mGravity);
     
     mWallRunTimer = deltaTime + mWallRunTimer;
@@ -305,17 +307,13 @@ void PlayerMove::UpdateWallRun(float deltaTime){
         //mSide = side;
     }
 
-    if(mSide == CollSide::SideMinX || mSide == CollSide::SideMaxY){
-        mOwner->GetComponent<CameraComponent>()->mRollSpeed = Math::Pi;
-    } else {
-        mOwner->GetComponent<CameraComponent>()->mRollSpeed = -Math::Pi;
-    }
+    
     
     if(mVelocity.z <= 0.0f){
         mVelocity.z = 0.0f;
         ChangeState(MoveState::Falling);
         mOwner->GetComponent<CameraComponent>()->mRollSpeed *= -1.0f;
-    
+        mWallRunning = false;
         /*float roll_ang =  mOwner->GetComponent<CameraComponent>()->mRollAngle;
         if(mSide == CollSide::SideMinX || mSide == CollSide::SideMaxY){
             mOwner->GetComponent<CameraComponent>()->mRollSpeed = -Math::Pi;

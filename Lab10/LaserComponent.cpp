@@ -38,25 +38,24 @@ void LaserComponent::Update(float deltaTime){
     
     CastInfo OI;
     
-    Block* block;
-    
+    //Block* block = nullptr;
+    Actor* ignore = nullptr;
     bool shouldKeepGoing = true;
     
     while(shouldKeepGoing){
         bool seg_cast = SegmentCast(mOwner->GetGame()->mPlayer, mLineSegment, OI);
-        Actor* ignore = OI.mActor;
+        ignore = OI.mActor;
+        //Actor* ignore = nullptr;
         if(seg_cast){
             mLineSegment.mEnd = OI.mPoint;
             shouldKeepGoing = false;
             mLineSegments.push_back(mLineSegment);
-        } else if(SegmentCast(mOwner->GetGame()->mBlocks, mLineSegment, OI)){
+        } else if(SegmentCast(mOwner->GetGame()->mBlocks, mLineSegment, OI, ignore)){
             mLineSegment.mEnd = OI.mPoint;
             mLineSegments.push_back(mLineSegment);
-            block = (Block*)OI.mActor;
-            //ignore = OI.mActor;
-            //ignore = static_cast<Block*>(ignore);
+            ignore = OI.mActor;
+            Block* block = static_cast<Block*>(ignore);
             if(block->GetIsMirror()){
-                //last_mirror = block;
                 Vector3 current_dir = mLineSegment.mEnd - mLineSegment.mStart;
                 current_dir.Normalize();
                 mLineSegment.mStart = mLineSegment.mEnd;
