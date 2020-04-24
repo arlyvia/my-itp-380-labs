@@ -312,7 +312,7 @@ void PlayerMove::UpdateWallRun(float deltaTime){
     if(mVelocity.z <= 0.0f){
         mVelocity.z = 0.0f;
         ChangeState(MoveState::Falling);
-        mOwner->GetComponent<CameraComponent>()->mRollSpeed *= -1.0f;
+        //mOwner->GetComponent<CameraComponent>()->mRollSpeed *= -1.0f;
         mWallRunning = false;
         /*float roll_ang =  mOwner->GetComponent<CameraComponent>()->mRollAngle;
         if(mSide == CollSide::SideMinX || mSide == CollSide::SideMaxY){

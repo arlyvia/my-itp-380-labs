@@ -34,7 +34,7 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
 		if (type == "Block")
 		{
 			Block* block = new Block(game, parent);
-            bool mirror;
+            bool mirror = false;
             GetBoolFromJSON(actorValue, "mirror", mirror);
             if(mirror){
                 block->SetIsMirror(true);
