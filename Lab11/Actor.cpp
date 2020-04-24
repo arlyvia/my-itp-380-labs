@@ -14,13 +14,10 @@ Actor::Actor(Game* game, Actor* parent)
 {
     // TODO
     mParent = parent;
-    std::cout << parent << std::endl;
     if(!mParent) {
         mGame->AddActor(this);
-        //mInheritScale = false;
     } else {
         mParent->AddChild(this);
-        //mInheritScale = true;
     }
    
 }

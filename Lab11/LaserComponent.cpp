@@ -83,13 +83,9 @@ void LaserComponent::Draw(class Shader *shader){
     if (mMesh)
     {
         // Set the world transform
-        //std::cout << "Size " << mLineSegments.size() <<std::endl;
         for(int unsigned i = 0; i < mLineSegments.size(); i++){
-            //std::cout << "i " << i <<std::endl;
             shader->SetMatrixUniform("uWorldTransform",
             worldTransform(mLineSegments[i]));
-            //shader->SetMatrixUniform("uWorldTransform",
-            //worldTransform(mLineSegment));
             // Set the active texture
             Texture* t = mMesh->GetTexture(mTextureIndex);
             if (t)
@@ -106,7 +102,6 @@ void LaserComponent::Draw(class Shader *shader){
 }
 
 Matrix4 LaserComponent::worldTransform(LineSegment lineSegment){
-    //std::cout << "length: " << lineSegment.LineSegment::Length() << std::endl;
     Vector3 Scale = Vector3(lineSegment.LineSegment::Length(), 1.0f, 1.0f);
     Vector3 Position = Vector3(lineSegment.LineSegment::PointOnSegment(0.5f));
     
@@ -138,7 +133,6 @@ Matrix4 LaserComponent::worldTransform(LineSegment lineSegment){
     }
 
     Matrix4 ScaleMatrix = Matrix4::CreateScale(Scale);
-    //Matrix4 RotationMatrix = Matrix4::CreateRotationZ(mOwner->GetRotation());
     Matrix4 RotationMatrix = Matrix4::CreateFromQuaternion(new_rotation);
     Matrix4 PositionMatrix = Matrix4::CreateTranslation(Position);
     

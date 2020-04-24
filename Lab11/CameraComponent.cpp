@@ -36,15 +36,6 @@ void CameraComponent::Update(float deltaTime)
     
     //camera rotation
     mRollAngle += mRollSpeed * deltaTime;
-    std::cout << "rollsp " << mRollSpeed << std::endl;
-    
-    /*if (mRollAngle >= Math::PiOver2/2.0f)
-    {
-        mRollAngle = Math::PiOver2/2.0f;
-    } else if (mRollAngle <= -Math::PiOver2/2.0f)
-    {
-        mRollAngle = -Math::PiOver2/2.0f;
-    }*/
     
     //check state of player and if they r in wall run
     CollSide side = mOwner->GetGame()->mPlayer->player_move->GetWallRunSide();
@@ -53,7 +44,6 @@ void CameraComponent::Update(float deltaTime)
     if(side == CollSide::SideMinX || side == CollSide::SideMaxY){
         mRollAngle = Math::Clamp(mRollAngle, -Math::Pi / 6.0f, 0.0f);
     } else {
-        //0 to pi/6
         mRollAngle = Math::Clamp(mRollAngle, 0.0f, Math::Pi / 6.0f);
     }
     
