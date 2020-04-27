@@ -39,6 +39,11 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
             if(mirror){
                 block->SetIsMirror(true);
             }
+            bool rotate = false;
+            GetBoolFromJSON(actorValue, "rotates", rotate);
+            if(rotate){
+                block->SetIsRotate(true);
+            }
             actor = block;
 		}
 		else if (type == "Player")

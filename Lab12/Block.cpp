@@ -37,11 +37,3 @@ Block::~Block()
         GetGame()->mBlocks.pop_back();
     }
 }
-
-void Block::OnUpdate(float deltaTime)
-{
-    if(mIsRotate){
-        SetRotation(GetRotation()  + (Math::Pi / 4.0f) * deltaTime);
-    }
-}
-

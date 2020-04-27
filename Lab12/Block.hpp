@@ -23,12 +23,6 @@ class Block: public Actor {
         bool mIsMirror = false;
         bool GetIsMirror()  { return mIsMirror; }
         bool SetIsMirror(bool isMirror) { return mIsMirror = isMirror; }
-    
-        bool mIsRotate = false;
-        bool GetIsRotate() { return mIsRotate; }
-        bool SetIsRotate(bool isRotate) { return mIsRotate = isRotate; }
-    
-        void OnUpdate(float deltaTime) override;
 };
 
 #endif /* Block_hpp */

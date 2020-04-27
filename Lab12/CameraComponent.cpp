@@ -35,33 +35,28 @@ void CameraComponent::Update(float deltaTime)
     mYawMatrix = Matrix4::CreateRotationZ(mOwner->GetRotation());
     
     //camera rotation
-    if(mOwner->GetGame()->mPlayer->player_move->mWallRunning){
-        mRollAngle += mRollSpeed * deltaTime;
-        mRollAngle = Math::Clamp(mRollAngle, 0.0f, Math::Pi / 6.0f);
-    } else {
-        mRollAngle -= mRollSpeed * deltaTime;
-        mRollAngle = Math::Clamp(mRollAngle, 0.0f, Math::Pi / 6.0f);
-    }
+    mRollAngle += mRollSpeed * deltaTime;
     
     //check state of player and if they r in wall run
     CollSide side = mOwner->GetGame()->mPlayer->player_move->GetWallRunSide();
     
+    
+    if(side == CollSide::SideMinX || side == CollSide::SideMaxY){
+        mRollAngle = Math::Clamp(mRollAngle, -Math::Pi / 6.0f, 0.0f);
+    } else {
+        mRollAngle = Math::Clamp(mRollAngle, 0.0f, Math::Pi / 6.0f);
+    }
+    
     Matrix4 rollMatrix;
     if(side == CollSide::SideMaxY || side == CollSide::SideMinY){
-        float temp = mRollAngle;
-        if(side == CollSide::SideMaxY){
-            rollMatrix = Matrix4::CreateRotationX(-1.0f * temp);
-        } else {
-            rollMatrix = Matrix4::CreateRotationX(temp);
-        }
+        rollMatrix = Matrix4::CreateRotationX(mRollAngle);
     } else {
-        float temp = mRollAngle;
-        if(side == CollSide::SideMinX){
-            rollMatrix = Matrix4::CreateRotationY(-1.0f * temp);
-        } else {
-            rollMatrix = Matrix4::CreateRotationY(temp);
-        }
+        rollMatrix = Matrix4::CreateRotationY(mRollAngle);
     }
+    //else not in wall run
+    //increment or decrement angle depending on if angle is > 0 >
+    //if >0 < 0.1 , then set angle to zero
+    //
     
     mRotationMatrix =  mPitchMatrix * mYawMatrix;
     
@@ -71,7 +66,7 @@ void CameraComponent::Update(float deltaTime)
     
     Vector3 targetPos = mOwner->GetPosition() + (camera_forward * TargetDist);
     
-    Vector3 transform_vec2 = Vector3::UnitZ;
+    Vector3 transform_vec2 = Vector3(0, 0, 1);
     
     Vector3 camera_up = Vector3::Transform(transform_vec2, rollMatrix);
     
@@ -79,6 +74,12 @@ void CameraComponent::Update(float deltaTime)
     
     mOwner->GetGame()->GetRenderer()->SetViewMatrix(viewMatrix);
 }
+
+/*Vector3 CameraComponent::idealPos(){
+    Vector3 idealPos = mOwner->GetPosition() - (mOwner->GetForward() * HDist) +
+        (Vector3::UnitZ * 70.0f);
+    return idealPos;
+}*/
 
 
 
