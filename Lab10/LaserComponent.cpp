@@ -28,24 +28,22 @@ LaserComponent::LaserComponent(class Actor* owner)
 void LaserComponent::Update(float deltaTime){
     //making the first line segment
     mLineSegments.clear();
+
+    mLineSegment = LineSegment(mOwner->GetWorldPosition(), mOwner->GetWorldPosition() + mOwner->GetWorldForward() * 500.0f);
     
-    //Vector3 dir = mOwner->GetQuatForward();
-    //mLineSegment = LineSegment(mOwner->GetPosition(), mOwner->GetPosition() + dir * 500.0f);
-    
-    //Vector3 dir = mOwner->GetQuatForward();
-    //mLineSegment = LineSegment(mOwner->GetWorldPosition(), mOwner->GetWorldForward());
-    mLineSegment = LineSegment(mOwner->GetWorldPosition(), mOwner->GetWorldPosition() + mOwner->GetQuatForward() * 500.0f);
-    
+    //reflecting lasers off mirrors
     CastInfo OI;
     
-    //Block* block = nullptr;
     Actor* ignore = nullptr;
     bool shouldKeepGoing = true;
     
     while(shouldKeepGoing){
         bool seg_cast = SegmentCast(mOwner->GetGame()->mPlayer, mLineSegment, OI);
         ignore = OI.mActor;
-        //Actor* ignore = nullptr;
+        //for rotating block
+        if(!ignore){
+            ignore = mOwner->mParent;
+        }
         if(seg_cast){
             mLineSegment.mEnd = OI.mPoint;
             shouldKeepGoing = false;
@@ -75,13 +73,9 @@ void LaserComponent::Draw(class Shader *shader){
     if (mMesh)
     {
         // Set the world transform
-        //std::cout << "Size " << mLineSegments.size() <<std::endl;
         for(int unsigned i = 0; i < mLineSegments.size(); i++){
-            //std::cout << "i " << i <<std::endl;
             shader->SetMatrixUniform("uWorldTransform",
             worldTransform(mLineSegments[i]));
-            //shader->SetMatrixUniform("uWorldTransform",
-            //worldTransform(mLineSegment));
             // Set the active texture
             Texture* t = mMesh->GetTexture(mTextureIndex);
             if (t)
@@ -98,7 +92,6 @@ void LaserComponent::Draw(class Shader *shader){
 }
 
 Matrix4 LaserComponent::worldTransform(LineSegment lineSegment){
-    //std::cout << "length: " << lineSegment.LineSegment::Length() << std::endl;
     Vector3 Scale = Vector3(lineSegment.LineSegment::Length(), 1.0f, 1.0f);
     Vector3 Position = lineSegment.LineSegment::PointOnSegment(0.5f);
     
@@ -128,7 +121,6 @@ Matrix4 LaserComponent::worldTransform(LineSegment lineSegment){
     }
 
     Matrix4 ScaleMatrix = Matrix4::CreateScale(Scale);
-    //Matrix4 RotationMatrix = Matrix4::CreateRotationZ(mOwner->GetRotation());
     Matrix4 RotationMatrix = Matrix4::CreateFromQuaternion(new_rotation);
     Matrix4 PositionMatrix = Matrix4::CreateTranslation(Position);
     

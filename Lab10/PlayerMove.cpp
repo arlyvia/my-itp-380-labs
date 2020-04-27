@@ -299,36 +299,14 @@ void PlayerMove::UpdateWallRun(float deltaTime){
     
     //Vector3 normal;
     
-    std::cout <<"change" <<std::endl;
-    
-    
     for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
-        CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
-        //mSide = side;
+        FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
     }
 
-    
-    
     if(mVelocity.z <= 0.0f){
         mVelocity.z = 0.0f;
         ChangeState(MoveState::Falling);
-        //mOwner->GetComponent<CameraComponent>()->mRollSpeed *= -1.0f;
         mWallRunning = false;
-        /*float roll_ang =  mOwner->GetComponent<CameraComponent>()->mRollAngle;
-        if(mSide == CollSide::SideMinX || mSide == CollSide::SideMaxY){
-            mOwner->GetComponent<CameraComponent>()->mRollSpeed = -Math::Pi;
-            if (roll_ang <= 0.0f){
-                roll_ang = 0.0f;
-                mOwner->GetComponent<CameraComponent>()->mRollSpeed = 0.0f;
-            }
-        } else {
-            mOwner->GetComponent<CameraComponent>()->mRollSpeed = Math::Pi;
-            if (roll_ang >= 0.0f) {
-                roll_ang = 0.0f;
-                mOwner->GetComponent<CameraComponent>()->mRollSpeed = 0.0f;
-            }
-        }*/
-        
     }
 }
 
@@ -361,10 +339,6 @@ bool PlayerMove::CanWallRun(CollSide side){
     Vector2 xyVelocity = Vector2(mVelocity.x, mVelocity.y);
     
     float xyDot = Vector2::Dot(xyVelocity, xyNormal);
-    
-    std::cout << "dot: " << dot << std::endl;
-    std::cout << "length: " << xyVelocity.Length() << std::endl;
-    std::cout << "xyDot: " << xyDot << std::endl;
     
     if(dot < 0.0f && xyVelocity.Length() > 350.0f
        && xyDot < 0.9f){
