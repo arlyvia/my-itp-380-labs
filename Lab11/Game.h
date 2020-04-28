@@ -34,6 +34,11 @@ public:
     
     class Arrow* mArrow = nullptr;
     
+    std::string mNextLevel = "";
+    void SetNextLevel(std::string nextLevel) { mNextLevel = nextLevel; }
+    
+    void LoadNextLevel();
+    
 private:
 	void ProcessInput();
 	void UpdateGame();

@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include "Actor.h"
+#include <string>
 
 class Checkpoint: public Actor {
     public:
@@ -23,6 +24,9 @@ class Checkpoint: public Actor {
         class CollisionComponent* checkpoint_cc;
     
         bool active = false;
+    
+        std::string mLevelString = "";
+        void SetLevelString(std::string levelString) { mLevelString = levelString; }
 };
 
 

@@ -27,6 +27,10 @@ void Checkpoint::OnUpdate(float deltaTime){
     GetGame()->mCheckpoints.front()->checkpoint_mc->SetTextureIndex(0);
     
     if(checkpoint_cc->Intersect(GetGame()->mPlayer->player_coc)){
+        if(!mLevelString.empty()){
+            GetGame()->SetNextLevel(mLevelString);
+        }
+        
         GetGame()->mPlayer->SetRespawn(GetGame()->mCheckpoints.front()->GetPosition());
         GetGame()->mCheckpoints.front()->SetState(ActorState::Destroy);
         GetGame()->mCheckpoints.pop();
