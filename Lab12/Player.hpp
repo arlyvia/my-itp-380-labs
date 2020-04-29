@@ -19,6 +19,7 @@ class Player: public Actor {
         class PlayerMove* player_move;
         class CameraComponent* player_cc;
         class CollisionComponent* player_coc;
+        class Hud* player_h;
         
         Vector3 mRespawn = Vector3::Zero;
         void SetRespawn(Vector3 respawn) { mRespawn = respawn; }

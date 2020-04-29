@@ -17,6 +17,7 @@
 #include "MeshComponent.h"
 #include "LevelLoader.h"
 #include <iostream>
+#include <SDL2/SDL_ttf.h>
 
 Game::Game()
 :mIsRunning(true)
@@ -39,6 +40,8 @@ bool Game::Initialize()
     if(!mRenderer->Initialize(1024.0f, 768.0f)) return false;;
 
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+    
+    TTF_Init();
 
 	LoadData();
 

@@ -12,6 +12,8 @@
 #include "CollisionComponent.h"
 #include "Renderer.h"
 #include "PlayerMove.hpp"
+#include <SDL2/SDL_ttf.h>
+#include "Hud.hpp"
 
 Player::Player(class Game* game, class Actor* parent)
 :Actor(game, parent)
@@ -22,4 +24,6 @@ Player::Player(class Game* game, class Actor* parent)
     
     player_coc = new CollisionComponent(this);
     player_coc->SetSize(50.0f, 175.0f, 50.0f);
+    
+    player_h = new Hud(this);
 }
