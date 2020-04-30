@@ -12,7 +12,6 @@
 #include "Renderer.h"
 #include "CameraComponent.hpp"
 #include "Component.h"
-#include "Player.hpp"
 #include "Math.h"
 #include <iostream>
 #include <SDL2/SDL_log.h>
@@ -67,14 +66,6 @@ void PlayerMove::Update(float deltaTime){
     if(mCurrentState == MoveState::Falling) UpdateFalling(deltaTime);
     if(mCurrentState == MoveState::WallClimb) UpdateWallClimb(deltaTime);
     if(mCurrentState == MoveState::WallRun) UpdateWallRun(deltaTime);
-    
-    if (mOwner->GetGame()->mPlayer->GetPosition().z < -750.0f) {
-        mOwner->GetGame()->mPlayer->SetPosition(mOwner->GetGame()->mPlayer->mRespawn);
-        mOwner->GetGame()->mPlayer->SetRotation(0.0f);
-        mVelocity = Vector3::Zero;
-        mPendingForces = Vector3::Zero;
-        mCurrentState = MoveState::Falling;
-    }
 }
 
 void PlayerMove::ChangeState(MoveState ms){
@@ -294,6 +285,8 @@ bool PlayerMove::CanWallClimb(CollSide side){
 
 //Horizontal wall climbing
 void PlayerMove::UpdateWallRun(float deltaTime){
+    mWallRunning = true;
+    
     AddForce(mGravity);
     
     mWallRunTimer = deltaTime + mWallRunTimer;
@@ -304,22 +297,16 @@ void PlayerMove::UpdateWallRun(float deltaTime){
     
     PhysicsUpdate(deltaTime);
     
+    //Vector3 normal;
+    
     for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
-        CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
-        //mSide = side;
+        FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
     }
 
-    if(mSide == CollSide::SideMinX || mSide == CollSide::SideMaxY){
-        mOwner->GetComponent<CameraComponent>()->mRollSpeed = Math::Pi;
-    } else {
-        mOwner->GetComponent<CameraComponent>()->mRollSpeed = -Math::Pi;
-    }
-    
     if(mVelocity.z <= 0.0f){
         mVelocity.z = 0.0f;
         ChangeState(MoveState::Falling);
-        mOwner->GetComponent<CameraComponent>()->mRollSpeed *= -1.0f;
-        
+        mWallRunning = false;
     }
 }
 
@@ -355,6 +342,7 @@ bool PlayerMove::CanWallRun(CollSide side){
     
     if(dot < 0.0f && xyVelocity.Length() > 350.0f
        && xyDot < 0.9f){
+        std::cout << "climb" << std::endl;
         return true;
     } else {
         return false;

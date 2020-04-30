@@ -37,7 +37,7 @@ public:
     
     //rolling
     float mRollAngle = 0.0f;
-    float mRollSpeed = 0.0f;
+    float mRollSpeed = Math::Pi / 2.0f;
     
     float GetRollSpeed() const { return mRollSpeed; }
     float SetRollSpeed(float speed) { return mRollSpeed = speed; }

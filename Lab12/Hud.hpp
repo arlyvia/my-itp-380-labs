@@ -25,9 +25,6 @@ public:
     
     class Texture* mTimerText;
     class Texture* mCoinText;
-    
-    float mTime = 0.0f;
-    int mCoinCount = 0;
 };
 
 #endif /* Hud_hpp */

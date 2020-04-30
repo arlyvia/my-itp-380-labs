@@ -34,6 +34,14 @@ public:
     
     class Arrow* mArrow = nullptr;
     
+    std::string mNextLevel = "";
+    void SetNextLevel(std::string nextLevel) { mNextLevel = nextLevel; }
+    
+    void LoadNextLevel();
+    
+    float mTime = 0.0f;
+    int mCoinCount = 0;
+    
 private:
 	void ProcessInput();
 	void UpdateGame();

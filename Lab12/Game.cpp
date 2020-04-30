@@ -16,6 +16,7 @@
 #include "Arrow.hpp"
 #include "MeshComponent.h"
 #include "LevelLoader.h"
+#include "Checkpoint.hpp"
 #include <iostream>
 #include <SDL2/SDL_ttf.h>
 
@@ -60,6 +61,9 @@ void Game::RunLoop()
 		ProcessInput();
 		UpdateGame();
 		GenerateOutput();
+        if(!mNextLevel.empty()){
+            LoadNextLevel();
+        }
 	}
 }
 
@@ -214,3 +218,15 @@ void Game::RemoveActor(Actor* actor)
 	}
 }
 
+void Game::LoadNextLevel(){
+    while(!mActors.empty()){
+        delete mActors.back();
+    }
+    std::queue<Checkpoint*> empty;
+    std::swap( mCheckpoints, empty);
+    LevelLoader::Load(this, mNextLevel);
+    //activate first checkpoint
+    mCheckpoints.front()->active = true;
+    mArrow = new Arrow(this, nullptr);
+    mNextLevel.clear();
+}

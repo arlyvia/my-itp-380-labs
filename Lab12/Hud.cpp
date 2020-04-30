@@ -9,6 +9,8 @@
 #include "UIComponent.h"
 #include "Font.h"
 #include "Texture.h"
+#include "Actor.h"
+#include "Game.h"
 #include <SDL2/SDL_ttf.h>
 #include <string>
 #include <iostream>
@@ -30,14 +32,14 @@ Hud::~Hud(){
 }
 
 void Hud::Update(float deltaTime){
-    mTime += deltaTime;
+    mOwner->GetGame()->mTime += deltaTime;
     mTimerText->Unload();
     delete mTimerText;
     
-    float minutes = mTime / 60.0f;
+    float minutes = mOwner->GetGame()->mTime / 60.0f;
     int minute = (int)minutes;
-    float seconds = fmod(mTime, 60.0f);
-    float fraction = fmod(mTime * 100.0f, 100.0f);
+    float seconds = fmod(mOwner->GetGame()->mTime, 60.0f);
+    float fraction = fmod(mOwner->GetGame()->mTime * 100.0f, 100.0f);
     
     std::stringstream timerText;
     
@@ -47,10 +49,7 @@ void Hud::Update(float deltaTime){
    
     mTimerText = mFont->RenderText(timerText.str());
     
-    //mCoinText->Unload();
-    //delete mCoinText;
-    
-    std::string coinText = std::to_string(mCoinCount) + "/55";
+    std::string coinText = std::to_string(mOwner->GetGame()->mCoinCount) + "/55";
     
     mCoinText = mFont->RenderText(coinText);
 }

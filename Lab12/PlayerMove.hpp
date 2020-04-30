@@ -78,6 +78,8 @@ class PlayerMove: public MoveComponent {
         bool CanWallRun(CollSide side);
         CollSide mSide;
         CollSide GetWallRunSide() { return mSide; }
+    
+        bool mWallRunning = false;
 };
 
 #endif /* PlayerMove_hpp */
