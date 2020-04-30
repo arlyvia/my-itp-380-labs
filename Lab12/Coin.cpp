@@ -23,11 +23,6 @@ Coin::Coin(class Game* game, class Actor* parent)
 }
 
 void Coin::OnUpdate(float deltaTime){
-    //Matrix4 YawMatrix = Matrix4::CreateRotationZ(Math::Pi);
-    
-    //Vector3 transform_vec = Vector3(0, 0, 1);
-    
-    //Vector3 camera_forward = Vector3::Transform(transform_vec, YawMatrix);
     SetRotation(GetRotation()  + Math::Pi * deltaTime);
     
     if(coin_cc->Intersect(GetGame()->mPlayer->player_coc)){

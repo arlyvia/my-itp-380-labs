@@ -10,6 +10,10 @@
 #include "Font.h"
 #include "Texture.h"
 #include <SDL2/SDL_ttf.h>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <iomanip>
 
 Hud::Hud(class Actor* owner)
 :UIComponent(owner)
@@ -26,9 +30,22 @@ Hud::~Hud(){
 }
 
 void Hud::Update(float deltaTime){
-    //mTime += deltaTime;
-    //mTimerText->Unload();
-    //delete mTimerText;
+    mTime += deltaTime;
+    mTimerText->Unload();
+    delete mTimerText;
+    
+    float minutes = mTime / 60.0f;
+    int minute = (int)minutes;
+    float seconds = fmod(mTime, 60.0f);
+    float fraction = fmod(mTime * 100.0f, 100.0f);
+    
+    std::stringstream timerText;
+    
+    char buf[1024];
+    sprintf(buf, "%02d:%02d.%02d", minute, (int)seconds, (int)fraction);
+    timerText << std::string(buf) << std::endl;
+   
+    mTimerText = mFont->RenderText(timerText.str());
 }
 
 void Hud::Draw(class Shader* shader){
