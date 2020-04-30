@@ -11,6 +11,7 @@
 #include "Renderer.h"
 #include "SecurityCone.hpp"
 #include "Player.hpp"
+#include "Hud.hpp"
 
 Coin::Coin(class Game* game, class Actor* parent)
 :Actor(game, parent)
@@ -27,5 +28,6 @@ void Coin::OnUpdate(float deltaTime){
     
     if(coin_cc->Intersect(GetGame()->mPlayer->player_coc)){
         SetState(ActorState::Destroy);
+        GetGame()->mPlayer->player_h->mCoinCount++;
     }
 }

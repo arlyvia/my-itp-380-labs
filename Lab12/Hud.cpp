@@ -46,11 +46,18 @@ void Hud::Update(float deltaTime){
     timerText << std::string(buf) << std::endl;
    
     mTimerText = mFont->RenderText(timerText.str());
+    
+    //mCoinText->Unload();
+    //delete mCoinText;
+    
+    std::string coinText = std::to_string(mCoinCount) + "/55";
+    
+    mCoinText = mFont->RenderText(coinText);
 }
 
 void Hud::Draw(class Shader* shader){
     DrawTexture(shader, mTimerText, Vector2(-420.0f, -325.0f));
-    //DrawTexture(shader, mCoinCounter, Vector2(-420.0f, -225.0f));
+    DrawTexture(shader, mCoinText, Vector2(-443.0f, -300.0f));
 }
 
 
