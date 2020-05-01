@@ -53,11 +53,8 @@ void SecurityCone::coneHelper(){
     Vector3 CP_norm = Vector3::Normalize(CP);
 
     float CP_angle = Math::Acos(Vector3::Dot(GetWorldForward(), CP_norm));
-    
-    std::cout << "length " << CP.Length();
-    std::cout << "dist " << dist_dot;
-    
-    if(CP.Length() <= dist_dot && CP_angle <= mHalfAngle){
+  
+    if(dist_dot <= mHeight && CP_angle <= mHalfAngle){
         std::cout << "inTrue" << std::endl;
         mInCone = true;
     } else {

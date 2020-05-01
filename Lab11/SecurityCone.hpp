@@ -27,7 +27,7 @@ class SecurityCone: public Actor {
         float mConeTimer = true;
     
         float mHeight = 300.0f;
-        float mHalfAngle = 30.0f;
+        float mHalfAngle = Math::Pi / 6.0f;
 };
 
 #endif /* SecurityCone_hpp */
