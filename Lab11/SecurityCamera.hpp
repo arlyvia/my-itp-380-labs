@@ -25,6 +25,26 @@ class SecurityCamera: public Actor {
         bool active = false;
     
         class SecurityCone* securityCamera_sco;
+    
+        //camera rotating
+        Quaternion mStartQ;
+        void SetStartQ(Quaternion startQ) { mStartQ = startQ; }
+        
+        Quaternion mEndQ;
+        void SetEndQ(Quaternion endQ) { mEndQ = endQ; }
+    
+        float mInterpTime;
+        void SetInterpTime(float interpTime) { mInterpTime = interpTime; }
+        
+        float mPauseTime;
+        void SetPauseTime(float pauseTime) { mPauseTime = pauseTime; }
+    
+        void OnUpdate(float deltaTime) override;
+        float mSlerpTimer = 0.0f;
+        float mPauseTimer = 0.0f;
+        bool toEnd = true;
+        bool startSwing = false;
+        bool forwardSwing = true;
 };
 
 

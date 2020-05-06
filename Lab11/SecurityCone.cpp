@@ -35,7 +35,8 @@ void SecurityCone::OnUpdate(float deltaTime){
         mConeTimer += deltaTime;
         if(mConeTimer > 2.0f){
             securityCone_mc->SetTextureIndex(2);
-            //GetGame()->mPlayer->SetState(ActorState::Paused);
+            if(mConeTimer > 2.50f){
+            }
         }
     } else {
         mConeTimer = 0;

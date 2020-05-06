@@ -71,6 +71,22 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
             
         } else if (type == "SecurityCamera"){
             SecurityCamera* security = new SecurityCamera(game,parent);
+            Quaternion startQ;
+            if(GetQuaternionFromJSON(actorValue, "startQ", startQ)){
+                security->SetStartQ(startQ);
+            }
+            Quaternion endQ;
+            if(GetQuaternionFromJSON(actorValue, "endQ", endQ)){
+                security->SetEndQ(endQ);
+            }
+            float interpTime;
+            if(GetFloatFromJSON(actorValue, "interpTime", interpTime)){
+                security->SetInterpTime(interpTime);
+            }
+            float pauseTime;
+            if(GetFloatFromJSON(actorValue, "pauseTime", pauseTime)){
+                security->SetPauseTime(pauseTime);
+            }
             actor = security;
         } else if (type == "Coin"){
             Coin* coin = new Coin(game, parent);
