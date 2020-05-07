@@ -36,6 +36,7 @@ void SecurityCone::OnUpdate(float deltaTime){
         if(mConeTimer > 2.0f){
             securityCone_mc->SetTextureIndex(2);
             if(mConeTimer > 2.50f){
+                GetGame()->mPlayer->SetState(ActorState::Paused);
             }
         }
     } else {
@@ -56,7 +57,6 @@ void SecurityCone::coneHelper(){
     float CP_angle = Math::Acos(Vector3::Dot(GetWorldForward(), CP_norm));
   
     if(dist_dot <= mHeight && CP_angle <= mHalfAngle){
-        std::cout << "inTrue" << std::endl;
         mInCone = true;
     } else {
         mInCone = false;

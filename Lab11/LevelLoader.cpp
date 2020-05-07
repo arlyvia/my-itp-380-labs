@@ -52,7 +52,6 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
             Player* player = new Player(game, parent);
             actor = player;
             game->mPlayer = player;
-            //game->mPlayer->respawn = pos;
 		}
 		// TODO: Add else ifs for other actor types
         else if (type == "LaserMine") {

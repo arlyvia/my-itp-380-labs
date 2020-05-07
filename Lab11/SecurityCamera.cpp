@@ -29,6 +29,9 @@ void SecurityCamera::OnUpdate(float deltaTime){
         mPauseTimer -= deltaTime;
         return;
     }
+    while(securityCamera_sco->GetComponent<MeshComponent>()->GetTextureIndex() != 0){
+        return;
+    }
     mSlerpTimer += deltaTime;
     if(mSlerpTimer > mInterpTime){
         mSlerpTimer = 0.0f;
@@ -46,4 +49,5 @@ void SecurityCamera::OnUpdate(float deltaTime){
     } else {
         SetQuaternion(Quaternion::Slerp(mEndQ, mStartQ, t));
     }
+        
 }

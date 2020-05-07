@@ -12,6 +12,7 @@ public:
 	// Set the mesh/texture index used by mesh component
 	virtual void SetMesh(class Mesh* mesh) { mMesh = mesh; }
 	void SetTextureIndex(size_t index) { mTextureIndex = index; }
+    size_t GetTextureIndex() { return mTextureIndex; }
 protected:
 	class Mesh* mMesh;
 	size_t mTextureIndex;
