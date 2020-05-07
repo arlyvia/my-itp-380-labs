@@ -32,6 +32,10 @@ void Checkpoint::OnUpdate(float deltaTime){
         }
         
         GetGame()->mPlayer->SetRespawn(GetGame()->mCheckpoints.front()->GetPosition());
+        Mix_Chunk* checkpoint_sound = GetGame()->GetSound("Assets/Sounds/Checkpoint.wav");
+        if(Mix_PlayChannel(-1, checkpoint_sound, 0)==-1) {
+            printf("Mix_PlayChannel: %s\n",Mix_GetError());
+        }
         GetGame()->mCheckpoints.front()->SetState(ActorState::Destroy);
         GetGame()->mCheckpoints.pop();
         if(!GetGame()->mCheckpoints.empty()){

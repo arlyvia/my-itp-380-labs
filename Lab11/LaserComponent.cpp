@@ -44,8 +44,12 @@ void LaserComponent::Update(float deltaTime){
     
     while(shouldKeepGoing){
         bool seg_cast = SegmentCast(mOwner->GetGame()->mPlayer, mLineSegment, OI);
-        Actor* ignore = OI.mActor;
+        //Actor* ignore = OI.mActor;
         if(seg_cast){
+            Mix_Chunk* laser_sound = mOwner->GetGame()->GetSound("Assets/Sounds/Laser.wav");
+            if(Mix_PlayChannel(-1, laser_sound, 0)==-1) {
+                printf("Mix_PlayChannel: %s\n",Mix_GetError());
+            }
             mLineSegment.mEnd = OI.mPoint;
             shouldKeepGoing = false;
             mLineSegments.push_back(mLineSegment);

@@ -24,9 +24,33 @@ SecurityCamera::SecurityCamera(class Game* game, class Actor* parent)
     securityCamera_sco = new SecurityCone(game, this);
 }
 
+SecurityCamera::~SecurityCamera(){
+    if(securityCamera_sco->mMotorChannel != -1){
+        Mix_HaltChannel(securityCamera_sco->mMotorChannel);
+    }
+}
+
 void SecurityCamera::OnUpdate(float deltaTime){
     if(mPauseTimer > 0.0f){
         mPauseTimer -= deltaTime;
+        /*Mix_HaltChannel(securityCamera_sco->mMotorChannel);
+        securityCamera_sco->mMotorChannel = -1;
+        Mix_Chunk* motor_stop_sound = GetGame()->GetSound("Assets/Sounds/CameraMotorStop.wav");*/
+        //securityCamera_sco->mMotorStopChannel = Mix_GroupAvailable(1);
+        
+        if(securityCamera_sco->mDistDot > 1500.0f){
+            Mix_Volume(securityCamera_sco->mMotorChannel, 0);
+        } else if(securityCamera_sco->mDistDot <= 1500.0f || securityCamera_sco->mDistDot > 500.0f){
+            float x = securityCamera_sco->mDistDot / 128.0f;
+            float vol = Math::Lerp(1500.0f, 500.0f, x);
+            Mix_Volume(securityCamera_sco->mMotorChannel, (int)vol);
+        } else if(securityCamera_sco->mDistDot <= 500.0f){
+            Mix_Volume(securityCamera_sco->mMotorChannel, 128.0f);
+        }
+        
+        /*if(Mix_PlayChannel(Mix_GroupAvailable(1), motor_stop_sound, 0)==-1) {
+            printf("Mix_PlayChannel: %s\n",Mix_GetError());
+        }*/
         return;
     }
     while(securityCamera_sco->GetComponent<MeshComponent>()->GetTextureIndex() != 0){

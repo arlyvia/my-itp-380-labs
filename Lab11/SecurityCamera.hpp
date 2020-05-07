@@ -15,6 +15,7 @@ class SecurityCamera: public Actor {
     public:
         //constructor
         SecurityCamera(class Game* game, Actor* parent);
+        ~SecurityCamera();
     
         //void OnUpdate(float deltaTime);
         

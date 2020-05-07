@@ -26,6 +26,7 @@ enum class MoveState
 class PlayerMove: public MoveComponent {
     public:
         PlayerMove(class Actor* owner);
+        ~PlayerMove();
 
         void ProcessInput(const Uint8* keyState)override;
         void Update(float deltaTime) override;
@@ -80,6 +81,9 @@ class PlayerMove: public MoveComponent {
         CollSide GetWallRunSide() { return mSide; }
     
         bool mWallRunning = false;
+    
+        //sounds
+        int mRunningSFX = 0;
 };
 
 #endif /* PlayerMove_hpp */

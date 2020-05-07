@@ -40,6 +40,8 @@ bool Game::Initialize()
     if(!mRenderer->Initialize(1024.0f, 768.0f)) return false;;
 
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+    Mix_AllocateChannels(32);
+    Mix_GroupChannels(22, 31, 1);
 
 	LoadData();
 
@@ -147,6 +149,12 @@ void Game::LoadData()
     LevelLoader::Load(this, "Assets/Tutorial.json");
     
     mArrow = new Arrow(this, nullptr);
+    
+    Mix_Chunk* music = GetSound("Assets/Sounds/Music.ogg");
+    mChannel = Mix_PlayChannel(-1, music, -1);
+    if(mChannel==-1) {
+        printf("Mix_PlayChannel: %s\n",Mix_GetError());
+    }
 }
 
 void Game::UnloadData()
