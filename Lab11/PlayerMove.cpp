@@ -13,6 +13,8 @@
 #include "CameraComponent.hpp"
 #include "Component.h"
 #include "Math.h"
+#include "Checkpoint.hpp"
+#include "Player.hpp"
 #include <iostream>
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_image.h>
@@ -23,8 +25,8 @@ PlayerMove::PlayerMove(class Actor* owner)
 {
     ChangeState(MoveState::Falling);
     
-    Mix_Chunk* running_sound = mOwner->GetGame()->GetSound("Assets/Sounds/Running.wav");
-    mRunningSFX = Mix_PlayChannel(-1, running_sound, -1);
+    Mix_Chunk* running = mOwner->GetGame()->GetSound("Assets/Sounds/Running.wav");
+    mRunningSFX = Mix_PlayChannel(-1, running, -1);
     if(mRunningSFX==-1) {
         printf("Mix_PlayChannel: %s\n",Mix_GetError());
     }
@@ -65,6 +67,10 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
     if(keyState[SDL_SCANCODE_SPACE]){
         if(!last_frame && keyState[SDL_SCANCODE_SPACE] && mCurrentState == MoveState::OnGround){
             AddForce(mJumpForce);
+            Mix_Chunk* jump_sound = mOwner->GetGame()->GetSound("Assets/Sounds/Jump.wav");
+            if(Mix_PlayChannel(-1, jump_sound, 0)==-1) {
+                printf("Mix_PlayChannel: %s\n",Mix_GetError());
+            }
             ChangeState(MoveState::Jump);
         }
     }
@@ -73,20 +79,26 @@ void PlayerMove::ProcessInput(const Uint8 *keyState){
 }
 
 void PlayerMove::Update(float deltaTime){
+    if(mOwner->GetGame()->mPlayer->GetPosition().z < -750.0f){
+        mOwner->GetGame()->mPlayer->SetPosition(mOwner->GetGame()->mPlayer->mRespawn);
+        mOwner->GetGame()->mPlayer->SetRotation(0.0f);
+        mVelocity = Vector3::Zero;
+        mPendingForces = Vector3::Zero;
+        mCurrentState = MoveState::Falling;
+    }
+    
     if(mCurrentState == MoveState::OnGround){
         UpdateOnGround(deltaTime);
         if(mVelocity.Length() > 50.0f){
             Mix_Resume(mRunningSFX);
-        } else {
-            Mix_Pause(mRunningSFX);
         }
     }
     if(mCurrentState == MoveState::Jump){
-        Mix_Pause(mRunningSFX);
+        //Mix_Pause(mRunningSFX);
         UpdateJump(deltaTime);
     }
     if(mCurrentState == MoveState::Falling) {
-         Mix_Pause(mRunningSFX);
+         //Mix_Pause(mRunningSFX);
          UpdateFalling(deltaTime);
     }
     if(mCurrentState == MoveState::WallClimb) {
@@ -131,10 +143,10 @@ void PlayerMove::UpdateJump(float deltaTime){
     
     AddForce(mGravity);
     PhysicsUpdate(deltaTime);
-    Mix_Chunk* jump_sound = mOwner->GetGame()->GetSound("Assets/Sounds/Jump.wav");
+    /*Mix_Chunk* jump_sound = mOwner->GetGame()->GetSound("Assets/Sounds/Jump.wav");
     if(Mix_PlayChannel(-1, jump_sound, 0)==-1) {
         printf("Mix_PlayChannel: %s\n",Mix_GetError());
-    }
+    }*/
     
     for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
         CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());

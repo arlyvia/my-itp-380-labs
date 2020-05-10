@@ -27,6 +27,8 @@ class Checkpoint: public Actor {
     
         std::string mLevelString = "";
         void SetLevelString(std::string levelString) { mLevelString = levelString; }
+    
+        Vector3 mLastCheckpointPos = Vector3::Zero;
 };
 
 

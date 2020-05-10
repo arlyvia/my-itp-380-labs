@@ -32,8 +32,8 @@ SecurityCamera::~SecurityCamera(){
 
 void SecurityCamera::OnUpdate(float deltaTime){
     if(mPauseTimer > 0.0f){
-        mPauseTimer -= deltaTime;
-        /*Mix_HaltChannel(securityCamera_sco->mMotorChannel);
+        /*mPauseTimer -= deltaTime;
+        Mix_HaltChannel(securityCamera_sco->mMotorChannel);
         securityCamera_sco->mMotorChannel = -1;
         Mix_Chunk* motor_stop_sound = GetGame()->GetSound("Assets/Sounds/CameraMotorStop.wav");*/
         //securityCamera_sco->mMotorStopChannel = Mix_GroupAvailable(1);

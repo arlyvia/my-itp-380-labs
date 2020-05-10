@@ -32,7 +32,7 @@ void Checkpoint::OnUpdate(float deltaTime){
             GetGame()->SetNextLevel(mLevelString);
         }
         
-        GetGame()->mPlayer->SetRespawn(GetGame()->mCheckpoints.front()->GetPosition());
+        //GetGame()->mPlayer->SetRespawn(GetGame()->mCheckpoints.front()->GetPosition());
         GetGame()->mCheckpoints.front()->SetState(ActorState::Destroy);
         GetGame()->mCheckpoints.pop();
         if(!GetGame()->mCheckpoints.empty()){
