@@ -29,11 +29,6 @@ void LaserComponent::Update(float deltaTime){
     //making the first line segment
     mLineSegments.clear();
     
-    //Vector3 dir = mOwner->GetQuatForward();
-    //mLineSegment = LineSegment(mOwner->GetPosition(), mOwner->GetPosition() + dir * 500.0f);
-    
-    //Vector3 dir = mOwner->GetQuatForward();
-    //mLineSegment = LineSegment(mOwner->GetWorldPosition(), mOwner->GetWorldForward());
     mLineSegment = LineSegment(mOwner->GetWorldPosition(), mOwner->GetWorldPosition() + mOwner->GetQuatForward() * 500.0f);
     
     CastInfo OI;
@@ -44,7 +39,6 @@ void LaserComponent::Update(float deltaTime){
     
     while(shouldKeepGoing){
         bool seg_cast = SegmentCast(mOwner->GetGame()->mPlayer, mLineSegment, OI);
-        //Actor* ignore = OI.mActor;
         if(seg_cast){
             Mix_Chunk* laser_sound = mOwner->GetGame()->GetSound("Assets/Sounds/Laser.wav");
             if(Mix_PlayChannel(-1, laser_sound, 0)==-1) {
@@ -57,10 +51,7 @@ void LaserComponent::Update(float deltaTime){
             mLineSegment.mEnd = OI.mPoint;
             mLineSegments.push_back(mLineSegment);
             block = (Block*)OI.mActor;
-            //ignore = OI.mActor;
-            //ignore = static_cast<Block*>(ignore);
             if(block->GetIsMirror()){
-                //last_mirror = block;
                 Vector3 current_dir = mLineSegment.mEnd - mLineSegment.mStart;
                 current_dir.Normalize();
                 mLineSegment.mStart = mLineSegment.mEnd;

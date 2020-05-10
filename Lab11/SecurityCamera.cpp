@@ -32,10 +32,17 @@ SecurityCamera::~SecurityCamera(){
 
 void SecurityCamera::OnUpdate(float deltaTime){
     if(mPauseTimer > 0.0f){
-        /*mPauseTimer -= deltaTime;
+        mPauseTimer -= deltaTime;
+        return;
+    }
+    while(securityCamera_sco->GetComponent<MeshComponent>()->GetTextureIndex() != 0){
+        return;
+    }
+    mSlerpTimer += deltaTime;
+    if(mSlerpTimer > mInterpTime){
         Mix_HaltChannel(securityCamera_sco->mMotorChannel);
         securityCamera_sco->mMotorChannel = -1;
-        Mix_Chunk* motor_stop_sound = GetGame()->GetSound("Assets/Sounds/CameraMotorStop.wav");*/
+        Mix_Chunk* motor_sound = GetGame()->GetSound("Assets/Sounds/CameraMotor.wav");
         //securityCamera_sco->mMotorStopChannel = Mix_GroupAvailable(1);
         
         if(securityCamera_sco->mDistDot > 1500.0f){
@@ -48,16 +55,9 @@ void SecurityCamera::OnUpdate(float deltaTime){
             Mix_Volume(securityCamera_sco->mMotorChannel, 128.0f);
         }
         
-        /*if(Mix_PlayChannel(Mix_GroupAvailable(1), motor_stop_sound, 0)==-1) {
+        if(Mix_PlayChannel(Mix_GroupAvailable(1), motor_sound, 0)==-1) {
             printf("Mix_PlayChannel: %s\n",Mix_GetError());
-        }*/
-        return;
-    }
-    while(securityCamera_sco->GetComponent<MeshComponent>()->GetTextureIndex() != 0){
-        return;
-    }
-    mSlerpTimer += deltaTime;
-    if(mSlerpTimer > mInterpTime){
+        }
         mSlerpTimer = 0.0f;
         mPauseTimer += deltaTime;
         if(forwardSwing){

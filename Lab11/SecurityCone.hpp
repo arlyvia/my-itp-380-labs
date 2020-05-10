@@ -30,12 +30,12 @@ class SecurityCone: public Actor {
         float mHalfAngle = Math::Pi / 6.0f;
     
         int mSecChannel = 0;
-    bool mColorChange = false;
-    
-    int mMotorChannel = 0;
-    int mMotorStopChannel = 0;
-    
-    float mDistDot = 0;
+        bool mColorChange = false;
+        
+        int mMotorChannel = 0;
+        int mMotorStopChannel = 0;
+        
+        float mDistDot = 0;
 };
 
 #endif /* SecurityCone_hpp */

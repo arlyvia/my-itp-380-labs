@@ -30,9 +30,11 @@ void SecurityCone::OnUpdate(float deltaTime){
     coneHelper();
     securityCone_mc->SetTextureIndex(0);
     
-    Mix_Chunk* motor_sound = GetGame()->GetSound("Assets/Sounds/CameraMotor.wav");
-    //mMotorChannel = Mix_GroupAvailable(1);
-    /*if(Mix_PlayChannel(Mix_GroupAvailable(1), motor_sound, 0)==-1) {
+    //working on
+    /*Mix_Chunk* motor_sound = GetGame()->GetSound("Assets/Sounds/CameraMotor.wav");
+    mMotorChannel = Mix_GroupAvailable(1);
+    
+    if(Mix_PlayChannel(Mix_GroupAvailable(1), motor_sound, -1)==-1) {
         printf("Mix_PlayChannel: %s\n",Mix_GetError());
     }*/
     
@@ -82,7 +84,7 @@ void SecurityCone::coneHelper(){
     } else if(mDistDot <= 1500.0f || mDistDot > 500.0f){
         float x = mDistDot / 128.0f;
         float vol = Math::Lerp(1500.0f, 500.0f, x);
-        Mix_Volume(mMotorChannel, vol);
+        Mix_Volume(mMotorChannel, (int)vol);
     } else if(mDistDot <= 500.0f){
         Mix_Volume(mMotorChannel, 128.0f);
     }

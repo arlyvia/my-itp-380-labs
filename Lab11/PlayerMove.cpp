@@ -94,11 +94,11 @@ void PlayerMove::Update(float deltaTime){
         }
     }
     if(mCurrentState == MoveState::Jump){
-        //Mix_Pause(mRunningSFX);
+        Mix_Pause(mRunningSFX);
         UpdateJump(deltaTime);
     }
     if(mCurrentState == MoveState::Falling) {
-         //Mix_Pause(mRunningSFX);
+         Mix_Pause(mRunningSFX);
          UpdateFalling(deltaTime);
     }
     if(mCurrentState == MoveState::WallClimb) {
@@ -143,10 +143,6 @@ void PlayerMove::UpdateJump(float deltaTime){
     
     AddForce(mGravity);
     PhysicsUpdate(deltaTime);
-    /*Mix_Chunk* jump_sound = mOwner->GetGame()->GetSound("Assets/Sounds/Jump.wav");
-    if(Mix_PlayChannel(-1, jump_sound, 0)==-1) {
-        printf("Mix_PlayChannel: %s\n",Mix_GetError());
-    }*/
     
     for(int unsigned i = 0; i < mOwner->GetGame()->mBlocks.size(); i++){
         CollSide side = FixCollision(mOwner->GetComponent<CollisionComponent>(), mOwner->GetGame()->mBlocks[i]->GetComponent<CollisionComponent>());
