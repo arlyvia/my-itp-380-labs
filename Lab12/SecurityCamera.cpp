@@ -22,4 +22,18 @@ SecurityCamera::SecurityCamera(class Game* game, class Actor* parent)
     securityCamera_cc->SetSize(25.0f, 25.0f, 25.0f);
     
     securityCamera_sco = new SecurityCone(game, this);
+    
+    GetGame()->mSecurityCameras.push_back(this);
+}
+
+SecurityCamera::~SecurityCamera()
+{
+    auto iter = std::find(GetGame()->mSecurityCameras.begin(), GetGame()->mSecurityCameras.end(), this);
+    if (iter != GetGame()->mSecurityCameras.end())
+    {
+        // Swap to end of vector and pop off (avoid erase copies)
+        auto iter2 = GetGame()->mSecurityCameras.end() - 1;
+        std::iter_swap(iter, iter2);
+        GetGame()->mSecurityCameras.pop_back();
+    }
 }

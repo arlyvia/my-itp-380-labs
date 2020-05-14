@@ -22,7 +22,7 @@ void UIComponent::Draw(Shader* shader)
 }
 
 void UIComponent::DrawTexture(class Shader* shader, class Texture* texture,
-				 const Vector2& offset, float scale)
+				 const Vector2& offset, float scale, float angle)
 {
 	// Scale the quad by the width/height of texture
 	Matrix4 scaleMat = Matrix4::CreateScale(
@@ -33,7 +33,8 @@ void UIComponent::DrawTexture(class Shader* shader, class Texture* texture,
 	Matrix4 transMat = Matrix4::CreateTranslation(
 		Vector3(offset.x, offset.y, 0.0f));	
 	// Set world transform
-	Matrix4 world = scaleMat * transMat;
+    Matrix4 rotation_matrix = Matrix4::CreateRotationZ(angle);
+	Matrix4 world = scaleMat * rotation_matrix * transMat;
 	shader->SetMatrixUniform("uWorldTransform", world);
 	// Set current texture
 	texture->SetActive();

@@ -41,6 +41,13 @@ public:
     
     float mTime = 0.0f;
     int mCoinCount = 0;
+    float mCheckpointTimer = 0.0f;
+    
+    Checkpoint* mCurrCheckpoint;
+    
+    bool at_next_checkpoint = false;
+    
+    std::vector<class SecurityCamera*> mSecurityCameras;
     
 private:
 	void ProcessInput();

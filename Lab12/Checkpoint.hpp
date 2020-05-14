@@ -27,6 +27,10 @@ class Checkpoint: public Actor {
     
         std::string mLevelString = "";
         void SetLevelString(std::string levelString) { mLevelString = levelString; }
+    
+        std::string mCheckpointText = "";
+        void SetCheckpointText(std::string checkpointText) { mCheckpointText = checkpointText; }
+        std::string GetCheckpointText() { return mCheckpointText; }
 };
 
 

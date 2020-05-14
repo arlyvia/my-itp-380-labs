@@ -66,6 +66,10 @@ void LoadActor(const rapidjson::Value& actorValue, Game* game, Actor* parent)
             if(GetStringFromJSON(actorValue, "level", level)){
                 checkpoint->SetLevelString(level);
             }
+            std::string text;
+            if(GetStringFromJSON(actorValue, "text", text)){
+                checkpoint->SetCheckpointText(text);
+            }
             actor = checkpoint;
             
         } else if (type == "SecurityCamera"){
