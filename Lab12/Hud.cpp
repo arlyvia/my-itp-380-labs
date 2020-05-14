@@ -107,7 +107,8 @@ Vector2 Hud::blipHelper(Vector3 player_world_pos, Vector3 other_world_pos){
     
     Vector2 PO = other2D - player2D;
     
-    float rotation_angle = Math::Atan2(player2D.x, player2D.y);
+    //float rotation_angle = Math::Atan2(player2D.x, player2D.y);
+    float rotation_angle = Math::Atan2(mOwner->GetForward().x, mOwner->GetForward().y);
     
     mRotMatrix = Matrix3::CreateRotation(rotation_angle);
     
